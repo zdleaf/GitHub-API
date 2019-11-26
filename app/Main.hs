@@ -9,7 +9,6 @@ import qualified Data.ByteString.Char8 as C8
 main :: IO ()
 main = do
     response <- callAPI repoAPIUrl
+    db <- initialiseDB "github.db"
     print $ "length of response: " ++ (show $ BS.length response)
     writeFile ("output.json") (C8.unpack response)
-
-    db <- initialiseDB "github.db"

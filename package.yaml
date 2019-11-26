@@ -29,6 +29,8 @@ dependencies:
 - http-conduit
 - http-client-tls
 - http-types
+- aeson
+- json
 
 
 library:
