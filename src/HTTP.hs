@@ -27,6 +27,10 @@ import Data.Text
 {-
 case insensitive --- CI.mk $ 
 
+parsing many with Aeson:
+https://geekingfrog.com/blog/post/struggles-with-parsing-json-with-aeson
+https://artyom.me/aeson
+
 repoID: 224,238,000
 -}
 
