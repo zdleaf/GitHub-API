@@ -8,3 +8,13 @@ data Reporesponse = Reporesponse
                }
                deriving (Eq, Show, Read)
 
+
+-- A  data type to handle Languages api responses
+
+data Langauges = Languages
+
+      {
+            languageURL :: String,
+
+      }
+      deriving(Show,Data, Typable)
