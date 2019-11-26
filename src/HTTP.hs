@@ -1,5 +1,6 @@
 module HTTP
-    ( callAPI
+    ( callAPI,
+    repoAPIUrl
     ) where
 
 import Database.HDBC
@@ -16,13 +17,16 @@ import Network.HTTP.Types
 
 {-
 case insensitive --- CI.mk $ 
+
+repoID: 224,238,000
 -}
 
+repoID = 224238000 :: Integer
 eventsAPIUrl = "http://api.github.com/events"
-repoAPIUrl = "http://api.github.com/repositories"
+repoAPIUrl = "http://api.github.com/repositories?since=" ++ show repoID
 userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
 
---callAPI :: String -> IO()
+--callAPI returns JSON data from calling a GitHub API url 
 callAPI :: String -> IO BS.ByteString
 callAPI url = do
     initReq <- parseRequest $ url
@@ -32,3 +36,5 @@ callAPI url = do
     return $ getResponseBody response -- JSON response data
     --print $ getResponseHeader "Content-Type" response
     --return $ getResponseStatusCode response
+
+--getLanguagesURLS response = do
