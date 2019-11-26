@@ -1,6 +1,7 @@
 module HTTP
     ( callAPI,
-    repoAPIUrl
+    repoAPIUrl,
+    parseResponse
     ) where
 
 import Database.HDBC
@@ -16,6 +17,10 @@ import Network.HTTP.Client.TLS
 import Network.HTTP.Types
 
 import DataTypes
+
+-- JSON modules
+import Data.Aeson 
+import Data.Aeson.TH as AE
 
 {-
 case insensitive --- CI.mk $ 
@@ -39,4 +44,7 @@ callAPI url = do
     --print $ getResponseHeader "Content-Type" response
     --return $ getResponseStatusCode response
 
---getLanguagesURLS response = do
+-- $(deriveJSON defaultOptions ''Reporesponse)
+
+parseResponse response = print (C8.decode response :: Maybe Reporesponse)
+    

@@ -12,3 +12,4 @@ main = do
     db <- initialiseDB "github.db"
     print $ "length of response: " ++ (show $ BS.length response)
     writeFile ("output.json") (C8.unpack response)
+    parseResponse response
