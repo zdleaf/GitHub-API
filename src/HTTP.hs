@@ -1,4 +1,4 @@
-module Lib
+module HTTP
     ( callAPI
     ) where
 
@@ -15,8 +15,6 @@ import Network.HTTP.Client.TLS
 import Network.HTTP.Types
 
 {-
-wireshark filter: (ip.dst == 140.82.118.5)
-
 case insensitive --- CI.mk $ 
 -}
 
@@ -24,13 +22,13 @@ eventsAPIUrl = "http://api.github.com/events"
 repoAPIUrl = "http://api.github.com/repositories"
 userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
 
---callAPI :: String -> IO BS.ByteString
-callAPI :: String -> IO()
+--callAPI :: String -> IO()
+callAPI :: String -> IO BS.ByteString
 callAPI url = do
     initReq <- parseRequest $ url
     let request = setRequestHeaders [(hUserAgent, userAgentBS)] initReq
     response <- httpBS request
-    return $ getResponseStatusCode response
-    --return $ getResponseBody response -- JSON response data
     putStrLn $ "The status code was: " ++ show (getResponseStatusCode response)
+    return $ getResponseBody response -- JSON response data
     --print $ getResponseHeader "Content-Type" response
+    --return $ getResponseStatusCode response
