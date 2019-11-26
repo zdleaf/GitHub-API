@@ -15,6 +15,8 @@ import Network.HTTP.Simple as HT -- see https://github.com/snoyberg/http-client/
 import Network.HTTP.Client.TLS
 import Network.HTTP.Types
 
+import DataTypes
+
 {-
 case insensitive --- CI.mk $ 
 
@@ -22,7 +24,7 @@ repoID: 224,238,000
 -}
 
 repoID = 224238000 :: Integer
-eventsAPIUrl = "http://api.github.com/events"
+--eventsAPIUrl = "http://api.github.com/events"
 repoAPIUrl = "http://api.github.com/repositories?since=" ++ show repoID
 userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
 
