@@ -4,16 +4,13 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: db90f99804492d86fa08a4b6061081fb178d0407ff9f478b1c731b5d5fec7d3e
+-- hash: 13d2751954ec8ccece37d74aa907be0a63009689b6b7a6298bb19935b9f6dab8
 
-name:           betfairTest
+name:           GitHubAPI
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/betfairTest#readme>
-homepage:       https://github.com/githubuser/betfairTest#readme
-bug-reports:    https://github.com/githubuser/betfairTest/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2019 Author name here
+description:    Scrapes the GitHub events API
+homepage:       https://github.com/#readme
+bug-reports:    https://github.com//issues
 license:        BSD3
 license-file:   LICENSE
 build-type:     Simple
@@ -23,13 +20,13 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/betfairTest
+  location: https://github.com/
 
 library
   exposed-modules:
       Lib
   other-modules:
-      Paths_betfairTest
+      Paths_GitHubAPI
   hs-source-dirs:
       src
   build-depends:
@@ -44,18 +41,18 @@ library
     , utf8-string
   default-language: Haskell2010
 
-executable betfairTest-exe
+executable GitHubAPI-exe
   main-is: Main.hs
   other-modules:
-      Paths_betfairTest
+      Paths_GitHubAPI
   hs-source-dirs:
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      HDBC
+      GitHubAPI
+    , HDBC
     , HDBC-sqlite3
     , base >=4.7 && <5
-    , betfairTest
     , bytestring
     , case-insensitive
     , http-client-tls
@@ -64,19 +61,19 @@ executable betfairTest-exe
     , utf8-string
   default-language: Haskell2010
 
-test-suite betfairTest-test
+test-suite GitHubAPI-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_betfairTest
+      Paths_GitHubAPI
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      HDBC
+      GitHubAPI
+    , HDBC
     , HDBC-sqlite3
     , base >=4.7 && <5
-    , betfairTest
     , bytestring
     , case-insensitive
     , http-client-tls
