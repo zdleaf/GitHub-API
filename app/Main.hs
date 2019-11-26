@@ -1,6 +1,7 @@
 module Main where
 
 import Lib
+import Githubdb
 
 eventsAPIUrl = "https://api.github.com/events"
 
