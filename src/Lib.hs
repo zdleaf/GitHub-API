@@ -21,6 +21,7 @@ case insensitive --- CI.mk $
 -}
 
 eventsAPIUrl = "http://api.github.com/events"
+repoAPIUrl = "http://api.github.com/repositories"
 userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
 
 --callAPI :: String -> IO BS.ByteString
