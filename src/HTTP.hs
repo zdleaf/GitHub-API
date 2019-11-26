@@ -8,7 +8,7 @@ import Database.HDBC
 import Database.HDBC.Sqlite3
 import qualified Data.CaseInsensitive as CI
 import qualified Data.ByteString as BS
---import Data.ByteString.Lazy     as BL
+import Data.ByteString.Lazy     as BL
 import Data.ByteString.Lazy.UTF8 as BLU -- from utf8-string
 import qualified Data.ByteString.Char8 as C8
 
@@ -19,8 +19,10 @@ import Network.HTTP.Types
 import DataTypes
 
 -- JSON modules
-import Data.Aeson 
-import Data.Aeson.TH as AE
+import Data.Aeson as AE
+import Data.Aeson.TH 
+
+import Data.Text
 
 {-
 case insensitive --- CI.mk $ 
@@ -39,12 +41,16 @@ callAPI url = do
     initReq <- parseRequest $ url
     let request = setRequestHeaders [(hUserAgent, userAgentBS)] initReq
     response <- HT.httpBS request
-    putStrLn $ "The status code was: " ++ show (getResponseStatusCode response)
+    Prelude.putStrLn $ "The status code was: " ++ show (getResponseStatusCode response)
     return $ getResponseBody response -- JSON response data
     --print $ getResponseHeader "Content-Type" response
     --return $ getResponseStatusCode response
 
 -- $(deriveJSON defaultOptions ''Reporesponse)
 
-parseResponse response = undefined --print (C8.decode response :: Maybe Reporesponse)
+parseResponse response = do
+    let lazyResponse = BL.fromStrict response
+    let decoded = AE.decode lazyResponse :: Maybe Reporesponse
+    print $ show decoded
+--print (C8.decode response :: Maybe Reporesponse)
     
