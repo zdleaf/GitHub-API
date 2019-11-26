@@ -4,17 +4,9 @@ module GithubDataTypes where
 -- a data type to handle api respones
 data Reporesponse = Reporesponse
                {
-                  repoId :: Integer,   -- github api id
+                  id :: Integer,   -- github api id
+                  languages_url :: String,
                }
-               deriving (Eq, Show, Read)
+               deriving (Eq, Show, Read, Data, Typable)
 
 
--- A  data type to handle Languages api responses
-
-data Langauges = Languages
-
-      {
-            languageURL :: String,
-
-      }
-      deriving(Show,Data, Typable)
