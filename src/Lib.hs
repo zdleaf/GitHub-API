@@ -21,16 +21,15 @@ case insensitive --- CI.mk $
 -}
 
 eventsAPIUrl = "http://api.github.com/events"
-userAgentBS = C8.pack "https://github.com/zdleaf"
+userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
 
-callAPI :: String -> IO BS.ByteString
+--callAPI :: String -> IO BS.ByteString
+callAPI :: String -> IO()
 callAPI url = do
     initReq <- parseRequest $ url
     let request = setRequestHeaders [(hUserAgent, userAgentBS)] initReq
     response <- httpBS request
-    return $ getResponseBody response
-    {-
+    return $ getResponseStatusCode response
+    --return $ getResponseBody response -- JSON response data
     putStrLn $ "The status code was: " ++ show (getResponseStatusCode response)
-    print $ getResponseHeader "Content-Type" response
-    BS.putStrLn $ getResponseBody response
-    -}
+    --print $ getResponseHeader "Content-Type" response
