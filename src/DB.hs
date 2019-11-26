@@ -1,11 +1,12 @@
---module Githubdb where
+module HTTP
+    ( connectDB
+    ) where
 
 import Database.HDBC
 import Database.HDBC.Sqlite3
 
-
-connectDb :: FilePath -> IO Connection
-connectDb filepath =
+connectDB :: FilePath -> IO Connection
+connectDB filepath =
     do
         connection <- connectSqlite3 "github.db"
 

@@ -1,7 +1,7 @@
 module Main where
 
 import Lib
-import Githubdb
+import DB
 import HTTP
 
 import qualified Data.ByteString as BS
