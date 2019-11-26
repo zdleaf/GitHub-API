@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 13d2751954ec8ccece37d74aa907be0a63009689b6b7a6298bb19935b9f6dab8
+-- hash: 7a2336026e34afe9ae1130124d7ff7474e6ac3c48ec9ad1c75f751797bb3626d
 
 name:           GitHubAPI
 version:        0.1.0.0
@@ -24,7 +24,7 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      HTTP
   other-modules:
       Paths_GitHubAPI
   hs-source-dirs:
