@@ -48,9 +48,29 @@ callAPI url = do
 
 -- $(deriveJSON defaultOptions ''Reporesponse)
 
+jsonFile :: FilePath
+jsonFile = "output.json"
+
+getJSON :: IO BL.ByteString
+getJSON = BL.readFile jsonFile
+
 parseResponse response = do
-    let lazyResponse = BL.fromStrict response
-    let decoded = AE.decode lazyResponse :: Maybe Reporesponse
-    print $ show decoded
---print (C8.decode response :: Maybe Reporesponse)
+    d <- (eitherDecode <$> getJSON) :: IO (Either String [Reporesponse])
+    -- If d is Left, the JSON was malformed.
+    -- In that case, we report the error.
+    -- Otherwise, we perform the operation of
+    -- our choice. In this case, just print it.
+    case d of
+        Left err -> Prelude.putStrLn err
+        Right ps -> print ps
+    --let lazyResponse = BL.fromStrict response :: BL.ByteString
+    --let d = AE.decode lazyResponse :: Maybe Reporesponse
+    --print $ show d
+    -- If d is Left, the JSON was malformed.
+    -- In that case, we report the error.
+    -- Otherwise, we perform the operation of
+    -- our choice. In this case, just print it.
+    --case d of
+    --    Nothing -> Prelude.putStrLn err
+    --    Right ps -> print ps
     
