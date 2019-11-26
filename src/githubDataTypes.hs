@@ -7,6 +7,6 @@ data Reporesponse = Reporesponse
                   id :: Integer,   -- github api id
                   languages_url :: String,
                }
-               deriving (Eq, Show, Data, Typable)
+               deriving (Show, Data, Typable)
 
 
