@@ -10,7 +10,7 @@ import qualified Data.ByteString as BS
 import Data.ByteString.Lazy.UTF8 as BLU -- from utf8-string
 import qualified Data.ByteString.Char8 as C8
 
-import Network.HTTP.Simple -- see https://github.com/snoyberg/http-client/blob/master/TUTORIAL.md
+import Network.HTTP.Simple as HT -- see https://github.com/snoyberg/http-client/blob/master/TUTORIAL.md
 import Network.HTTP.Client.TLS
 import Network.HTTP.Types
 
@@ -27,7 +27,7 @@ callAPI :: String -> IO BS.ByteString
 callAPI url = do
     initReq <- parseRequest $ url
     let request = setRequestHeaders [(hUserAgent, userAgentBS)] initReq
-    response <- httpBS request
+    response <- HT.httpBS request
     putStrLn $ "The status code was: " ++ show (getResponseStatusCode response)
     return $ getResponseBody response -- JSON response data
     --print $ getResponseHeader "Content-Type" response
