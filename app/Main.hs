@@ -1,8 +1,8 @@
 module Main where
 
-import Lib
-import DB
 import HTTP
+import DB
+
 
 import qualified Data.ByteString as BS
 
