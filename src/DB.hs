@@ -10,8 +10,6 @@ import DataTypes as D
 import Database.HDBC
 import Database.HDBC.Sqlite3
 
-import Control.Monad (mzero)
-
 --type dbname = String
 --initialiseDB :: dbname ->
 initialiseDB dbname = do

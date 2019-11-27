@@ -7,9 +7,7 @@ import DataTypes
 -- JSON modules
 import Data.Aeson as AE
 import Data.Aeson.Types
---import Data.Aeson.TH
 
-import Data.Text
 import Data.Foldable
 import Control.Monad (join)
 
