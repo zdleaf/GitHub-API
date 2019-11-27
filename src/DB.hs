@@ -5,7 +5,7 @@ module DB
 
 import Database.HDBC
 import Database.HDBC.Sqlite3
-
+import DataTypes as D
 --type dbname = String
 --initialiseDB :: dbname ->
 initialiseDB dbname = do
@@ -26,5 +26,16 @@ connectDB connection = do
 
     else return ()
 
-    
 
+test_response = Reporesponse 1 "test"
+--addRepo :: Connection -> Reporesponse -> IO ()
+addRepo repoResponse =
+    do
+        connection <- connectSqlite3 "github.db"
+        let repoLanguagesUrl = languages_url repoResponse
+        let repoId = D.id repoResponse
+
+        run connection "INSERT INTO Reporesponses (gitID, repoURL)\
+                           \VALUES (?, ?)" [toSql repoId repoLanguagesUrl]
+        commit connection
+        return ()

@@ -2,7 +2,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module DataTypes
-( Reporesponse
+( Reporesponse(id, languages_url, Reporesponse)
+
 ) where
 
 import Data.Aeson
