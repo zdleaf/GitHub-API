@@ -6,7 +6,10 @@ module DataTypes
 import Data.Aeson
 import GHC.Generics
 
-instance FromJSON Reporesponse
+instance FromJSON Reporesponse where
+   parseJSON = genericParseJSON defaultOptions
+      { omitNothingFields = True }
+      
 instance ToJSON Reporesponse
 
 -- a data type to handle api respones

@@ -20,7 +20,7 @@ import DataTypes
 
 -- JSON modules
 import Data.Aeson as AE
-import Data.Aeson.TH 
+--import Data.Aeson.TH
 
 import Data.Text
 
