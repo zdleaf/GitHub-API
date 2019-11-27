@@ -13,7 +13,8 @@ import Control.Monad (mzero)
 data Reporesponse = Reporesponse
                {
                   id :: Integer, -- github repo id
-                  languages_url :: String
+                  languages_url :: String -- languages 
+                  followers_url :: String 
                }
                deriving (Eq, Show, Generic)
 
