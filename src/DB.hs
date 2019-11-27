@@ -49,11 +49,11 @@ addRepo connection (Right repoResponse) = do
     commit connection
     return ()
 
--- extract response either Left/Right in response list
+-- extract response list from Either Left/Right
 extractResp (Left err) = []
 extractResp (Right list) = list
 
-addRepoMany :: IConnection t => t -> [Either a Reporesponse] -> IO b
+addRepoMany :: IConnection t => t -> [Either String Reporesponse] -> IO b
 addRepoMany db (x:xs) = do
     addRepo db x
     addRepoMany db xs

@@ -13,8 +13,7 @@ main = do
     print $ "length of response: " ++ (show $ BL.length response)
     --Prelude.writeFile ("output.json") (C8.unpack response)
     parsed <- parseResponse response
-    let responseList = extractResp parsed
-    addRepoMany db responseList
+    addRepoMany db $ extractResp parsed
     --let extracted = extractResponseList parsed
     --addRepoMany db parsed
 
