@@ -12,5 +12,7 @@ main = do
     db <- initialiseDB "github.db"
     print $ "length of response: " ++ (show $ BL.length response)
     --Prelude.writeFile ("output.json") (C8.unpack response)
-    parseResponse response
+    let repoResponse = parseResponse response
+    addRepo db repoResponse
+
     return ()

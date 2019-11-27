@@ -14,7 +14,9 @@ import Data.Foldable
 import Control.Monad (join)
 
 parseResponse response = do
-    print $ eitherDecode response >>= parseEither verboseParseMany
+    print $ "successfully decoded JSON"
+    let decodedJSON = eitherDecode response >>= parseEither verboseParseMany
+    return decodedJSON
 
 {- change/rewrite the below functions - came from https://geekingfrog.com/blog/post/struggles-with-parsing-json-with-aeson -}
 verboseParser :: Value -> Parser (Either String Reporesponse)
