@@ -30,10 +30,8 @@ connectDB connection = do
 
 test_response = (Reporesponse 1 "test" "test")
 --addRepo :: Connection -> Reporesponse -> IO ()
-addRepo repoResponse =
+addRepo connection repoResponse =
     do
-        connection <- connectSqlite3 "github.db"
-
         run connection "INSERT INTO Reporesponses (gitID, languageURL, contributorsURL )\
                            \VALUES (?, ?, ?)"
                            [
