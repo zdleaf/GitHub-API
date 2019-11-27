@@ -53,14 +53,6 @@ callAPI url = do
     --print $ getResponseHeader "Content-Type" response
     --return $ getResponseStatusCode response
 
--- $(deriveJSON defaultOptions ''Reporesponse)
-
-jsonFile :: FilePath
-jsonFile = "output.json"
-
-getJSON :: IO BL.ByteString
-getJSON = BL.readFile jsonFile
-
 parseResponse response = do
     print $ eitherDecode response >>= parseEither verboseParseMany
 
@@ -72,7 +64,7 @@ verboseParser v = do
         Right parsed -> return $ Right parsed
 
 verboseParseMany :: Value -> Parser [Either String Reporesponse]
-verboseParseMany = withArray "people" $ \arr -> do
+verboseParseMany = withArray "Reporesponse" $ \arr -> do
     let allParsed = fmap (join . parseEither verboseParser) arr
     return $ toList allParsed
     
