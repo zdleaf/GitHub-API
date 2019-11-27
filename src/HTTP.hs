@@ -4,6 +4,8 @@ module HTTP
     parseResponse
     ) where
 
+import DataTypes
+
 import Database.HDBC
 import Database.HDBC.Sqlite3
 import qualified Data.CaseInsensitive as CI
@@ -16,13 +18,14 @@ import Network.HTTP.Simple -- see https://github.com/snoyberg/http-client/blob/m
 import Network.HTTP.Client.TLS
 import Network.HTTP.Types
 
-import DataTypes
-
 -- JSON modules
 import Data.Aeson as AE
+import Data.Aeson.Types
 --import Data.Aeson.TH
 
 import Data.Text
+import Data.Foldable
+import Control.Monad (join)
 
 {-
 case insensitive --- CI.mk $ 
@@ -59,11 +62,17 @@ getJSON :: IO BL.ByteString
 getJSON = BL.readFile jsonFile
 
 parseResponse response = do
-    --let decoded = AE.decode response :: Maybe Reporesponse
-    --print decoded
-    let d = eitherDecode response :: Either String Reporesponse
-    case d of
-        Left err -> Prelude.putStrLn err
-        Right ps -> print ps
+    print $ eitherDecode response >>= parseEither verboseParseMany
 
+{- change/rewrite the below functions - came from https://geekingfrog.com/blog/post/struggles-with-parsing-json-with-aeson -}
+verboseParser :: Value -> Parser (Either String Reporesponse)
+verboseParser v = do
+    case parseEither parseJSON v of
+        Left err -> return . Left $ err ++ " -- Invalid object is: " ++ show v
+        Right parsed -> return $ Right parsed
+
+verboseParseMany :: Value -> Parser [Either String Reporesponse]
+verboseParseMany = withArray "people" $ \arr -> do
+    let allParsed = fmap (join . parseEither verboseParser) arr
+    return $ toList allParsed
     
