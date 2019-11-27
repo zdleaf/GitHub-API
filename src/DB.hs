@@ -50,12 +50,14 @@ addRepo connection (Right repoObject) = do
     return ()
 
 -- extract response either Left/Right in reponse list
-extractResp (Left _) = []
+extractResp (Left err) = []
 extractResp (Right list) = list
 
 
 --addRepoMany db responseList = fmap (addRepo db) responseList
-extractRepo (Left _) = Reporesponse {}
+extractRepo (Left err) = do
+    print $ "extractRepo Left: " ++ err
+    return Reporesponse {}
 extractRepo (Right repo) = repo
 
 addRepoMany :: IConnection t => t -> [Either a Reporesponse] -> IO b
