@@ -14,7 +14,7 @@ main = do
     --Prelude.writeFile ("output.json") (C8.unpack response)
     parsed <- parseResponse response
     let responseList = extractResp parsed
-    --addRepoMany db responseList
+    addRepoMany db responseList
     --let extracted = extractResponseList parsed
     --addRepoMany db parsed
 

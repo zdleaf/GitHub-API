@@ -37,23 +37,31 @@ connectDB connection = do
 test_response = (Reporesponse 1 "test" "test")
 
 --addRepo :: Connection -> Reporesponse -> IO ()
-addRepo connection repoResponse =
-    do
-        run connection "INSERT INTO Reporesponses (gitID, languageURL, contributorsURL )\
-                           \VALUES (?, ?, ?)"
-                           [
-                           (toSql (D.id repoResponse)),
-                           (toSql (languages_url repoResponse)),
-                           (toSql (contributors_url repoResponse))
-                            ]
-        commit connection
-        return ()
+addRepo connection (Left str) = return ()
+addRepo connection (Right repoObject) = do
+    run connection "INSERT INTO Reporesponses (gitID, languageURL, contributorsURL )\
+                        \VALUES (?, ?, ?)"
+                        [
+                        (toSql (D.id repoObject)),
+                        (toSql (languages_url repoObject)),
+                        (toSql (contributors_url repoObject))
+                        ]
+    commit connection
+    return ()
 
 -- extract response either Left/Right in reponse list
 extractResp (Left _) = []
 extractResp (Right list) = list
 
-addRepoMany db responseList = fmap (addRepo db) responseList
+
+--addRepoMany db responseList = fmap (addRepo db) responseList
+extractRepo (Left _) = Reporesponse {}
+extractRepo (Right repo) = repo
+
+addRepoMany :: IConnection t => t -> [Either a Reporesponse] -> IO b
+addRepoMany db (x:xs) = do
+    addRepo db $ x
+    addRepoMany db xs
 
 {-
 extractResponseList :: Either [Char] [Either String D.Reporesponse] -> Either (IO (), [Either String D.Reporesponse])      
