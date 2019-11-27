@@ -15,6 +15,7 @@ data Reporesponse = Reporesponse
                   id :: Integer, -- github repo id
                   languages_url :: String, -- languages
                   contributors_url :: String
+
                }
                deriving (Eq, Show, Generic)
 
