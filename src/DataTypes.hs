@@ -2,8 +2,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module DataTypes
-( 
-   Reporesponse(id, languages_url, contributors_url, Reporesponse)
+(
+   Reporesponse(id, languages_url, contributors_url, Reporesponse),
+   Urlobj(gitID, url, Urlobj)
 ) where
 
 import Data.Aeson
@@ -19,7 +20,15 @@ data Reporesponse = Reporesponse
                }
                deriving (Eq, Show, Generic)
 
+data Urlobj =
+  Urlobj
+  {
+       gitID :: Integer, -- github repo id
+       url :: String -- languages
+  }
+  deriving (Eq, Show, Generic)
+
+
+
 instance FromJSON Reporesponse
 -- we do not need to specify details since we're deriving Generic
-
-

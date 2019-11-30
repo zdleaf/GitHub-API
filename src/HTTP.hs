@@ -1,5 +1,5 @@
 module HTTP
-    ( callAPI,
+    ( callRepoAPI,
     repoAPIUrl
     ) where
 
@@ -22,9 +22,9 @@ repoID = 224238000 :: Integer
 repoAPIUrl = "http://api.github.com/repositories?since=" ++ show repoID
 userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
 
---callAPI returns JSON data from calling a GitHub API url 
-callAPI :: String -> IO BL.ByteString
-callAPI url = do
+--callRepoAPI returns JSON data from calling a GitHub API url
+callRepoAPI :: String -> IO BL.ByteString
+callRepoAPI url = do
     initReq <- parseRequest $ url
     let request = setRequestHeaders [(hUserAgent, userAgentBS)] initReq
     response <- httpLBS request
