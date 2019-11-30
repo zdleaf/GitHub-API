@@ -1,4 +1,5 @@
 module Main where
+import System.IO
 
 import HTTP as HT
 import DB
@@ -16,4 +17,6 @@ main = do
     parsed <- parseResponse response
     addRepoMany db $ extractResp parsed
     repoReponse <- retrieveRepoResponse db
+    print (repoReponse)
+    hFlush stdout
     return ()
