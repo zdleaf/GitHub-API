@@ -56,7 +56,7 @@ addRepoMany db (x:xs) = do
     addRepo db x
     addRepoMany db xs
 
-{-
+{- TRY map FMAP, sequence, mapM
 --addRepoMany db responseList = fmap (addRepo db) responseList
 
 extractRepo (Left err) = do
