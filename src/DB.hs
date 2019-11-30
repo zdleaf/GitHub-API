@@ -56,6 +56,11 @@ addRepoMany db (x:xs) = do
     addRepo db x
     addRepoMany db xs
 
+
+retrieveLanguageUrls connection = do
+    urls <- quickQuery connection "select gitID, languageURL from Reporesponses" []
+    print (urls)
+    return ()
 {- TRY map FMAP, sequence, mapM
 --addRepoMany db responseList = fmap (addRepo db) responseList
 
