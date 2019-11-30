@@ -39,19 +39,26 @@ connectDB connection =
         return ()
       commit connection
 
+-- INSERT INTO Reporesponses
+
+-- SELECT 2, "test", "test"
+-- WHERE NOT EXISTS  (SELECT 1 from Reporesponses WHERE gitID = 224238003)
+
 --addRepo :: Connection -> Reporesponse -> IO ()
 addRepo connection (Left err) = return ()
 addRepo connection (Right repoResponse) = handleSql handleError $ do
-        run connection "INSERT INTO Reporesponses (gitID, languageURL, contributorsURL )\
-                                                \VALUES (?, ?, ?)"
-                                                [
-                                                (toSql (D.id repoResponse)),
-                                                (toSql (languages_url repoResponse)),
-                                                (toSql (contributors_url repoResponse))
-                                                ]
+        run connection "INSERT OR REPLACE INTO Reporesponses (gitID,\
+                       \languageURL, contributorsURL) VALUES (?, ?, ?)"
+            [
+              toSql (D.id repoResponse),
+              toSql (languages_url repoResponse),
+              toSql (contributors_url repoResponse)
+            ]
+
+
         commit connection
-        where handleError e = do fail $ "error adding podcase - does it exist. \
-												 \PodcastId = " ++ (show (D.id repoResponse)) ++ (show e)
+        where handleError e = do fail $ "error adding repo PodcastId\
+                                        \= " ++ (show (D.id repoResponse)) ++ " "++ (show e)
 
 -- extract response list from Either Left/Right
 extractResp (Left err) = []
