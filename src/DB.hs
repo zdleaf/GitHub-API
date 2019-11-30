@@ -4,8 +4,7 @@ module DB
         initialiseDB,
         extractResp,
         addRepoMany,
-        retrieveLanguageUrls,
-        retrieveContributorUrls
+        retrieveRepoResponse
         ) where
 
 import DataTypes as D
@@ -66,21 +65,16 @@ addRepoMany db (x:xs) = do
 addRepoMany db _ = do
     return ()
 
-retrieveLanguageUrls connection = do
-        urls <- quickQuery connection "select gitID, languageURL from Reporesponses" []
+retrieveRepoResponse connection = do
+        urls <- quickQuery connection "select gitID, languageURL, \
+                                      \contributorsURL from Reporesponses" []
         commit connection
         return (map fromSqlurls urls)
 
-
-retrieveContributorUrls connection = do
-        urls <- quickQuery connection "select gitID, contributorsURL from Reporesponses" []
-        commit connection
-        return (map fromSqlurls urls)
-
-
-fromSqlurls [gitId, gitURL] =
-    Urlobj {gitID = fromSql gitId,
-            url = fromSql gitURL
+fromSqlurls [gitId, languages_url, contributors_url] =
+    Reporesponse {D.id = fromSql gitId,
+            languages_url = fromSql languages_url,
+            contributors_url = fromSql contributors_url
     }
 fromSqlurls _ = error $ "error in bytestring conversion"
 

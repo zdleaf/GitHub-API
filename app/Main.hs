@@ -15,6 +15,5 @@ main = do
     --Prelude.writeFile ("output.json") (C8.unpack response)
     parsed <- parseResponse response
     addRepoMany db $ extractResp parsed
-    contributorsUrllist <- retrieveContributorUrls db
-    languageUrllist <- retrieveLanguageUrls db
+    repoReponse <- retrieveRepoResponse db
     return ()

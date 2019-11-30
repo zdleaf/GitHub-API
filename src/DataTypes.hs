@@ -12,13 +12,14 @@ import GHC.Generics
 
 -- a data type to handle API response for public repos
 data Reporesponse = Reporesponse
-               {
-                  id :: Integer, -- github repo id
-                  languages_url :: String, -- languages
-                  contributors_url :: String
+    {
+      id :: Integer, -- github repo id
+      languages_url :: String, -- languages
+      contributors_url :: String
 
-               }
-               deriving (Eq, Show, Generic)
+    }
+    deriving (Eq, Show, Generic)
+
 
 data Urlobj =
   Urlobj
