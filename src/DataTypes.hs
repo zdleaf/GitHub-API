@@ -4,6 +4,7 @@
 module DataTypes
 (
    Reporesponse(id, languages_url, contributors_url, Reporesponse),
+   Parameteresponse(gitid, rest, Parameteresponse)
 ) where
 
 import Data.Aeson
@@ -19,6 +20,11 @@ data Reporesponse = Reporesponse
     }
     deriving (Eq, Show, Generic)
 
-
 instance FromJSON Reporesponse
 -- we do not need to specify details since we're deriving Generic
+
+data Parameteresponse a = Parameteresponse
+  {
+    gitid :: Integer,
+    rest  :: a
+  }  deriving (Show, Generic)

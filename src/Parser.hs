@@ -1,5 +1,6 @@
 module Parser
-    ( parseResponse
+    ( parseResponse,
+      verboseParser
     ) where
 
 import DataTypes
@@ -27,4 +28,3 @@ verboseParseMany :: Value -> Parser [Either String Reporesponse]
 verboseParseMany = withArray "Reporesponse" $ \arr -> do
     let allParsed = fmap (join . parseEither verboseParser) arr
     return $ toList allParsed
-    
