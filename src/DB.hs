@@ -57,8 +57,8 @@ addRepo connection (Right repoResponse) = handleSql handleError $ do
 
 
         commit connection
-        where handleError e = do fail $ "error adding repo PodcastId\
-                                        \= " ++ (show (D.id repoResponse)) ++ " "++ (show e)
+        where handleError e = do fail $ "error adding repo: "\
+                                        \ ++ (show (D.id repoResponse)) ++ " "++ (show e)
 
 -- extract response list from Either Left/Right
 extractResp (Left err) = []
