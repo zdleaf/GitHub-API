@@ -11,6 +11,8 @@ import Network.HTTP.Simple -- see https://github.com/snoyberg/http-client/blob/m
 import Network.HTTP.Client.TLS
 import Network.HTTP.Types
 import Parser
+import Data.Aeson.Types
+
 {-
 parsing many with Aeson:
 https://geekingfrog.com/blog/post/struggles-with-parsing-json-with-aeson
@@ -45,8 +47,9 @@ callParamApi reporesponse = do
     let id = D.id reporesponse
     let languageurl = D.languages_url reporesponse
     let contributors_url = D.contributors_url reporesponse
-    test <- callAPI languageurl
-    print (BL.unpack test)
+    languagebytestring <- callAPI languageurl
+    contributorsbytestring <- callAPI contributors_url
+    return contributorsbytestring
 
 
 
