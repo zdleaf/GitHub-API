@@ -50,6 +50,26 @@ connectDB connection =
         return()
     commit connection
 
+
+
+    when (not ("contributorCount" 'elem' tables)) $ do
+        run connection "CREATE TABLE contributorCount (\
+                        \repoID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
+                        \contributors INTEGER NOT NULL UNIQUE)" []
+
+        return()
+    commit connection
+
+-- final table that of language and totals for contributors and count
+    when (not ("final" 'elem' tables)) $ do
+        run connection "CREATE TABLE final (\
+                        \language TEXT NOT NULL UNIQUE,\
+                        \totalCount INTEGER NOT NULL UNIQUE,\
+                        \totalContributors INTEGER NOT NULL UNIQUE)" []
+
+        return()
+    commit connection
+    
 -- INSERT INTO Reporesponses
 
 -- SELECT 2, "test", "test"
