@@ -30,17 +30,7 @@ connectDB connection =
         return ()
       commit connection
 
-      {-when (not ("repoData" `elem` tables)) $ do
-        run connection "CREATE TABLE repoData (\
-                       \gitID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
-                       \language TEXT NOT NULL UNIQUE,\
-                       \languageCOUNT INTEGER NOT NULL UNIQUE,\
-                       \collaborators TEXT NOT NULL UNIQUE,\
-                       \collaboratorsCOUNT INTEGER NOT NULL UNIQUE)" []
-        return ()
-      commit connection-}
-
-
+      
       when (not ("langResponses" 'elem' tables)) $ do
         run connection "CREATE TABLE langResponses (\
                         \repoID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
