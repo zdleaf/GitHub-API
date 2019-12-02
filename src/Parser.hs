@@ -1,6 +1,7 @@
 module Parser
     ( parseResponse,
-      verboseParser
+      verboseParser,
+      amendContributorsURL
     ) where
 
 import DataTypes
@@ -16,6 +17,9 @@ parseResponse response = do
     let decodedJSON = eitherDecode response >>= parseEither verboseParseMany
     print $ "successfully decoded JSON"
     return decodedJSON
+
+-- we want to change https://api.github.com/repos/owner/repo/contributors to repo/stats/contributors
+amendContributorsURL url = (reverse $ snd (break (=='/') (reverse url))) ++ "stats/contributors"
 
 {- change/rewrite the below functions - came from https://geekingfrog.com/blog/post/struggles-with-parsing-json-with-aeson -}
 verboseParser :: Value -> Parser (Either String Reporesponse)

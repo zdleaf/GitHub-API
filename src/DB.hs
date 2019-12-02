@@ -11,6 +11,7 @@ import DataTypes as D
 import Database.HDBC
 import Database.HDBC.Sqlite3
 import Control.Monad
+import Parser (amendContributorsURL)
 --type dbname = String
 --initialiseDB :: dbname ->
 initialiseDB dbname = do
@@ -47,12 +48,13 @@ connectDB connection =
 --addRepo :: Connection -> Reporesponse -> IO ()
 addRepo connection (Left err) = return ()
 addRepo connection (Right repoResponse) = handleSql handleError $ do
+        
         run connection "INSERT OR REPLACE INTO Reporesponses (gitID,\
                        \languageURL, contributorsURL) VALUES (?, ?, ?)"
             [
               toSql (D.id repoResponse),
               toSql (languages_url repoResponse),
-              toSql (contributors_url repoResponse)
+              toSql (amendContributorsURL $ contributors_url repoResponse)
             ]
 
 
