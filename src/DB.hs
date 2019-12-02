@@ -42,7 +42,12 @@ connectDB connection =
 
       when (not ("langResponses" 'elem' tables)) $ do
         run connection "CREATE TABLE langResponses (\
-                        \repoID"
+                        \repoID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
+                        \language TEXT NOT NULL UNIQUE,\
+                        \count INTEGER NOT NULL UNIQUE)" []
+
+        return()
+    commit connection
 
 -- INSERT INTO Reporesponses
 
@@ -53,11 +58,11 @@ connectDB connection =
 addRepo connection (Left err) = return ()
 addRepo connection (Right repoResponse) = handleSql handleError $ do
         run connection "INSERT OR REPLACE INTO Reporesponses (gitID,\
-                       \languageURL, contributorsURL) VALUES (?, ?, ?)"
+                       \languageURL,\ contributorsURL) VALUES (?, ?, ?)"
             [
               toSql (D.id repoResponse),
               toSql (languages_url repoResponse),
-              toSql (contributors_url repoResponse)
+              toSql (contributorsURL repoResponse)
             ]
 
 
