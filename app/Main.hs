@@ -16,7 +16,9 @@ main = do
     --Prelude.writeFile ("output.json") (C8.unpack response)
     parsed <- parseResponse response
     addRepoMany db $ extractResp parsed
-    repoReponse <- retrieveRepoResponse db
+
+
+{-     repoReponse <- retrieveRepoResponse db
     print (repoReponse)
-    hFlush stdout
+    hFlush stdout -}
     return ()

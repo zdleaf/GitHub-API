@@ -47,15 +47,14 @@ connectDB connection =
 --addRepo :: Connection -> Reporesponse -> IO ()
 addRepo connection (Left err) = return ()
 addRepo connection (Right repoResponse) = handleSql handleError $ do
+        print $ D.id repoResponse
         run connection "INSERT OR REPLACE INTO Reporesponses (gitID,\
                        \languageURL, contributorsURL) VALUES (?, ?, ?)"
             [
               toSql (D.id repoResponse),
               toSql (languages_url repoResponse),
-              toSql (contributors_url repoResponse)
+              toSql (contributorsURL repoResponse)
             ]
-
-
         commit connection
         where handleError e = do fail $ "error adding repo: " ++ (show (D.id repoResponse)) ++ " " ++ (show e)
 
@@ -66,6 +65,7 @@ extractResp (Right list) = list
 addRepoMany :: IConnection t => t -> [Either String Reporesponse] -> IO ()
 addRepoMany db (x:xs) = do
     addRepo db x
+    --print x
     addRepoMany db xs
     return ()
 addRepoMany db _ = do
@@ -77,10 +77,10 @@ retrieveRepoResponse connection = do
         commit connection
         return (map fromSqlurls urls)
 
-fromSqlurls [gitId, languages_url, contributors_url] =
+fromSqlurls [gitId, languages_url, contributorsURL] =
     Reporesponse {D.id = fromSql gitId,
             languages_url = fromSql languages_url,
-            contributors_url = fromSql contributors_url
+            contributorsURL = fromSql contributorsURL
     }
 fromSqlurls _ = error $ "error in bytestring conversion"
 

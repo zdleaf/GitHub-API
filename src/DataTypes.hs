@@ -1,9 +1,10 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module DataTypes
 (
-   Reporesponse(id, languages_url, contributors_url, Reporesponse),
+   Reporesponse(id, languages_url, contributorsURL, Reporesponse),
    Parameteresponse(gitid, rest, Parameteresponse)
 ) where
 
@@ -15,13 +16,17 @@ data Reporesponse = Reporesponse
     {
       id :: Integer, -- github repo id
       languages_url :: String, -- languages
-      contributors_url :: String
-
+      contributorsURL :: String
     }
-    deriving (Eq, Show, Generic)
+    deriving (Eq, Show)
 
-instance FromJSON Reporesponse
+instance FromJSON Reporesponse where
 -- we do not need to specify details since we're deriving Generic
+  parseJSON = withObject "Reporesponse" $ \o -> do
+    id <- o .:  "id"
+    languages_url  <- o .: "languages_url"
+    contributorsURL  <- o .:? "contributorsURL" .!= "https://api.github.com/repos/"
+    return Reporesponse{..}
 
 data Parameteresponse a = Parameteresponse
   {
