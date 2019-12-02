@@ -20,38 +20,35 @@ initialiseDB dbname = do
         return connection
 
 connectDB connection =
-    do
-      tables <- getTables connection
-      when (not ("Reporesponses" `elem` tables)) $ do
-        run connection "CREATE TABLE Reporesponses(\
-                        \gitID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
-                        \languageURL TEXT NOT NULL UNIQUE,\
-                        \contributorsURL Text Not NULL UNIQUE)" []
-        return ()
-      commit connection
-
-      
-      when (not ("langResponses" 'elem' tables)) $ do
-        run connection "CREATE TABLE langResponses (\
-                        \repoID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
-                        \language TEXT NOT NULL UNIQUE,\
-                        \count INTEGER NOT NULL UNIQUE)" []
-
-        return()
+  do
+    tables <- getTables connection
+    when (not ("Reporesponses" `elem` tables)) $ do
+      run connection "CREATE TABLE Reporesponses(\
+                      \gitID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
+                      \languageURL TEXT NOT NULL UNIQUE,\
+                      \contributorsURL Text Not NULL UNIQUE)" []
+      return ()
     commit connection
 
 
+    when (not ("langResponses" `elem` tables)) $ do
+      run connection "CREATE TABLE langResponses (\
+                      \repoID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
+                      \language TEXT NOT NULL UNIQUE,\
+                      \count INTEGER NOT NULL UNIQUE)" []
+      return()
+    commit connection
 
-    when (not ("contributorCount" 'elem' tables)) $ do
-        run connection "CREATE TABLE contributorCount (\
-                        \repoID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
-                        \contributors INTEGER NOT NULL UNIQUE)" []
+    when (not ("contributorCount" `elem` tables)) $ do
+      run connection "CREATE TABLE contributorCount (\
+                      \repoID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
+                      \contributors INTEGER NOT NULL UNIQUE)" []
 
-        return()
+      return()
     commit connection
 
 -- final table that of language and totals for contributors and count
-    when (not ("final" 'elem' tables)) $ do
+    when (not ("final" `elem` tables)) $ do
         run connection "CREATE TABLE final (\
                         \language TEXT NOT NULL UNIQUE,\
                         \totalCount INTEGER NOT NULL UNIQUE,\
@@ -59,7 +56,7 @@ connectDB connection =
 
         return()
     commit connection
-    
+
 -- INSERT INTO Reporesponses
 
 -- SELECT 2, "test", "test"
@@ -68,16 +65,14 @@ connectDB connection =
 --addRepo :: Connection -> Reporesponse -> IO ()
 addRepo connection (Left err) = return ()
 addRepo connection (Right repoResponse) = handleSql handleError $ do
-        
+
         run connection "INSERT OR REPLACE INTO Reporesponses (gitID,\
-                       \languageURL,\ contributorsURL) VALUES (?, ?, ?)"
+                       \languageURL, contributorsURL) VALUES (?, ?, ?)"
             [
               toSql (D.id repoResponse),
               toSql (languages_url repoResponse),
-              toSql (contributorsURL repoResponse)
+              toSql (amendContributorsURL $ contributors_url repoResponse)
             ]
-
-
         commit connection
         where handleError e = do fail $ "error adding repo: " ++ (show (D.id repoResponse)) ++ " "++ (show e)
 
