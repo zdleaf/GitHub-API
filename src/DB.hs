@@ -29,7 +29,7 @@ connectDB connection =
         return ()
       commit connection
 
-      when (not ("repoData" `elem` tables)) $ do
+      {-when (not ("repoData" `elem` tables)) $ do
         run connection "CREATE TABLE repoData (\
                        \gitID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
                        \language TEXT NOT NULL UNIQUE,\
@@ -37,7 +37,12 @@ connectDB connection =
                        \collaborators TEXT NOT NULL UNIQUE,\
                        \collaboratorsCOUNT INTEGER NOT NULL UNIQUE)" []
         return ()
-      commit connection
+      commit connection-}
+
+
+      when (not ("langResponses" 'elem' tables)) $ do
+        run connection "CREATE TABLE langResponses (\
+                        \repoID"
 
 -- INSERT INTO Reporesponses
 
@@ -57,8 +62,7 @@ addRepo connection (Right repoResponse) = handleSql handleError $ do
 
 
         commit connection
-        where handleError e = do fail $ "error adding repo: "\
-                                        \ ++ (show (D.id repoResponse)) ++ " "++ (show e)
+        where handleError e = do fail $ "error adding repo: " ++ (show (D.id repoResponse)) ++ " "++ (show e)
 
 -- extract response list from Either Left/Right
 extractResp (Left err) = []
