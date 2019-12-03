@@ -24,7 +24,7 @@ connectDB connection =
     tables <- getTables connection
     when (not ("repoResponses" `elem` tables)) $ do
       run connection "CREATE TABLE Reporesponses(\
-                      \gitID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
+                      \repoID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
                       \languageURL TEXT NOT NULL UNIQUE,\
                       \contributorsURL Text Not NULL UNIQUE)" []
       return ()
@@ -60,13 +60,13 @@ connectDB connection =
 -- INSERT INTO Reporesponses
 
 -- SELECT 2, "test", "test"
--- WHERE NOT EXISTS  (SELECT 1 from Reporesponses WHERE gitID = 224238003)
+-- WHERE NOT EXISTS  (SELECT 1 from Reporesponses WHERE repoID = 224238003)
 
 --addRepo :: Connection -> Reporesponse -> IO ()
 addRepo connection (Left err) = return ()
 addRepo connection (Right repoResponse) = handleSql handleError $ do
 
-        run connection "INSERT OR REPLACE INTO Reporesponses (gitID,\
+        run connection "INSERT OR REPLACE INTO Reporesponses (repoID,\
                        \languageURL, contributorsURL) VALUES (?, ?, ?)"
             [
               toSql (D.id repoResponse),
@@ -89,13 +89,13 @@ addRepoMany db _ = do
     return ()
 
 retrieveRepoResponse connection = do
-        urls <- quickQuery connection "select gitID, languageURL, \
+        urls <- quickQuery connection "select repoID, languageURL, \
                                       \contributorsURL from Reporesponses" []
         commit connection
         return (map fromSqlurls urls)
 
-fromSqlurls [gitId, languages_url, contributors_url] =
-    Reporesponse {D.id = fromSql gitId,
+fromSqlurls [repoID, languages_url, contributors_url] =
+    Reporesponse {D.id = fromSql repoID,
             languages_url = fromSql languages_url,
             contributors_url = fromSql contributors_url
     }

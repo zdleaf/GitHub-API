@@ -16,15 +16,15 @@ data Reporesponse = Reporesponse
       id :: Integer, -- github repo id
       languages_url :: String, -- languages
       contributors_url :: String
-
     }
     deriving (Eq, Show, Generic)
 
 instance FromJSON Reporesponse
 -- we do not need to specify details since we're deriving Generic
 
-data Parameteresponse a = Parameteresponse
+data LangResponse a = LangResponse
   {
-    gitid :: Integer,
-    rest  :: a
-  }  deriving (Show, Generic)
+    repoID :: Integer,
+    language  :: String,
+    lineCount :: Integer
+  }  deriving (Show)
