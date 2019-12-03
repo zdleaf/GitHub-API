@@ -1,3 +1,6 @@
+{-# LANGUAGE FlexibleContexts #-}
+
+
 module DB
        (
         connectDB,
@@ -87,6 +90,21 @@ addRepoMany db (x:xs) = do
     return ()
 addRepoMany db _ = do
     return ()
+
+
+addContribs connection tuple = handleSql handleError $ do
+  run connection "INSERT OR REPLACE INTO contributorResponses (repoID,\
+                 \contributors) VALUES (?, ?)"
+    [
+      toSql (fst tuple),
+      toSql (snd tuple)
+    ]
+  commit connection
+  where handleError e = do fail $ "error adding contributors: \
+                          \" ++ (show (fst tuple)) ++ " "++ (show e)
+
+
+
 
 retrieveRepoResponse connection = do
         urls <- quickQuery connection "select repoID, languageURL, \

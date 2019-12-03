@@ -46,9 +46,3 @@ callContribURL reporesponse = do
     let eitherCount = fmap Prelude.length parsed
     let count = getContribCount eitherCount
     return ((D.id reporesponse), count)
-
-
-
-
-
-
