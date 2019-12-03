@@ -2,7 +2,7 @@ module Parser
     ( parseRepoResponse,
       parserRepo,
       amendContributorsURL,
-      parseSingleRespones,
+      parseContribResponse,
       parserContribs
     ) where
 
@@ -21,8 +21,8 @@ parseRepoResponse response = do
     return decodedJSON
 
 
-parseSingleRespones response = do
-    let decodedJSON = eitherDecode response >>= parseEither parserContribs
+parseContribResponse response = do
+    let decodedJSON = eitherDecode response >>= parseEither parserContribsMany
     print $ "successfully decoded JSON"
     return decodedJSON
 
@@ -50,4 +50,10 @@ parserContribs value = do
     case parseEither parseJSON value of
         Left err -> return . Left $ err ++ "Invalid object is: " ++ show value
         Right parsed -> return $ Right parsed
+
+
+parserContribsMany :: Value -> Parser [Either String ContributorResponse]
+parserContribsMany = withArray "ContributorResponse" $ \arr -> do
+    let allParsed = fmap (join . parseEither parserContribs) arr
+    return $ toList allParsed
 

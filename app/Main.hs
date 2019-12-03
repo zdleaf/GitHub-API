@@ -21,9 +21,9 @@ main = do
     hFlush stdout
 
 
-    -- let contributors_url_test = "https://api.github.com/repos/edwinf/vscode-jest/stats/contributors"
-    -- contributorsbytestring <- callAPI contributors_url_test
-    -- test_parse <- parseSingleRespones contributorsbytestring
-    -- print $ test_parse
+    let contributors_url_test = "https://api.github.com/repos/edwinf/vscode-jest/stats/contributors"
+    contributorsbytestring <- callAPI contributors_url_test
+    test_parse <- parseContribResponse contributorsbytestring
+    print $ test_parse
 
     return ()
