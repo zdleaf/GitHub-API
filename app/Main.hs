@@ -17,6 +17,6 @@ main = do
     parsed <- parseResponse response
     addRepoMany db $ extractResp parsed
     repoReponse <- retrieveRepoResponse db
-    print (repoReponse)
+    --print (repoReponse)
     hFlush stdout
     return ()

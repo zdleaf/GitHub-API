@@ -22,7 +22,7 @@ initialiseDB dbname = do
 connectDB connection =
   do
     tables <- getTables connection
-    when (not ("Reporesponses" `elem` tables)) $ do
+    when (not ("repoResponses" `elem` tables)) $ do
       run connection "CREATE TABLE Reporesponses(\
                       \gitID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
                       \languageURL TEXT NOT NULL UNIQUE,\
@@ -35,12 +35,12 @@ connectDB connection =
       run connection "CREATE TABLE langResponses (\
                       \repoID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
                       \language TEXT NOT NULL UNIQUE,\
-                      \count INTEGER NOT NULL UNIQUE)" []
+                      \lineCount INTEGER NOT NULL UNIQUE)" []
       return()
     commit connection
 
-    when (not ("contributorCount" `elem` tables)) $ do
-      run connection "CREATE TABLE contributorCount (\
+    when (not ("contributorResponses" `elem` tables)) $ do
+      run connection "CREATE TABLE contributorResponses (\
                       \repoID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
                       \contributors INTEGER NOT NULL UNIQUE)" []
 
@@ -48,11 +48,11 @@ connectDB connection =
     commit connection
 
 -- final table that of language and totals for contributors and count
-    when (not ("final" `elem` tables)) $ do
-        run connection "CREATE TABLE final (\
+    when (not ("totalCount" `elem` tables)) $ do
+        run connection "CREATE TABLE totalCount (\
                         \language TEXT NOT NULL UNIQUE,\
-                        \totalCount INTEGER NOT NULL UNIQUE,\
-                        \totalContributors INTEGER NOT NULL UNIQUE)" []
+                        \lineCount INTEGER NOT NULL UNIQUE,\
+                        \contributors INTEGER NOT NULL UNIQUE)" []
 
         return()
     commit connection
