@@ -23,7 +23,7 @@ connectDB connection =
   do
     tables <- getTables connection
     when (not ("repoResponses" `elem` tables)) $ do
-      run connection "CREATE TABLE Reporesponses(\
+      run connection "CREATE TABLE repoResponses(\
                       \repoID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
                       \languageURL TEXT NOT NULL UNIQUE,\
                       \contributorsURL Text Not NULL UNIQUE)" []
@@ -66,7 +66,7 @@ connectDB connection =
 addRepo connection (Left err) = return ()
 addRepo connection (Right repoResponse) = handleSql handleError $ do
 
-        run connection "INSERT OR REPLACE INTO Reporesponses (repoID,\
+        run connection "INSERT OR REPLACE INTO repoResponses (repoID,\
                        \languageURL, contributorsURL) VALUES (?, ?, ?)"
             [
               toSql (D.id repoResponse),

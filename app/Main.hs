@@ -14,9 +14,16 @@ main = do
     db <- initialiseDB "github.db"
     print $ "length of response: " ++ (show $ BL.length response)
     --Prelude.writeFile ("output.json") (C8.unpack response)
-    parsed <- parseResponse response
+    parsed <- parseRepoResponse response
     addRepoMany db $ extractResp parsed
     repoReponse <- retrieveRepoResponse db
     --print (repoReponse)
     hFlush stdout
+
+
+    -- let contributors_url_test = "https://api.github.com/repos/edwinf/vscode-jest/stats/contributors"
+    -- contributorsbytestring <- callAPI contributors_url_test
+    -- test_parse <- parseSingleRespones contributorsbytestring
+    -- print $ test_parse
+
     return ()
