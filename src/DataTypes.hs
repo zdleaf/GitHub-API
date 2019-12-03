@@ -8,6 +8,7 @@ module DataTypes
    RepoResponse(id, languages_url, contributors_url, RepoResponse),
    ContributorResponse(repoID, total, ContributorResponse),
    LangResponse(repoID, language, lineCount)
+
 ) where
 
 import Data.Aeson
