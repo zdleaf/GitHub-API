@@ -24,11 +24,11 @@ main = do
     contrib <- sequence $ fmap callContribURL test
     addContribsMany db contrib
 
-    let lang = "https://api.github.com/repos/gr3gburk3/node/languages"
+{-     let lang = "https://api.github.com/repos/gr3gburk3/node/languages"
     langResp <- callAPI lang
     langParsed <- parseLangResponse langResp
-    print langParsed
- -}
+    print langParsed -}
+ 
     return ()
 
 callManyContrib [] = []
