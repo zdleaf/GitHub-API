@@ -36,9 +36,10 @@ callAPI url = do
     --print $ getResponseHeader "Content-Type" response
     --return $ getResponseStatusCode response
 
-
 getContribCount (Right x) = x
 getContribCount _ = 0
+
+test = RepoResponse 1 "test.com" "https://api.github.com/repos/Chekist322/android-dagger/contributors"
 
 callContribURL reporesponse = do
     response <- callAPI $ D.contributors_url reporesponse
@@ -46,3 +47,4 @@ callContribURL reporesponse = do
     let eitherCount = fmap Prelude.length parsed
     let count = getContribCount eitherCount
     return ((D.id reporesponse), count)
+

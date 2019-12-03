@@ -103,9 +103,6 @@ addContribs connection tuple = handleSql handleError $ do
   where handleError e = do fail $ "error adding contributors: \
                           \" ++ (show (fst tuple)) ++ " "++ (show e)
 
-
-
-
 retrieveRepoResponse connection = do
         urls <- quickQuery connection "select repoID, languageURL, \
                                       \contributorsURL from repoResponses" []
