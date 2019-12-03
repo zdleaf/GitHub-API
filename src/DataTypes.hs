@@ -4,7 +4,7 @@
 module DataTypes
 (
    Reporesponse(id, languages_url, contributors_url, Reporesponse),
-   Parameteresponse(gitid, rest, Parameteresponse)
+
 ) where
 
 import Data.Aeson
