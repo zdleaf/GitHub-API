@@ -20,9 +20,8 @@ main = do
     --print (repoReponse)
     hFlush stdout
 
-
-    let contributors_url_test = "https://api.github.com/repos/edwinf/vscode-jest/contributors"
-    contributorsbytestring <- callAPI contributors_url_test
+    let test = "https://api.github.com/repos/edwinf/vscode-jest/contributors"
+    contributorsbytestring <- callAPI test
     test_parse <- parseContribResponse contributorsbytestring
     print $ test_parse
 

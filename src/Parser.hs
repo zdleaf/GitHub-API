@@ -50,7 +50,6 @@ parserContribs value = do
         Left err -> return . Left $ err ++ "Invalid object is: " ++ show value
         Right parsed -> return $ Right parsed
 
-
 parserContribsMany :: Value -> Parser [Either String ContributorResponse]
 parserContribsMany = withArray "ContributorResponse" $ \arr -> do
     let allParsed = fmap (join . parseEither parserContribs) arr

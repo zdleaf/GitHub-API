@@ -6,7 +6,7 @@
 module DataTypes
 (
    RepoResponse(id, languages_url, contributors_url, RepoResponse),
-   ContributorResponse(total, ContributorResponse),
+   ContributorResponse(login, ContributorResponse),
    LangResponse(repoID, language, lineCount)
 
 ) where
@@ -28,7 +28,7 @@ instance FromJSON RepoResponse
 
 data ContributorResponse = ContributorResponse
   {
-    total :: Integer
+    login :: Integer
   }  deriving (Show, Generic)
 
 instance FromJSON ContributorResponse
