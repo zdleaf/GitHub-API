@@ -1,7 +1,8 @@
 module HTTP
     ( callAPI,
     repoAPIUrl,
-    callContribURL
+    callContribURL,
+    callContribURLMany
     ) where
 
 import Data.ByteString.Lazy as BL
@@ -49,3 +50,5 @@ callContribURL reporesponse = do
     let count = getContribCount eitherCount
     return ((D.id reporesponse), count)
 
+callContribURLMany [] = []
+callContribURLMany (x:xs) = callContribURL x:callContribURLMany xs

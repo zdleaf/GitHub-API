@@ -1,13 +1,14 @@
 {-# LANGUAGE FlexibleContexts #-}
 
-
 module DB
        (
         connectDB,
         initialiseDB,
         extractResp,
         addRepoMany,
-        retrieveRepoResponse
+        retrieveRepoResponse,
+        addContribs,
+        addContribsMany
         ) where
 
 import DataTypes as D
@@ -91,7 +92,6 @@ addRepoMany db (x:xs) = do
 addRepoMany db _ = do
     return ()
 
-
 addContribs connection tuple = handleSql handleError $ do
   run connection "INSERT OR REPLACE INTO contributorResponses (repoID,\
                  \contributors) VALUES (?, ?)"
@@ -102,6 +102,13 @@ addContribs connection tuple = handleSql handleError $ do
   commit connection
   where handleError e = do fail $ "error adding contributors: \
                           \" ++ (show (fst tuple)) ++ " "++ (show e)
+
+addContribsMany db (x:xs) = do
+  addContribs db x
+  addContribsMany db xs
+  return ()
+addContribsMany db _ = do
+  return ()
 
 retrieveRepoResponse connection = do
         urls <- quickQuery connection "select repoID, languageURL, \
