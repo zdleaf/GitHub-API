@@ -17,14 +17,11 @@ main = do
     parsed <- parseRepoResponse response
     addRepoMany db $ extractResp parsed
     repoReponse <- retrieveRepoResponse db
-    --print (repoReponse)
-    hFlush stdout
 
-    let test = "https://api.github.com/repos/edwinf/vscode-jest/contributors"
-    contributorsbytestring <- callAPI test
-    test_parse <- parseContribResponse contributorsbytestring
-    print $ test_parse
-    print $ fmap Prelude.length test_parse
+    let lang = "https://api.github.com/repos/liuzi919/biocode/languages"
+    langResp <- callAPI lang
+    langParsed <- parseLangResponse langResp
+    print langParsed
 
     return ()
 

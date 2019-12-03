@@ -32,6 +32,7 @@ dependencies:
 - aeson
 - json
 - text
+- unordered-containers
 
 
 library:

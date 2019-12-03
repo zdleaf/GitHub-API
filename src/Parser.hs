@@ -2,7 +2,8 @@ module Parser
     ( parseRepoResponse,
       parserRepo,
       parseContribResponse,
-      parserContribs
+      parserContribs,
+      parseLangResponse
     ) where
 
 import DataTypes
@@ -14,6 +15,8 @@ import Data.Aeson.Types
 import Data.Foldable
 import Control.Monad (join)
 
+import qualified Data.HashMap.Strict as HM
+
 parseRepoResponse response = do
     let decodedJSON = eitherDecode response >>= parseEither parseRepoMany
     print $ "successfully decoded JSON"
@@ -22,7 +25,12 @@ parseRepoResponse response = do
 
 parseContribResponse response = do
     let decodedJSON = eitherDecode response >>= parseEither parserContribsMany
-    print $ "successfully decoded JSON"
+    print $ "successfully decoded contributors JSON"
+    return decodedJSON
+
+parseLangResponse response = do
+    let decodedJSON = eitherDecode response >>= parseEither parseLanguages
+    print $ "successfully decoded languages JSON"
     return decodedJSON
 
 
@@ -55,7 +63,28 @@ parserContribsMany = withArray "ContributorResponse" $ \arr -> do
     let allParsed = fmap (join . parseEither parserContribs) arr
     return $ toList allParsed
 
+parseLanguages :: Value -> Parser [LangResponse]
+parseLanguages p =
+    -- Convert each “accesses” object to a list of pairs, and create a Referrer.
+    map (\(language, lineCount) -> LangResponse language lineCount) . HM.toList <$> parseJSON p
+    
+
+
 {- parseLanguages :: Value -> Parser [LangResponse]
+parseLanguages =
+        lineCountX <- parseJSON language
+        return $ LangResponse {
+        language       = T.unpack language,
+        lineCount = lineCountX }
+
+parseLanguages :: Value -> Parser (Text,Value)
+parseLanguages (Object v) =
+        case HMap.toList v of
+        [(k,v)] -> (k, v)
+        _       -> fail "More than one key - who sent this thing?"
+parseLanguages _ = fail "Incorrect JSON - expected an object."
+
+parseLanguages :: Value -> Parser [LangResponse]
 parseLanguages =
   -- We're expecting an object: {"languageName": 1234}
   withObject "languages" $ \o ->
@@ -68,4 +97,4 @@ parseLanguages =
       let accesses' = map (\(page, n) -> (T.unpack page, n)) accesses
       return $ Referer {
         domain       = T.unpack domain,
-        pathAccesses = accesses' } -}
+        pathAccesses = accesses' }  -}

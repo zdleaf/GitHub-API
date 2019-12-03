@@ -7,12 +7,13 @@ module DataTypes
 (
    RepoResponse(id, languages_url, contributors_url, RepoResponse),
    ContributorResponse(login, ContributorResponse),
-   LangResponse(repoID, language, lineCount)
+   LangResponse(language, lineCount, LangResponse)
 
 ) where
 
 import Data.Aeson
 import GHC.Generics
+import qualified Data.HashMap.Strict as H
 
 -- a data type to handle API response for public repos
 data RepoResponse = RepoResponse
@@ -33,9 +34,14 @@ data ContributorResponse = ContributorResponse
 
 instance FromJSON ContributorResponse
 
-data LangResponse a = LangResponse
+data LangResponse = LangResponse
   {
-    repoID :: Integer,
     language  :: String,
     lineCount :: Integer
   }  deriving (Show)
+
+{- instance FromJSON LangResponse where
+  parseJSON (Object v) = mapM parseItem $ H.toList v where
+      parseItem (language, lineCount) = 
+        LangResponse language <$>
+        v .: "version" <*> -}

@@ -42,12 +42,13 @@ getContribCount _ = 0
 
 callContribURL reporesponse = do
     response <- callAPI $ D.contributors_url reporesponse
-
     parsed <- parseContribResponse response
     let eitherCount = fmap Prelude.length parsed
     let count = getContribCount eitherCount
-
     return ((D.id reporesponse), count)
+
+
+
 
 
 
