@@ -24,5 +24,6 @@ main = do
     contributorsbytestring <- callAPI test
     test_parse <- parseContribResponse contributorsbytestring
     print $ test_parse
+    print $ fmap Prelude.length test_parse
 
     return ()

@@ -28,7 +28,7 @@ instance FromJSON RepoResponse
 
 data ContributorResponse = ContributorResponse
   {
-    login :: Integer
+    login :: String
   }  deriving (Show, Generic)
 
 instance FromJSON ContributorResponse
