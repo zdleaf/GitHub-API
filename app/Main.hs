@@ -19,8 +19,8 @@ main = do
     addRepoMany db $ extractResp parsed
     repoReponse <- retrieveRepoResponse db
     
-    contrib <- sequence $ fmap callContribURL repoReponse
-    print contrib
+{-     contrib <- sequence $ fmap callContribURL repoReponse
+    print contrib -}
 
     let lang = "https://api.github.com/repos/liuzi919/biocode/languages"
     langResp <- callAPI lang

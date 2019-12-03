@@ -24,12 +24,13 @@ repoID: 224,238,000
 startRepoId = 224238000 :: Integer
 repoAPIUrl = "http://api.github.com/repositories?since=" ++ show startRepoId
 userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
+token =  C8.pack "token da45c3b3cfa3127bf08e60eff8be3f58aac0923d"
 
 --callRepoAPI returns JSON data from calling a GitHub API url
 callAPI :: String -> IO BL.ByteString
 callAPI url = do
     initReq <- parseRequest $ url
-    let request = setRequestHeaders [(hUserAgent, userAgentBS)] initReq
+    let request = setRequestHeaders [(hUserAgent, userAgentBS),(hAuthorization, token)] initReq
     response <- httpLBS request
     Prelude.putStrLn $ "The status code was: " ++ show (getResponseStatusCode response)
     return $ getResponseBody response -- JSON response data
