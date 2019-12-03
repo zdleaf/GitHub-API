@@ -32,6 +32,7 @@ data ContributorResponse = ContributorResponse
     total :: Integer
   }  deriving (Show, Generic)
 
+instance FromJSON ContributorResponse
 
 data LangResponse a = LangResponse
   {
