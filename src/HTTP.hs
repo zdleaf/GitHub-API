@@ -43,7 +43,7 @@ x = Reporesponse {
     contributors_url = "https://api.github.com/repos/DitIsDamien/TheSilentser/contributors"
 }
 
-callParamApi reporesponse = do
+callRepoURLs reporesponse = do
     let id = D.id reporesponse
     let languageurl = D.languages_url reporesponse
     let contributors_url = D.contributors_url reporesponse
