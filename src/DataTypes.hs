@@ -5,8 +5,9 @@
 
 module DataTypes
 (
-   Reporesponse(id, languages_url, contributors_url, Reporesponse),
-   Parameteresponse(gitid, rest, Parameteresponse)
+   RepoResponse(id, languages_url, contributors_url, RepoResponse),
+   ContributorResponse(repoID, total, ContributorResponse),
+   LangResponse(repoID, language, lineCount)
 ) where
 
 import Data.Aeson
@@ -26,8 +27,8 @@ instance FromJSON RepoResponse
 
 data ContributorResponse = ContributorResponse
   {
-    id :: Integer,
-    contributors :: Integer
+    repoID :: Integer,
+    total :: Integer
   }  deriving (Show, Generic)
 
 

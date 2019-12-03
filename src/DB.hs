@@ -80,7 +80,7 @@ addRepo connection (Right repoResponse) = handleSql handleError $ do
 extractResp (Left err) = []
 extractResp (Right list) = list
 
-addRepoMany :: IConnection t => t -> [Either String Reporesponse] -> IO ()
+addRepoMany :: IConnection t => t -> [Either String RepoResponse] -> IO ()
 addRepoMany db (x:xs) = do
     addRepo db x
     addRepoMany db xs
@@ -95,7 +95,7 @@ retrieveRepoResponse connection = do
         return (map fromSqlurls urls)
 
 fromSqlurls [repoID, languages_url, contributors_url] =
-    Reporesponse {D.id = fromSql repoID,
+    RepoResponse {D.id = fromSql repoID,
             languages_url = fromSql languages_url,
             contributors_url = fromSql contributors_url
     }
