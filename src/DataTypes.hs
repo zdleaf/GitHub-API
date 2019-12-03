@@ -39,9 +39,3 @@ data LangResponse = LangResponse
     language  :: String,
     lineCount :: Integer
   }  deriving (Show)
-
-{- instance FromJSON LangResponse where
-  parseJSON (Object v) = mapM parseItem $ H.toList v where
-      parseItem (language, lineCount) = 
-        LangResponse language <$>
-        v .: "version" <*> -}

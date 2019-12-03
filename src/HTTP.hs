@@ -48,6 +48,7 @@ callContribURL reporesponse = do
     parsed <- parseContribResponse response
     let eitherCount = fmap Prelude.length parsed
     let count = getContribCount eitherCount
+    print ((D.id reporesponse), count)
     return ((D.id reporesponse), count)
 
 callContribURLMany [] = []

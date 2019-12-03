@@ -39,14 +39,14 @@ connectDB connection =
       run connection "CREATE TABLE langResponses (\
                       \repoID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
                       \language TEXT NOT NULL UNIQUE,\
-                      \lineCount INTEGER NOT NULL UNIQUE)" []
+                      \lineCount INTEGER NOT NULL)" []
       return()
     commit connection
 
     when (not ("contributorResponses" `elem` tables)) $ do
       run connection "CREATE TABLE contributorResponses (\
                       \repoID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
-                      \contributors INTEGER NOT NULL UNIQUE)" []
+                      \contributors INTEGER NOT NULL)" []
 
       return()
     commit connection
@@ -55,8 +55,8 @@ connectDB connection =
     when (not ("totalCount" `elem` tables)) $ do
         run connection "CREATE TABLE totalCount (\
                         \language TEXT NOT NULL UNIQUE,\
-                        \lineCount INTEGER NOT NULL UNIQUE,\
-                        \contributors INTEGER NOT NULL UNIQUE)" []
+                        \lineCount INTEGER NOT NULL,\
+                        \contributors INTEGER NOT NULL)" []
 
         return()
     commit connection
@@ -93,8 +93,7 @@ addRepoMany db _ = do
     return ()
 
 addContribs connection tuple = handleSql handleError $ do
-  run connection "INSERT OR REPLACE INTO contributorResponses (repoID,\
-                 \contributors) VALUES (?, ?)"
+  run connection "INSERT OR REPLACE INTO contributorResponses (repoID, contributors) VALUES (?, ?)"
     [
       toSql (fst tuple),
       toSql (snd tuple)
@@ -105,6 +104,7 @@ addContribs connection tuple = handleSql handleError $ do
 
 addContribsMany db (x:xs) = do
   addContribs db x
+  print $ "adding to db: " ++ show x
   addContribsMany db xs
   return ()
 addContribsMany db _ = do
