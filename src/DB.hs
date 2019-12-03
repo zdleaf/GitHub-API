@@ -11,7 +11,7 @@ import DataTypes as D
 import Database.HDBC
 import Database.HDBC.Sqlite3
 import Control.Monad
-import Parser (amendContributorsURL)
+
 --type dbname = String
 --initialiseDB :: dbname ->
 initialiseDB dbname = do
@@ -71,7 +71,7 @@ addRepo connection (Right repoResponse) = handleSql handleError $ do
             [
               toSql (D.id repoResponse),
               toSql (languages_url repoResponse),
-              toSql (amendContributorsURL $ contributors_url repoResponse)
+              toSql (contributors_url repoResponse)
             ]
         commit connection
         where handleError e = do fail $ "error adding repo: " ++ (show (D.id repoResponse)) ++ " "++ (show e)
