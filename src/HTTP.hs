@@ -37,17 +37,14 @@ callAPI url = do
     --return $ getResponseStatusCode response
 
 
-x = Reporesponse {
+x = ContributorResponse {
     D.id = 224238216,
-    languages_url = "https://api.github.com/repos/gr3gburk3/node/languages",
-    contributors_url = "https://api.github.com/repos/DitIsDamien/TheSilentser/contributors"
+    contributors_url = "https://api.github.com/repos/nwillouis/GithubCC2019/stats/contributors"
 }
 
 callRepoURLs reporesponse = do
     let id = D.id reporesponse
-    let languageurl = D.languages_url reporesponse
     let contributors_url = D.contributors_url reporesponse
-    languagebytestring <- callAPI languageurl
     contributorsbytestring <- callAPI contributors_url
     return contributorsbytestring
 
