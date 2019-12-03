@@ -1,7 +1,7 @@
 module HTTP
     ( callAPI,
     repoAPIUrl,
-    callParamApi
+    callRepoURLs
     ) where
 
 import Data.ByteString.Lazy as BL
@@ -21,8 +21,8 @@ https://artyom.me/aeson
 repoID: 224,238,000
 -}
 
-repoID = 224238000 :: Integer
-repoAPIUrl = "http://api.github.com/repositories?since=" ++ show repoID
+startRepoId = 224238000 :: Integer
+repoAPIUrl = "http://api.github.com/repositories?since=" ++ show startRepoId
 userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
 
 --callRepoAPI returns JSON data from calling a GitHub API url
@@ -37,8 +37,10 @@ callAPI url = do
     --return $ getResponseStatusCode response
 
 
-x = ContributorResponse {
+
+x = RepoResponse {
     D.id = 224238216,
+    languages_url = "https://api.github.com/repos/gr3gburk3/node/languages",
     contributors_url = "https://api.github.com/repos/nwillouis/GithubCC2019/stats/contributors"
 }
 
@@ -47,6 +49,3 @@ callRepoURLs reporesponse = do
     let contributors_url = D.contributors_url reporesponse
     contributorsbytestring <- callAPI contributors_url
     return contributorsbytestring
-
-
-

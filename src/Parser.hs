@@ -22,13 +22,13 @@ parseResponse response = do
 amendContributorsURL url = (reverse $ snd (break (=='/') (reverse url))) ++ "stats/contributors"
 
 {- change/rewrite the below functions - came from https://geekingfrog.com/blog/post/struggles-with-parsing-json-with-aeson -}
-verboseParser :: Value -> Parser (Either String Reporesponse)
+verboseParser :: Value -> Parser (Either String RepoResponse)
 verboseParser value = do
     case parseEither parseJSON value of
         Left err -> return . Left $ err ++ "Invalid object is: " ++ show value
         Right parsed -> return $ Right parsed
 
-verboseParseMany :: Value -> Parser [Either String Reporesponse]
-verboseParseMany = withArray "Reporesponse" $ \arr -> do
+verboseParseMany :: Value -> Parser [Either String RepoResponse]
+verboseParseMany = withArray "RepoResponse" $ \arr -> do
     let allParsed = fmap (join . parseEither verboseParser) arr
     return $ toList allParsed
