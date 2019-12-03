@@ -1,5 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DuplicateRecordFields #-}
+
 
 module DataTypes
 (
@@ -11,7 +13,7 @@ import Data.Aeson
 import GHC.Generics
 
 -- a data type to handle API response for public repos
-data Reporesponse = Reporesponse
+data RepoResponse = RepoResponse
     {
       id :: Integer, -- github repo id
       languages_url :: String, -- languages
@@ -19,8 +21,15 @@ data Reporesponse = Reporesponse
     }
     deriving (Eq, Show, Generic)
 
-instance FromJSON Reporesponse
+instance FromJSON RepoResponse
 -- we do not need to specify details since we're deriving Generic
+
+data ContributorResponse = ContributorResponse
+  {
+    id :: Integer,
+    contributors :: Integer
+  }  deriving (Show, Generic)
+
 
 data LangResponse a = LangResponse
   {
