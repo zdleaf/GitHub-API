@@ -18,7 +18,7 @@ main = do
     addRepoMany db $ extractResp parsed
     repoReponse <- retrieveRepoResponse db
 
-    let lang = "https://api.github.com/repos/liuzi919/biocode/languages"
+    let lang = "https://api.github.com/repos/gr3gburk3/node/languages"
     langResp <- callAPI lang
     langParsed <- parseLangResponse langResp
     print langParsed
