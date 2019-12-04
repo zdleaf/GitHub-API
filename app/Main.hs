@@ -8,6 +8,8 @@ import DataTypes
 import Prelude as P
 import Data.ByteString.Lazy as BL
 
+import Data.Aeson.Encode.Pretty
+
 main :: IO ()
 main = do
     -- get repositories
@@ -24,7 +26,7 @@ main = do
     print "adding repos to DB..."
     addRepoMany db $ extractResp repoParsed
 
-    repoList <- retrieveRepoResponse db
+    repoJSONtoFile db
 
     print "calling all contributor urls..."
     contribResp <- sequence $ fmap callContribURL repoList
@@ -40,7 +42,6 @@ main = do
     fillTotalCount db
 
     P.putStrLn "\ncomplete"
-
 
     return ()
 

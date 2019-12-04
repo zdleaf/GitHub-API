@@ -6,17 +6,22 @@ module DB
         initialiseDB,
         extractResp,
         addRepoMany,
-        retrieveRepoResponse,
+        retrieveDB,
         addContribs,
         addLangMany,
         addLang,
-        fillTotalCount
+        fillTotalCount,
+        repoJSONtoFile
         ) where
 
 import DataTypes as D
+
+import Prelude as P
 import Database.HDBC
 import Database.HDBC.Sqlite3
 import Control.Monad
+import Data.ByteString.Lazy as BL
+import Data.Aeson.Encode.Pretty
 
 initialiseDB dbname = do
         connection <- connectSqlite3 dbname
@@ -26,7 +31,7 @@ initialiseDB dbname = do
 connectDB connection =
   do
     tables <- getTables connection
-    when (not ("repoResponses" `elem` tables)) $ do
+    when (not ("repoResponses" `P.elem` tables)) $ do
       run connection "CREATE TABLE repoResponses(\
                       \repoID INTEGER NOT NULL PRIMARY KEY,\
                       \languageURL TEXT NOT NULL UNIQUE,\
@@ -34,7 +39,7 @@ connectDB connection =
       return ()
     commit connection
 
-    when (not ("langResponses" `elem` tables)) $ do
+    when (not ("langResponses" `P.elem` tables)) $ do
       run connection "CREATE TABLE langResponses (\
                       \repoID INTEGER NOT NULL,\
                       \language TEXT NOT NULL,\
@@ -43,7 +48,7 @@ connectDB connection =
       return()
     commit connection
 
-    when (not ("contributorResponses" `elem` tables)) $ do
+    when (not ("contributorResponses" `P.elem` tables)) $ do
       run connection "CREATE TABLE contributorResponses (\
                       \repoID INTEGER NOT NULL PRIMARY KEY,\
                       \contributors INTEGER NOT NULL)" []
@@ -52,7 +57,7 @@ connectDB connection =
     commit connection
 
 -- final table including languages and totals for contributors and line count
-    when (not ("totalCount" `elem` tables)) $ do
+    when (not ("totalCount" `P.elem` tables)) $ do
         run connection "CREATE TABLE totalCount (\
                         \language TEXT NOT NULL UNIQUE,\
                         \lineCount INTEGER NOT NULL,\
@@ -94,7 +99,7 @@ addContribs connection tuple = handleSql handleError $ do
       toSql (snd tuple)
     ]
   commit connection
-  putStr "."
+  P.putStr "."
   where handleError e = do fail $ "error adding contributors: " ++ (show (fst tuple)) ++ " "++ (show e)
 
 addLang connection (id, language, count)  = handleSql handleError $ do
@@ -105,7 +110,7 @@ addLang connection (id, language, count)  = handleSql handleError $ do
       toSql count
     ]
   commit connection
-  putStr "."
+  P.putStr "."
   where handleError e = do fail $ "error adding contributors: " ++ (show (id)) ++ " "++ (show e)
 
 addLangMany connection (x:xs) = do
@@ -116,19 +121,24 @@ addLangMany connection (x:xs) = do
 addLangMany db _ = do
   return ()
 
-retrieveRepoResponse connection = do
-        urls <- quickQuery connection "select repoID, languageURL, \
-                                      \contributorsURL from repoResponses" []
+retrieveDB connection table typeConverter = do
+        repoList <- quickQuery connection ("select * from "++table) []
         commit connection
-        return (map fromSqlurls urls)
+        return (P.map typeConverter repoList)
 
-fromSqlurls [repoID, languages_url, contributors_url] =
+repoFromSQL [repoID, languages_url, contributors_url] =
     RepoResponse {D.id = fromSql repoID,
             languages_url = fromSql languages_url,
             contributors_url = fromSql contributors_url
     }
-fromSqlurls _ = error $ "error in bytestring conversion"
+repoFromSQL _ = error $ "error in bytestring conversion"
 
+contribFromSQL [repoID, contributors] =
+  Contributor {D.id = fromSql repoID,
+          languages_url = fromSql languages_url,
+          contributors_url = fromSql contributors_url
+  }
+contribFromSQL _ = error $ "error in bytestring conversion"
 
 fillTotalCount connection = do
   run connection "INSERT INTO totalCount (language, lineCount,\
@@ -141,3 +151,7 @@ fillTotalCount connection = do
   commit connection
   return ()
 
+repoJSONtoFile db = do
+  repoList <- retrieveDB db "repoResponses" repoFromSQL
+  let json = BL.concat $ fmap encodePretty repoList
+  BL.writeFile "repo.json" json

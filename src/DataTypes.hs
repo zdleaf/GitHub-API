@@ -6,7 +6,7 @@
 module DataTypes
 (
    RepoResponse(id, languages_url, contributors_url, RepoResponse),
-   ContributorResponse(login, ContributorResponse),
+   Contributor(login, ContributorResponse),
    LangResponse(language, lineCount, LangResponse)
 
 ) where
@@ -26,16 +26,28 @@ data RepoResponse = RepoResponse
 
 instance FromJSON RepoResponse
 -- we do not need to specify details since we're deriving Generic
+instance ToJSON RepoResponse
 
-data ContributorResponse = ContributorResponse
+data Contributor = ContributorFrom
   {
     login :: String
-  }  deriving (Show, Generic)
+  } | ContributorTo {
+    repoID :: Integer,
+    contributors :: Integer
+  } deriving (Show, Generic)
 
-instance FromJSON ContributorResponse
+instance FromJSON Contributor
 
 data LangResponse = LangResponse
   {
     language  :: String,
     lineCount :: Integer
   }  deriving (Show)
+
+data Contributor = Contributor
+  {
+    repoID :: Integer,
+    contributors :: Integer
+  } deriving (Show, Generic)
+
+instance ToJSON Contributor

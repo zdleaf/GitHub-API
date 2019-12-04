@@ -3,19 +3,20 @@ module Parser
       parserRepo,
       parseContribResponse,
       parserContribs,
-      parseLangResponse
+      parseLangResponse,
     ) where
 
 import DataTypes
 
 -- JSON modules
 import Data.Aeson as AE
-import Data.Aeson.Types
+import Data.Aeson.Types 
 
 import Data.Foldable
 import Control.Monad (join)
 
 import qualified Data.HashMap.Strict as HM
+
 
 parseRepoResponse response = do
     let decodedJSON = eitherDecode response >>= parseEither parserRepoMany
