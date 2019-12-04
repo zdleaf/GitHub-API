@@ -33,7 +33,7 @@ callAPI url = do
     initReq <- parseRequest $ url
     let request = setRequestHeaders [(hUserAgent, userAgentBS),(hAuthorization, token)] initReq
     response <- httpLBS request
-    Prelude.putStrLn $ "The status code was: " ++ show (getResponseStatusCode response)
+    --Prelude.putStrLn $ "The status code was: " ++ show (getResponseStatusCode response)
     return $ getResponseBody response -- JSON response data
     --print $ getResponseHeader "Content-Type" response
     --return $ getResponseStatusCode response
@@ -48,11 +48,11 @@ callContribURL reporesponse = do
     parsedContribs <- parseContribResponse response
     let eitherCount = fmap Prelude.length parsedContribs
     let count = removeEitherNum eitherCount
-    print ((D.id reporesponse), count)
+    --print "((D.id reporesponse), count)"
     return ((D.id reporesponse), count)
 
-removeEitherLang (Right x) = x
-removeEitherLang _ = "error"
+{- removeEitherLang (Right x) = x
+removeEitherLang _ = "error" -}
 
 callLangURL reporesponse = do
     response <- callAPI $ D.languages_url reporesponse

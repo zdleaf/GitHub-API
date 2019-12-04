@@ -100,7 +100,7 @@ addContribs connection tuple = handleSql handleError $ do
 
 addContribsMany db (x:xs) = do
   addContribs db x
-  print $ "adding to db: " ++ show x
+  --print $ "adding to db: " ++ show x
   addContribsMany db xs
   return ()
 addContribsMany db _ = do
@@ -118,7 +118,7 @@ addLang connection (id, language, count)  = handleSql handleError $ do
 
 addLangMany connection (x:xs) = do
   addLang connection x
-  print $ "adding to db: " ++ show x
+  --print $ "adding to db: " ++ show x
   addLangMany connection xs
   return ()
 addLangMany db _ = do
