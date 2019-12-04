@@ -5,41 +5,41 @@ import HTTP as HT
 import DB
 import Parser
 import DataTypes
-
+import Prelude as P
 import Data.ByteString.Lazy as BL
 
 main :: IO ()
 main = do
     -- get repositories
-    Prelude.putStrLn "retrieving repository information..."
+    P.putStrLn "retrieving repository information..."
     repoResponse <- callAPI repoAPIUrl :: IO BL.ByteString
-    Prelude.putStrLn $ "length of response: " ++ (show $ BL.length repoResponse)
-    --Prelude.writeFile ("output.json") (C8.unpack response)
-    Prelude.putStrLn "parsing JSON..."
+    P.putStrLn $ "length of response: " ++ (show $ BL.length repoResponse)
+    --P.writeFile ("output.json") (C8.unpack response)
+    P.putStrLn "parsing JSON..."
     repoParsed <- parseRepoResponse repoResponse
 
-    Prelude.putStrLn "initialising db..."
+    P.putStrLn "initialising db..."
     db <- initialiseDB "github.db"
 
-    Prelude.putStrLn "adding repos to DB..."
+    P.putStrLn "adding repos to DB..."
     addRepoMany db $ extractResp repoParsed
 
     repoList <- retrieveRepoResponse db
 
-    Prelude.putStrLn "calling all contributor urls..."
+    P.putStrLn "calling all contributor urls..."
     contribResp <- sequence $ fmap callContribURL repoList
 
-    Prelude.putStrLn "\nadding contributors to db..."
+    P.putStrLn "\nadding contributors to db..."
     sequence_ $ fmap (addContribs db) contribResp
 
-    Prelude.putStrLn "\ncalling all language urls..."
+    P.putStrLn "\ncalling all language urls..."
     langResp <- sequence $ fmap callLangURL repoList
 
-    Prelude.putStrLn "\nadding languages to db..."
+    P.putStrLn "\nadding languages to db..."
     sequence_ $ fmap (addLangMany db) langResp
     fillTotalCount db
 
-    Prelude.putStrLn "\ncomplete"
+    P.putStrLn "\ncomplete"
 
 
     return ()
