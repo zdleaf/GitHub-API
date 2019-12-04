@@ -18,10 +18,12 @@ import Database.HDBC
 import Database.HDBC.Sqlite3
 import Control.Monad
 
+
 initialiseDB dbname = do
         connection <- connectSqlite3 dbname
         connectDB connection
         return connection
+
 
 connectDB connection =
   do
@@ -33,6 +35,7 @@ connectDB connection =
                       \contributorsURL Text Not NULL UNIQUE)" []
       return ()
     commit connection
+
 
     when (not ("langResponses" `elem` tables)) $ do
       run connection "CREATE TABLE langResponses (\
@@ -94,7 +97,6 @@ addContribs connection tuple = handleSql handleError $ do
       toSql (snd tuple)
     ]
   commit connection
-  putStr "."
   where handleError e = do fail $ "error adding contributors: " ++ (show (fst tuple)) ++ " "++ (show e)
 
 addLang connection (id, language, count)  = handleSql handleError $ do
@@ -105,12 +107,12 @@ addLang connection (id, language, count)  = handleSql handleError $ do
       toSql count
     ]
   commit connection
-  putStr "."
+  print  ('.')
   where handleError e = do fail $ "error adding contributors: " ++ (show (id)) ++ " "++ (show e)
 
 addLangMany connection (x:xs) = do
   addLang connection x
-  --print $ "adding to db: " ++ show x
+  print $ "adding to db: " ++ show x
   addLangMany connection xs
   return ()
 addLangMany db _ = do
@@ -122,6 +124,7 @@ retrieveRepoResponse connection = do
         commit connection
         return (map fromSqlurls urls)
 
+
 fromSqlurls [repoID, languages_url, contributors_url] =
     RepoResponse {D.id = fromSql repoID,
             languages_url = fromSql languages_url,
@@ -129,15 +132,16 @@ fromSqlurls [repoID, languages_url, contributors_url] =
     }
 fromSqlurls _ = error $ "error in bytestring conversion"
 
-
 fillTotalCount connection = do
-  run connection "INSERT INTO totalCount (language, lineCount,\
-                            \contributors) SELECT language, sum(contributors) \
-                            \as contributors, sum(lineCount) as lineCount FROM \
-                            \langResponses JOIN contributorResponses ON \
-                            \contributorResponses.repoID = \
-                            \langResponses.repoID GROUP BY LANGUAGE ORDER BY \
-                            \sum(lineCount) DESC" []
+  run connection
+                "INSERT INTO totalCount (language, lineCount, contributors) \
+                \SELECT language, sum(contributors) as contributors, \
+                \sum(lineCount) as lineCount  FROM langResponses \
+                \JOIN contributorResponses ON contributorResponses.repoID\
+                \ = langResponses.repoID GROUP BY LANGUAGE \
+                \ORDER BY sum(lineCount) DESC" []
   commit connection
-  return ()
+
+
+
 
