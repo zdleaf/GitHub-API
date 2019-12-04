@@ -11,22 +11,22 @@ import Data.ByteString.Lazy as BL
 main :: IO ()
 main = do
     -- get repositories
-    P.putStrLn "retrieving repository information..."
+    print "retrieving repository information..."
     repoResponse <- callAPI repoAPIUrl :: IO BL.ByteString
-    P.putStrLn $ "length of response: " ++ (show $ BL.length repoResponse)
+    print $ "length of response: " ++ (show $ BL.length repoResponse)
     --P.writeFile ("output.json") (C8.unpack response)
-    P.putStrLn "parsing JSON..."
+    print "parsing JSON..."
     repoParsed <- parseRepoResponse repoResponse
 
-    P.putStrLn "initialising db..."
+    print "initialising db..."
     db <- initialiseDB "github.db"
 
-    P.putStrLn "adding repos to DB..."
+    print "adding repos to DB..."
     addRepoMany db $ extractResp repoParsed
 
     repoList <- retrieveRepoResponse db
 
-    P.putStrLn "calling all contributor urls..."
+    print "calling all contributor urls..."
     contribResp <- sequence $ fmap callContribURL repoList
 
     P.putStrLn "\nadding contributors to db..."
