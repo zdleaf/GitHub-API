@@ -16,7 +16,7 @@ main = do
     print $ "length of response: " ++ (show $ BL.length response)
     --Prelude.writeFile ("output.json") (C8.unpack response)
     parsed <- parseRepoResponse response
-    
+
     -- add repos to DB
     addRepoMany db $ extractResp parsed
 
@@ -24,15 +24,16 @@ main = do
     repoResponse <- retrieveRepoResponse db
 
     -- recusively call the contrib urls
-    contrib <- sequence $ fmap callContribURL repoResponse
-    print contrib
-    -- add contrib counts per repo to DB
-    addContribsMany db contrib
+    -- contrib <- sequence $ fmap callContribURL repoResponse
+    -- print contrib
+    -- -- add contrib counts per repo to DB
+    -- addContribsMany db contrib
     --fmap (fmap (addContribs db)) contrib
 
     let lang = "https://api.github.com/repos/gr3gburk3/node/languages"
     langResp <- callAPI lang
     langParsed <- parseLangResponse langResp
     print langParsed
- 
+
     return ()
+
