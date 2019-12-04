@@ -16,7 +16,7 @@ main = do
     print $ "length of response: " ++ (show $ BL.length repoResponse)
     --Prelude.writeFile ("output.json") (C8.unpack response)
     repoParsed <- parseRepoResponse repoResponse
-    
+
     -- add repos to DB
     addRepoMany db $ extractResp repoParsed
 
@@ -32,7 +32,8 @@ main = do
 
     langResp <- sequence $ fmap callLangURL repoList
     print langResp
-    fmap (addLangMany db) langResp
+
+    sequence_ $ Prelude.map (addLangMany db) langResp
 
 {-     let lang = "https://api.github.com/repos/gr3gburk3/node/languages"
     langResp <- callAPI lang

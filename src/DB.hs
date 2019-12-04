@@ -113,7 +113,7 @@ addContribsMany db _ = do
 
 addLang connection (id, language, count)  = handleSql handleError $ do
   run connection "INSERT OR REPLACE INTO langResponses (repoID, language,\
-                 \count) VALUES (?, ?, ?)"
+                 \lineCount) VALUES (?, ?, ?)"
     [
       toSql id,
       toSql language,
