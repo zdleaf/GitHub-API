@@ -34,5 +34,6 @@ main = do
     langResp <- callAPI lang
     langParsed <- parseLangResponse langResp
     print langParsed
- 
+
     return ()
+

@@ -16,17 +16,19 @@ import Database.HDBC
 import Database.HDBC.Sqlite3
 import Control.Monad
 
+
 initialiseDB dbname = do
         connection <- connectSqlite3 dbname
         connectDB connection
         return connection
+
 
 connectDB connection =
   do
     tables <- getTables connection
     when (not ("repoResponses" `elem` tables)) $ do
       run connection "CREATE TABLE repoResponses(\
-                      \repoID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
+                      \repoID INTEGER NOT NULL PRIMARY KEY,\
                       \languageURL TEXT NOT NULL UNIQUE,\
                       \contributorsURL Text Not NULL UNIQUE)" []
       return ()
@@ -35,15 +37,15 @@ connectDB connection =
 
     when (not ("langResponses" `elem` tables)) $ do
       run connection "CREATE TABLE langResponses (\
-                      \repoID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
-                      \language TEXT NOT NULL UNIQUE,\
+                      \repoID INTEGER NOT NULL PRIMARY KEY UNIQUE,\
+                      \language TEXT NOT NULL,\
                       \lineCount INTEGER NOT NULL)" []
       return()
     commit connection
 
     when (not ("contributorResponses" `elem` tables)) $ do
       run connection "CREATE TABLE contributorResponses (\
-                      \repoID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
+                      \repoID INTEGER NOT NULL PRIMARY KEY,\
                       \contributors INTEGER NOT NULL)" []
 
       return()
@@ -59,6 +61,7 @@ connectDB connection =
         return()
     commit connection
 
+
 --addRepo :: Connection -> Reporesponse -> IO ()
 addRepo connection (Left err) = return ()
 addRepo connection (Right repoResponse) = handleSql handleError $ do
@@ -73,9 +76,11 @@ addRepo connection (Right repoResponse) = handleSql handleError $ do
         commit connection
         where handleError e = do fail $ "error adding repo: " ++ (show (D.id repoResponse)) ++ " "++ (show e)
 
+
 -- extract response list from Either Left/Right
 extractResp (Left err) = []
 extractResp (Right list) = list
+
 
 addRepoMany :: IConnection t => t -> [Either String RepoResponse] -> IO ()
 addRepoMany db (x:xs) = do
@@ -84,6 +89,7 @@ addRepoMany db (x:xs) = do
     return ()
 addRepoMany db _ = do
     return ()
+
 
 addContribs connection tuple = handleSql handleError $ do
   run connection "INSERT OR REPLACE INTO contributorResponses (repoID, contributors) VALUES (?, ?)"
@@ -103,11 +109,34 @@ addContribsMany db (x:xs) = do
 addContribsMany db _ = do
   return ()
 
+
+addLang connection (id, language, count)  = handleSql handleError $ do
+  run connection "INSERT OR REPLACE INTO langResponses (repoID, language,\
+                 \count) VALUES (?, ?, ?)"
+    [
+      toSql id,
+      toSql language,
+      toSql count
+    ]
+  commit connection
+  where handleError e = do fail $ "error adding contributors: \
+                          \" ++ (show (id)) ++ " "++ (show e)
+
+
+addLangMany connection (x:xs) = do
+  addLang connection x
+  print $ "adding to db: " ++ show x
+  addLangMany connection xs
+  return ()
+addLangMany db _ = do
+  return ()
+
 retrieveRepoResponse connection = do
         urls <- quickQuery connection "select repoID, languageURL, \
                                       \contributorsURL from repoResponses" []
         commit connection
         return (map fromSqlurls urls)
+
 
 fromSqlurls [repoID, languages_url, contributors_url] =
     RepoResponse {D.id = fromSql repoID,
@@ -115,3 +144,6 @@ fromSqlurls [repoID, languages_url, contributors_url] =
             contributors_url = fromSql contributors_url
     }
 fromSqlurls _ = error $ "error in bytestring conversion"
+
+
+
