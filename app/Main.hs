@@ -30,13 +30,15 @@ main = do
     contribResp <- sequence $ fmap callContribURL repoList
 
     print "adding contributors to db..."
-    addContribsMany db contribResp
+    sequence_ $ fmap (addContribs db) contribResp
 
     print "calling all language urls..."
     langResp <- sequence $ fmap callLangURL repoList
+
     print "adding languages to db..."
-    sequence_ $ Prelude.map (addLangMany db) langResp
+    sequence_ $ fmap (addLangMany db) langResp
     print "complete"
+
 
     return ()
 

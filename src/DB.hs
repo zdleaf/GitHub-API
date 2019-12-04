@@ -8,8 +8,8 @@ module DB
         addRepoMany,
         retrieveRepoResponse,
         addContribs,
-        addContribsMany,
-        addLangMany
+        addLangMany,
+        addLang
         ) where
 
 import DataTypes as D
@@ -98,13 +98,13 @@ addContribs connection tuple = handleSql handleError $ do
   commit connection
   where handleError e = do fail $ "error adding contributors: " ++ (show (fst tuple)) ++ " "++ (show e)
 
-addContribsMany db (x:xs) = do
-  addContribs db x
-  --print $ "adding to db: " ++ show x
-  addContribsMany db xs
-  return ()
-addContribsMany db _ = do
-  return ()
+-- addContribsMany db (x:xs) = do
+--   addContribs db x
+--   print $ "adding to db: " ++ show x
+--   addContribsMany db xs
+--   return ()
+-- addContribsMany db _ = do
+--   return ()
 
 addLang connection (id, language, count)  = handleSql handleError $ do
   run connection "INSERT OR REPLACE INTO langResponses (repoID, language, lineCount) VALUES (?, ?, ?)"
@@ -114,6 +114,7 @@ addLang connection (id, language, count)  = handleSql handleError $ do
       toSql count
     ]
   commit connection
+  print  ('.')
   where handleError e = do fail $ "error adding contributors: " ++ (show (id)) ++ " "++ (show e)
 
 addLangMany connection (x:xs) = do
