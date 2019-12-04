@@ -12,21 +12,24 @@ import Data.Aeson.Encode.Pretty
 
 main :: IO ()
 main = do
-    -- get repositories
+{-     -- get repositories
     print "retrieving repository information..."
     repoResponse <- callAPI repoAPIUrl :: IO BL.ByteString
     print $ "length of response: " ++ (show $ BL.length repoResponse)
     --P.writeFile ("output.json") (C8.unpack response)
     print "parsing JSON..."
-    repoParsed <- parseRepoResponse repoResponse
+    repoParsed <- parseRepoResponse repoResponse -}
 
     print "initialising db..."
     db <- initialiseDB "github.db"
 
-    print "adding repos to DB..."
-    addRepoMany db $ extractResp repoParsed
+{-     print "adding repos to DB..."
+    addRepoMany db $ extractResp repoParsed -}
 
     repoJSONtoFile db
+    contribJSONtoFile db
+    langJSONtoFile db
+    {- repoList <- retrieveDB db "repoResponses" repoFromSQL
 
     print "calling all contributor urls..."
     contribResp <- sequence $ fmap callContribURL repoList
@@ -42,6 +45,6 @@ main = do
     fillTotalCount db
 
     P.putStrLn "\ncomplete"
-
+ -}
     return ()
 

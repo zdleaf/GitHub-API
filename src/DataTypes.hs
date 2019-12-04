@@ -6,8 +6,8 @@
 module DataTypes
 (
    RepoResponse(id, languages_url, contributors_url, RepoResponse),
-   Contributor(login, ContributorResponse),
-   LangResponse(language, lineCount, LangResponse)
+   Contributor(login, repoID, contributors, ContributorFrom, ContributorTo),
+   Language(langRepoID, language, lineCount, LanguageFrom, LanguageTo)
 
 ) where
 
@@ -24,12 +24,12 @@ data RepoResponse = RepoResponse
     }
     deriving (Eq, Show, Generic)
 
-instance FromJSON RepoResponse
 -- we do not need to specify details since we're deriving Generic
+instance FromJSON RepoResponse
 instance ToJSON RepoResponse
 
-data Contributor = ContributorFrom
-  {
+data Contributor = 
+  ContributorFrom {
     login :: String
   } | ContributorTo {
     repoID :: Integer,
@@ -37,17 +37,28 @@ data Contributor = ContributorFrom
   } deriving (Show, Generic)
 
 instance FromJSON Contributor
+instance ToJSON Contributor where
+  toJSON = genericToJSON (defaultOptions { sumEncoding = UntaggedValue }) --remove "tag" in JSON due to multiple constructors
 
-data LangResponse = LangResponse
+data Language = 
+  LanguageFrom
   {
     language  :: String,
     lineCount :: Integer
-  }  deriving (Show)
+  } | LanguageTo {
+    langRepoID :: Integer,
+    language :: String,
+    lineCount :: Integer
+  } deriving (Show, Generic)
 
-data Contributor = Contributor
+instance FromJSON Language
+instance ToJSON Language where
+  toJSON = genericToJSON (defaultOptions { sumEncoding = UntaggedValue }) --remove "tag" in JSON due to multiple constructors
+
+{- data Contributor = Contributor
   {
     repoID :: Integer,
     contributors :: Integer
   } deriving (Show, Generic)
 
-instance ToJSON Contributor
+instance ToJSON Contributor -}

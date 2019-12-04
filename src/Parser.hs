@@ -44,16 +44,16 @@ parserRepoMany = withArray "RepoResponse" $ \arr -> do
     let allParsed = fmap (join . parseEither parserRepo) arr
     return $ toList allParsed
 
-parserContribs :: Value -> Parser (Either String ContributorResponse)
+parserContribs :: Value -> Parser (Either String Contributor)
 parserContribs value = do
     case parseEither parseJSON value of
         Left err -> return . Left $ err ++ "Invalid object is: " ++ show value
         Right parsed -> return $ Right parsed
 
-parserContribsMany :: Value -> Parser [Either String ContributorResponse]
-parserContribsMany = withArray "ContributorResponse" $ \arr -> do
+parserContribsMany :: Value -> Parser [Either String Contributor]
+parserContribsMany = withArray "Contributor" $ \arr -> do
     let allParsed = fmap (join . parseEither parserContribs) arr
     return $ toList allParsed
 
-parserLanguages :: Value -> Parser [LangResponse]
-parserLanguages p = map (\(language, lineCount) -> LangResponse language lineCount) . HM.toList <$> parseJSON p
+parserLanguages :: Value -> Parser [Language]
+parserLanguages p = map (\(language, lineCount) -> LanguageFrom language lineCount) . HM.toList <$> parseJSON p

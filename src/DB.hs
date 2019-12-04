@@ -11,7 +11,10 @@ module DB
         addLangMany,
         addLang,
         fillTotalCount,
-        repoJSONtoFile
+        repoJSONtoFile,
+        repoFromSQL,
+        contribJSONtoFile,
+        langJSONtoFile
         ) where
 
 import DataTypes as D
@@ -134,15 +137,21 @@ repoFromSQL [repoID, languages_url, contributors_url] =
 repoFromSQL _ = error $ "error in bytestring conversion"
 
 contribFromSQL [repoID, contributors] =
-  Contributor {D.id = fromSql repoID,
-          languages_url = fromSql languages_url,
-          contributors_url = fromSql contributors_url
+  ContributorTo {D.repoID = fromSql repoID,
+          D.contributors = fromSql contributors
   }
 contribFromSQL _ = error $ "error in bytestring conversion"
 
+langFromSQL [repoID, language, lineCount] =
+  LanguageTo {D.langRepoID = fromSql repoID,
+          D.language = fromSql language,
+          D.lineCount = fromSql lineCount
+  }
+langFromSQL _ = error $ "error in bytestring conversion"
+
 fillTotalCount connection = do
-  run connection "INSERT INTO totalCount (language, lineCount,\
-                            \contributors) SELECT language, sum(contributors) \
+  run connection "INSERT INTO totalCount (language, contributors,\
+                            \lineCount) SELECT language, sum(contributors) \
                             \as contributors, sum(lineCount) as lineCount FROM \
                             \langResponses JOIN contributorResponses ON \
                             \contributorResponses.repoID = \
@@ -155,3 +164,13 @@ repoJSONtoFile db = do
   repoList <- retrieveDB db "repoResponses" repoFromSQL
   let json = BL.concat $ fmap encodePretty repoList
   BL.writeFile "repo.json" json
+
+contribJSONtoFile db = do
+  contribList <- retrieveDB db "contributorResponses" contribFromSQL
+  let json = BL.concat $ fmap encodePretty contribList
+  BL.writeFile "contributor.json" json
+
+langJSONtoFile db = do
+  langList <- retrieveDB db "langResponses" langFromSQL
+  let json = BL.concat $ fmap encodePretty langList
+  BL.writeFile "languages.json" json
