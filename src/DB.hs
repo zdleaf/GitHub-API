@@ -40,7 +40,8 @@ connectDB connection =
       run connection "CREATE TABLE langResponses (\
                       \repoID INTEGER NOT NULL,\
                       \language TEXT NOT NULL,\
-                      \lineCount INTEGER NOT NULL)" []
+                      \lineCount INTEGER NOT NULL,\
+                      \CONSTRAINT limitdb UNIQUE (repoID, language))" []
       return()
     commit connection
 
