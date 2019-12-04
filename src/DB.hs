@@ -14,7 +14,8 @@ module DB
         repoJSONtoFile,
         repoFromSQL,
         contribJSONtoFile,
-        langJSONtoFile
+        langJSONtoFile,
+        totalJSONtoFile
         ) where
 
 import DataTypes as D
@@ -149,6 +150,13 @@ langFromSQL [repoID, language, lineCount] =
   }
 langFromSQL _ = error $ "error in bytestring conversion"
 
+totalFromSQL [language, lineCount, contributors] =
+  TotalCount {D.totalLanguage = fromSql language,
+          D.totalLineCount = fromSql lineCount,
+          D.totalContributors = fromSql contributors
+  }
+totalFromSQL _ = error $ "error in bytestring conversion"
+
 fillTotalCount connection = do
   run connection "INSERT INTO totalCount (language, contributors,\
                             \lineCount) SELECT language, sum(contributors) \
@@ -163,14 +171,23 @@ fillTotalCount connection = do
 repoJSONtoFile db = do
   repoList <- retrieveDB db "repoResponses" repoFromSQL
   let json = BL.concat $ fmap encodePretty repoList
-  BL.writeFile "repo.json" json
+  BL.writeFile "repos.json" json
+  print "output db to: repos.json"
 
 contribJSONtoFile db = do
   contribList <- retrieveDB db "contributorResponses" contribFromSQL
   let json = BL.concat $ fmap encodePretty contribList
-  BL.writeFile "contributor.json" json
+  BL.writeFile "contributors.json" json
+  print "output db to: contributor.json"
 
 langJSONtoFile db = do
   langList <- retrieveDB db "langResponses" langFromSQL
   let json = BL.concat $ fmap encodePretty langList
   BL.writeFile "languages.json" json
+  print "output db to: languages.json"
+
+totalJSONtoFile db = do
+  totalList <- retrieveDB db "totalCount" totalFromSQL
+  let json = BL.concat $ fmap encodePretty totalList
+  BL.writeFile "totalcounts.json" json
+  print "output db to: totalcounts.json"
