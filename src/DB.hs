@@ -27,10 +27,12 @@ import Control.Monad
 import Data.ByteString.Lazy as BL
 import Data.Aeson.Encode.Pretty
 
+
 initialiseDB dbname = do
         connection <- connectSqlite3 dbname
         connectDB connection
         return connection
+
 
 connectDB connection =
   do
@@ -119,7 +121,7 @@ addLang connection (id, language, count)  = handleSql handleError $ do
 
 addLangMany connection (x:xs) = do
   addLang connection x
-  --print $ "adding to db: " ++ show x
+  print $ "adding to db: " ++ show x
   addLangMany connection xs
   return ()
 addLangMany db _ = do
@@ -166,7 +168,6 @@ fillTotalCount connection = do
                             \langResponses.repoID GROUP BY LANGUAGE ORDER BY \
                             \sum(lineCount) DESC" []
   commit connection
-  return ()
 
 repoJSONtoFile db = do
   repoList <- retrieveDB db "repoResponses" repoFromSQL
