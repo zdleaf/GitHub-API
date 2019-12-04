@@ -1,7 +1,8 @@
 module HTTP
     ( callAPI,
     repoAPIUrl,
-    callContribURL
+    callContribURL,
+    callLangURL
     ) where
 
 import Data.ByteString.Lazy as BL
@@ -60,3 +61,4 @@ callLangURL reporesponse = do
 
 splitLangResp id (Right []) = []
 splitLangResp id (Right (x:xs)) = (id, D.language x, D.lineCount x):splitLangResp id (Right xs)
+splitLangResp id _ = []

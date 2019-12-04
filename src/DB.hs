@@ -8,7 +8,8 @@ module DB
         addRepoMany,
         retrieveRepoResponse,
         addContribs,
-        addContribsMany
+        addContribsMany,
+        addLangMany
         ) where
 
 import DataTypes as D
