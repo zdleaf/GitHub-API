@@ -25,14 +25,16 @@ main = do
 
     -- recusively call the contrib urls
     contribResp <- sequence $ fmap callContribURL repoList
-    print contribResp
+    -- print contribResp
     -- add contrib counts per repo to DB
-    addContribsMany db contribResp
+    --  addContribsMany db contribResp
+
+    sequence_ $ fmap (addContribs db) contribResp
     --fmap (fmap (addContribs db)) contrib -}
 
     langResp <- sequence $ fmap callLangURL repoList
     print langResp
-    sequence_ $ Prelude.map (addLangMany db) langResp
+    sequence_ $ fmap (addLangMany db) langResp
 
 {-     let lang = "https://api.github.com/repos/gr3gburk3/node/languages"
     langResp <- callAPI lang
