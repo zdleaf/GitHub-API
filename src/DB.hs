@@ -123,6 +123,14 @@ addLang connection (id, language, count)  = handleSql handleError $ do
                           \" ++ (show (id)) ++ " "++ (show e)
 
 
+addLangMany connection (x:xs) = do
+  addLang connection x
+  print $ "adding to db: " ++ show x
+  addLangMany connection xs
+  return ()
+addLangMany db _ = do
+  return ()
+
 retrieveRepoResponse connection = do
         urls <- quickQuery connection "select repoID, languageURL, \
                                       \contributorsURL from repoResponses" []
