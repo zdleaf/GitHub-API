@@ -16,8 +16,6 @@ import Database.HDBC
 import Database.HDBC.Sqlite3
 import Control.Monad
 
---type dbname = String
---initialiseDB :: dbname ->
 initialiseDB dbname = do
         connection <- connectSqlite3 dbname
         connectDB connection
@@ -51,7 +49,7 @@ connectDB connection =
       return()
     commit connection
 
--- final table that of language and totals for contributors and count
+-- final table including languages and totals for contributors and line count
     when (not ("totalCount" `elem` tables)) $ do
         run connection "CREATE TABLE totalCount (\
                         \language TEXT NOT NULL UNIQUE,\
@@ -60,11 +58,6 @@ connectDB connection =
 
         return()
     commit connection
-
--- INSERT INTO Reporesponses
-
--- SELECT 2, "test", "test"
--- WHERE NOT EXISTS  (SELECT 1 from Reporesponses WHERE repoID = 224238003)
 
 --addRepo :: Connection -> Reporesponse -> IO ()
 addRepo connection (Left err) = return ()
@@ -122,12 +115,3 @@ fromSqlurls [repoID, languages_url, contributors_url] =
             contributors_url = fromSql contributors_url
     }
 fromSqlurls _ = error $ "error in bytestring conversion"
-
-{- TRY map FMAP, sequence, mapM
---addRepoMany db responseList = fmap (addRepo db) responseList
-
-extractRepo (Left err) = do
-		print $ "extractRepo Left: " ++ err
-		return Reporesponse {}
-extractRepo (Right repo) = repo
--}
