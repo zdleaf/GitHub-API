@@ -11,20 +11,20 @@ import Data.ByteString.Lazy as BL
 main :: IO ()
 main = do
     -- get repositories
-    response <- callAPI repoAPIUrl :: IO BL.ByteString
+    repoResponse <- callAPI repoAPIUrl :: IO BL.ByteString
     db <- initialiseDB "github.db"
-    print $ "length of response: " ++ (show $ BL.length response)
+    print $ "length of response: " ++ (show $ BL.length repoResponse)
     --Prelude.writeFile ("output.json") (C8.unpack response)
-    parsed <- parseRepoResponse response
+    repoParsed <- parseRepoResponse repoResponse
     
     -- add repos to DB
-    addRepoMany db $ extractResp parsed
+    addRepoMany db $ extractResp repoParsed
 
     -- retrieve repos from DB (unnecessary here? just call on parsed)
-    repoResponse <- retrieveRepoResponse db
+    repoList <- retrieveRepoResponse db
 
     -- recusively call the contrib urls
-    contrib <- sequence $ fmap callContribURL repoResponse
+    contrib <- sequence $ fmap callContribURL repoList
     print contrib
     -- add contrib counts per repo to DB
     addContribsMany db contrib

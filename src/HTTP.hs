@@ -1,8 +1,7 @@
 module HTTP
     ( callAPI,
     repoAPIUrl,
-    callContribURL,
-    callContribURLMany
+    callContribURL
     ) where
 
 import Data.ByteString.Lazy as BL
@@ -38,18 +37,26 @@ callAPI url = do
     --print $ getResponseHeader "Content-Type" response
     --return $ getResponseStatusCode response
 
-getContribCount (Right x) = x
-getContribCount _ = 0
+removeEitherNum (Right x) = x
+removeEitherNum _ = 0
 
-test = RepoResponse 1 "test.com" "https://api.github.com/repos/Chekist322/android-dagger/contributors"
+test = RepoResponse 999 "https://api.github.com/repos/gr3gburk3/node/languages" "https://api.github.com/repos/Chekist322/android-dagger/contributors"
 
 callContribURL reporesponse = do
     response <- callAPI $ D.contributors_url reporesponse
-    parsed <- parseContribResponse response
-    let eitherCount = fmap Prelude.length parsed
-    let count = getContribCount eitherCount
+    parsedContribs <- parseContribResponse response
+    let eitherCount = fmap Prelude.length parsedContribs
+    let count = removeEitherNum eitherCount
     print ((D.id reporesponse), count)
     return ((D.id reporesponse), count)
 
-callContribURLMany [] = []
-callContribURLMany (x:xs) = callContribURL x:callContribURLMany xs
+removeEitherLang (Right x) = x
+removeEitherLang _ = "error"
+
+callLangURL reporesponse = do
+    response <- callAPI $ D.languages_url reporesponse
+    parsedLangs <- parseLangResponse response
+    return $ splitLangResp (D.id reporesponse) parsedLangs
+
+splitLangResp id (Right []) = []
+splitLangResp id (Right (x:xs)) = (id, D.language x, D.lineCount x):splitLangResp id (Right xs)
