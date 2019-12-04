@@ -11,33 +11,33 @@ import Data.ByteString.Lazy as BL
 main :: IO ()
 main = do
     -- get repositories
-    print "retrieving repository information..."
+    Prelude.putStrLn "retrieving repository information..."
     repoResponse <- callAPI repoAPIUrl :: IO BL.ByteString
-    print $ "length of response: " ++ (show $ BL.length repoResponse)
+    Prelude.putStrLn $ "length of response: " ++ (show $ BL.length repoResponse)
     --Prelude.writeFile ("output.json") (C8.unpack response)
-    print "parsing JSON..."
+    Prelude.putStrLn "parsing JSON..."
     repoParsed <- parseRepoResponse repoResponse
 
-    print "initialising db..."
+    Prelude.putStrLn "initialising db..."
     db <- initialiseDB "github.db"
 
-    print "adding repos to DB..."
+    Prelude.putStrLn "adding repos to DB..."
     addRepoMany db $ extractResp repoParsed
 
     repoList <- retrieveRepoResponse db
 
-    print "calling all contributor urls..."
+    Prelude.putStrLn "calling all contributor urls..."
     contribResp <- sequence $ fmap callContribURL repoList
 
-    print "adding contributors to db..."
+    Prelude.putStrLn "\nadding contributors to db..."
     sequence_ $ fmap (addContribs db) contribResp
 
-    print "calling all language urls..."
+    Prelude.putStrLn "\ncalling all language urls..."
     langResp <- sequence $ fmap callLangURL repoList
 
-    print "adding languages to db..."
+    Prelude.putStrLn "\nadding languages to db..."
     sequence_ $ fmap (addLangMany db) langResp
-    print "complete"
+    Prelude.putStrLn "\ncomplete"
 
 
     return ()

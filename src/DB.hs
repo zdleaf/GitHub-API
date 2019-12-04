@@ -96,6 +96,7 @@ addContribs connection tuple = handleSql handleError $ do
       toSql (snd tuple)
     ]
   commit connection
+  putStr "."
   where handleError e = do fail $ "error adding contributors: " ++ (show (fst tuple)) ++ " "++ (show e)
 
 -- addContribsMany db (x:xs) = do
@@ -114,7 +115,7 @@ addLang connection (id, language, count)  = handleSql handleError $ do
       toSql count
     ]
   commit connection
-  print  ('.')
+  putStr "."
   where handleError e = do fail $ "error adding contributors: " ++ (show (id)) ++ " "++ (show e)
 
 addLangMany connection (x:xs) = do

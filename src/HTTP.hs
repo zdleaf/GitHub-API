@@ -13,6 +13,7 @@ import Network.HTTP.Client.TLS
 import Network.HTTP.Types
 import Parser
 import Data.Aeson.Types
+import System.IO
 
 {-
 parsing many with Aeson:
@@ -48,6 +49,8 @@ callContribURL reporesponse = do
     parsedContribs <- parseContribResponse response
     let eitherCount = fmap Prelude.length parsedContribs
     let count = removeEitherNum eitherCount
+    Prelude.putStr "."
+    hFlush stdout
     --print "((D.id reporesponse), count)"
     return ((D.id reporesponse), count)
 
@@ -57,6 +60,8 @@ removeEitherLang _ = "error" -}
 callLangURL reporesponse = do
     response <- callAPI $ D.languages_url reporesponse
     parsedLangs <- parseLangResponse response
+    Prelude.putStr "."
+    hFlush stdout
     return $ splitLangResp (D.id reporesponse) parsedLangs
 
 splitLangResp id (Right []) = []
