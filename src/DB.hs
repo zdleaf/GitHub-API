@@ -38,7 +38,7 @@ connectDB connection =
 
     when (not ("langResponses" `elem` tables)) $ do
       run connection "CREATE TABLE langResponses (\
-                      \repoID INTEGER NOT NULL PRIMARY KEY UNIQUE,\
+                      \repoID INTEGER NOT NULL,\
                       \language TEXT NOT NULL,\
                       \lineCount INTEGER NOT NULL)" []
       return()
@@ -62,7 +62,6 @@ connectDB connection =
         return()
     commit connection
 
-
 --addRepo :: Connection -> Reporesponse -> IO ()
 addRepo connection (Left err) = return ()
 addRepo connection (Right repoResponse) = handleSql handleError $ do
@@ -77,11 +76,9 @@ addRepo connection (Right repoResponse) = handleSql handleError $ do
         commit connection
         where handleError e = do fail $ "error adding repo: " ++ (show (D.id repoResponse)) ++ " "++ (show e)
 
-
 -- extract response list from Either Left/Right
 extractResp (Left err) = []
 extractResp (Right list) = list
-
 
 addRepoMany :: IConnection t => t -> [Either String RepoResponse] -> IO ()
 addRepoMany db (x:xs) = do
@@ -91,7 +88,6 @@ addRepoMany db (x:xs) = do
 addRepoMany db _ = do
     return ()
 
-
 addContribs connection tuple = handleSql handleError $ do
   run connection "INSERT OR REPLACE INTO contributorResponses (repoID, contributors) VALUES (?, ?)"
     [
@@ -99,8 +95,7 @@ addContribs connection tuple = handleSql handleError $ do
       toSql (snd tuple)
     ]
   commit connection
-  where handleError e = do fail $ "error adding contributors: \
-                          \" ++ (show (fst tuple)) ++ " "++ (show e)
+  where handleError e = do fail $ "error adding contributors: " ++ (show (fst tuple)) ++ " "++ (show e)
 
 addContribsMany db (x:xs) = do
   addContribs db x
@@ -110,19 +105,15 @@ addContribsMany db (x:xs) = do
 addContribsMany db _ = do
   return ()
 
-
 addLang connection (id, language, count)  = handleSql handleError $ do
-  run connection "INSERT OR REPLACE INTO langResponses (repoID, language,\
-                 \lineCount) VALUES (?, ?, ?)"
+  run connection "INSERT OR REPLACE INTO langResponses (repoID, language, lineCount) VALUES (?, ?, ?)"
     [
       toSql id,
       toSql language,
       toSql count
     ]
   commit connection
-  where handleError e = do fail $ "error adding contributors: \
-                          \" ++ (show (id)) ++ " "++ (show e)
-
+  where handleError e = do fail $ "error adding contributors: " ++ (show (id)) ++ " "++ (show e)
 
 addLangMany connection (x:xs) = do
   addLang connection x

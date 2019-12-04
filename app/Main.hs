@@ -23,7 +23,7 @@ main = do
     -- retrieve repos from DB (unnecessary here? just call on parsed)
     repoList <- retrieveRepoResponse db
 
-{-     -- recusively call the contrib urls
+    -- recusively call the contrib urls
     contribResp <- sequence $ fmap callContribURL repoList
     print contribResp
     -- add contrib counts per repo to DB
@@ -32,7 +32,6 @@ main = do
 
     langResp <- sequence $ fmap callLangURL repoList
     print langResp
-
     sequence_ $ Prelude.map (addLangMany db) langResp
 
 {-     let lang = "https://api.github.com/repos/gr3gburk3/node/languages"
