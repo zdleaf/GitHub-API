@@ -10,7 +10,8 @@ module DB
         addContribs,
 --        addContribsMany,
         addLangMany,
-        addLang
+        addLang,
+        fillTotalCount
         ) where
 
 import DataTypes as D
@@ -141,4 +142,14 @@ fromSqlurls [repoID, languages_url, contributors_url] =
 fromSqlurls _ = error $ "error in bytestring conversion"
 
 
+fillTotalCount connection = do
+  run connection "INSERT INTO totalCount (language, lineCount,\
+                            \contributors) SELECT language, sum(contributors) \
+                            \as contributors, sum(lineCount) as lineCount FROM \
+                            \langResponses JOIN contributorResponses ON \
+                            \contributorResponses.repoID = \
+                            \langResponses.repoID GROUP BY LANGUAGE ORDER BY \
+                            \sum(lineCount) DESC" []
+  commit connection
+  return ()
 

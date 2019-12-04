@@ -35,7 +35,7 @@ main = do
     langResp <- sequence $ fmap callLangURL repoList
     print langResp
     sequence_ $ fmap (addLangMany db) langResp
-
+    fillTotalCount db
 {-     let lang = "https://api.github.com/repos/gr3gburk3/node/languages"
     langResp <- callAPI lang
     langParsed <- parseLangResponse langResp
