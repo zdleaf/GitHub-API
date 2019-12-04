@@ -19,7 +19,7 @@ import qualified Data.HashMap.Strict as HM
 
 parseRepoResponse response = do
     let decodedJSON = eitherDecode response >>= parseEither parserRepoMany
-    print $ "successfully decoded JSON"
+    print $ "successfully decoded repo JSON"
     return decodedJSON
 
 parseContribResponse response = do

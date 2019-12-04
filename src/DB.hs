@@ -8,7 +8,6 @@ module DB
         addRepoMany,
         retrieveRepoResponse,
         addContribs,
---        addContribsMany,
         addLangMany,
         addLang,
         fillTotalCount
@@ -19,12 +18,10 @@ import Database.HDBC
 import Database.HDBC.Sqlite3
 import Control.Monad
 
-
 initialiseDB dbname = do
         connection <- connectSqlite3 dbname
         connectDB connection
         return connection
-
 
 connectDB connection =
   do
@@ -36,7 +33,6 @@ connectDB connection =
                       \contributorsURL Text Not NULL UNIQUE)" []
       return ()
     commit connection
-
 
     when (not ("langResponses" `elem` tables)) $ do
       run connection "CREATE TABLE langResponses (\
@@ -98,15 +94,8 @@ addContribs connection tuple = handleSql handleError $ do
       toSql (snd tuple)
     ]
   commit connection
+  putStr "."
   where handleError e = do fail $ "error adding contributors: " ++ (show (fst tuple)) ++ " "++ (show e)
-
--- addContribsMany db (x:xs) = do
---   addContribs db x
---   print $ "adding to db: " ++ show x
---   addContribsMany db xs
---   return ()
--- addContribsMany db _ = do
---   return ()
 
 addLang connection (id, language, count)  = handleSql handleError $ do
   run connection "INSERT OR REPLACE INTO langResponses (repoID, language, lineCount) VALUES (?, ?, ?)"
@@ -116,12 +105,12 @@ addLang connection (id, language, count)  = handleSql handleError $ do
       toSql count
     ]
   commit connection
-  print  ('.')
+  putStr "."
   where handleError e = do fail $ "error adding contributors: " ++ (show (id)) ++ " "++ (show e)
 
 addLangMany connection (x:xs) = do
   addLang connection x
-  print $ "adding to db: " ++ show x
+  --print $ "adding to db: " ++ show x
   addLangMany connection xs
   return ()
 addLangMany db _ = do
@@ -132,7 +121,6 @@ retrieveRepoResponse connection = do
                                       \contributorsURL from repoResponses" []
         commit connection
         return (map fromSqlurls urls)
-
 
 fromSqlurls [repoID, languages_url, contributors_url] =
     RepoResponse {D.id = fromSql repoID,
