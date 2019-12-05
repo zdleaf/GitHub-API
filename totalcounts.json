@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
     "totalLineCount": 174,
     "totalContributors": 9686150,
     "totalLanguage": "JavaScript",
@@ -163,4 +164,297 @@
     "totalContributors": 494,
     "totalLanguage": "Mako",
     "linesPerContrib": 494
+=======
+    "totalLineCount": 85541300,
+    "totalContributors": 151,
+    "totalLanguage": "C++"
+}{
+    "totalLineCount": 63433878,
+    "totalContributors": 330,
+    "totalLanguage": "Python"
+}{
+    "totalLineCount": 52931144,
+    "totalContributors": 70,
+    "totalLanguage": "Go"
+}{
+    "totalLineCount": 30346693,
+    "totalContributors": 36,
+    "totalLanguage": "Jupyter Notebook"
+}{
+    "totalLineCount": 29347121,
+    "totalContributors": 175,
+    "totalLanguage": "C"
+}{
+    "totalLineCount": 25622503,
+    "totalContributors": 129,
+    "totalLanguage": "PHP"
+}{
+    "totalLineCount": 24965184,
+    "totalContributors": 153,
+    "totalLanguage": "C#"
+}{
+    "totalLineCount": 21939356,
+    "totalContributors": 146,
+    "totalLanguage": "Java"
+}{
+    "totalLineCount": 8070406,
+    "totalContributors": 49,
+    "totalLanguage": "CMake"
+}{
+    "totalLineCount": 7191936,
+    "totalContributors": 334,
+    "totalLanguage": "JavaScript"
+}{
+    "totalLineCount": 5781853,
+    "totalContributors": 397,
+    "totalLanguage": "HTML"
+}{
+    "totalLineCount": 2577890,
+    "totalContributors": 456,
+    "totalLanguage": "Shell"
+}{
+    "totalLineCount": 2083842,
+    "totalContributors": 310,
+    "totalLanguage": "CSS"
+}{
+    "totalLineCount": 664342,
+    "totalContributors": 108,
+    "totalLanguage": "Smarty"
+}{
+    "totalLineCount": 445310,
+    "totalContributors": 31,
+    "totalLanguage": "Cuda"
+}{
+    "totalLineCount": 398146,
+    "totalContributors": 31,
+    "totalLanguage": "Swift"
+}{
+    "totalLineCount": 387084,
+    "totalContributors": 205,
+    "totalLanguage": "Makefile"
+}{
+    "totalLineCount": 360301,
+    "totalContributors": 60,
+    "totalLanguage": "M4"
+}{
+    "totalLineCount": 350811,
+    "totalContributors": 30,
+    "totalLanguage": "TypeScript"
+}{
+    "totalLineCount": 328409,
+    "totalContributors": 94,
+    "totalLanguage": "Objective-C"
+}{
+    "totalLineCount": 325306,
+    "totalContributors": 61,
+    "totalLanguage": "Roff"
+}{
+    "totalLineCount": 277114,
+    "totalContributors": 30,
+    "totalLanguage": "Gherkin"
+}{
+    "totalLineCount": 260880,
+    "totalContributors": 30,
+    "totalLanguage": "Rich Text Format"
+}{
+    "totalLineCount": 168486,
+    "totalContributors": 61,
+    "totalLanguage": "Perl"
+}{
+    "totalLineCount": 160118,
+    "totalContributors": 230,
+    "totalLanguage": "Dockerfile"
+}{
+    "totalLineCount": 151265,
+    "totalContributors": 30,
+    "totalLanguage": "Vue"
+}{
+    "totalLineCount": 138749,
+    "totalContributors": 92,
+    "totalLanguage": "PowerShell"
+}{
+    "totalLineCount": 120244,
+    "totalContributors": 30,
+    "totalLanguage": "Scilab"
+}{
+    "totalLineCount": 114324,
+    "totalContributors": 30,
+    "totalLanguage": "ShaderLab"
+}{
+    "totalLineCount": 113178,
+    "totalContributors": 30,
+    "totalLanguage": "Vim script"
+}{
+    "totalLineCount": 102247,
+    "totalContributors": 60,
+    "totalLanguage": "Yacc"
+}{
+    "totalLineCount": 92188,
+    "totalContributors": 30,
+    "totalLanguage": "Processing"
+}{
+    "totalLineCount": 81465,
+    "totalContributors": 99,
+    "totalLanguage": "Ruby"
+}{
+    "totalLineCount": 62671,
+    "totalContributors": 191,
+    "totalLanguage": "Batchfile"
+}{
+    "totalLineCount": 60006,
+    "totalContributors": 31,
+    "totalLanguage": "R"
+}{
+    "totalLineCount": 56815,
+    "totalContributors": 41,
+    "totalLanguage": "GLSL"
+}{
+    "totalLineCount": 56038,
+    "totalContributors": 2,
+    "totalLanguage": "RenderScript"
+}{
+    "totalLineCount": 54026,
+    "totalContributors": 61,
+    "totalLanguage": "Lua"
+}{
+    "totalLineCount": 51930,
+    "totalContributors": 70,
+    "totalLanguage": "TSQL"
+}{
+    "totalLineCount": 40223,
+    "totalContributors": 60,
+    "totalLanguage": "Lex"
+}{
+    "totalLineCount": 37840,
+    "totalContributors": 61,
+    "totalLanguage": "TeX"
+}{
+    "totalLineCount": 35143,
+    "totalContributors": 1,
+    "totalLanguage": "SAS"
+}{
+    "totalLineCount": 27775,
+    "totalContributors": 60,
+    "totalLanguage": "Tcl"
+}{
+    "totalLineCount": 23893,
+    "totalContributors": 30,
+    "totalLanguage": "ANTLR"
+}{
+    "totalLineCount": 22970,
+    "totalContributors": 60,
+    "totalLanguage": "HLSL"
+}{
+    "totalLineCount": 22795,
+    "totalContributors": 31,
+    "totalLanguage": "Fortran"
+}{
+    "totalLineCount": 22384,
+    "totalContributors": 8,
+    "totalLanguage": "SQLPL"
+}{
+    "totalLineCount": 19185,
+    "totalContributors": 1,
+    "totalLanguage": "Kotlin"
+}{
+    "totalLineCount": 18918,
+    "totalContributors": 60,
+    "totalLanguage": "XSLT"
+}{
+    "totalLineCount": 17498,
+    "totalContributors": 6,
+    "totalLanguage": "HCL"
+}{
+    "totalLineCount": 16644,
+    "totalContributors": 30,
+    "totalLanguage": "F*"
+}{
+    "totalLineCount": 15048,
+    "totalContributors": 30,
+    "totalLanguage": "Assembly"
+}{
+    "totalLineCount": 14448,
+    "totalContributors": 30,
+    "totalLanguage": "Emacs Lisp"
+}{
+    "totalLineCount": 12841,
+    "totalContributors": 30,
+    "totalLanguage": "sed"
+}{
+    "totalLineCount": 11464,
+    "totalContributors": 30,
+    "totalLanguage": "DM"
+}{
+    "totalLineCount": 7226,
+    "totalContributors": 8,
+    "totalLanguage": "Groovy"
+}{
+    "totalLineCount": 7104,
+    "totalContributors": 7,
+    "totalLanguage": "Jsonnet"
+}{
+    "totalLineCount": 6966,
+    "totalContributors": 31,
+    "totalLanguage": "MATLAB"
+}{
+    "totalLineCount": 6013,
+    "totalContributors": 1,
+    "totalLanguage": "Visual Basic"
+}{
+    "totalLineCount": 5078,
+    "totalContributors": 2,
+    "totalLanguage": "Rust"
+}{
+    "totalLineCount": 3971,
+    "totalContributors": 30,
+    "totalLanguage": "Game Maker Language"
+}{
+    "totalLineCount": 3128,
+    "totalContributors": 1,
+    "totalLanguage": "Hack"
+}{
+    "totalLineCount": 2401,
+    "totalContributors": 60,
+    "totalLanguage": "Objective-C++"
+}{
+    "totalLineCount": 1888,
+    "totalContributors": 30,
+    "totalLanguage": "Perl 6"
+}{
+    "totalLineCount": 1647,
+    "totalContributors": 30,
+    "totalLanguage": "Pascal"
+}{
+    "totalLineCount": 1582,
+    "totalContributors": 30,
+    "totalLanguage": "AppleScript"
+}{
+    "totalLineCount": 1338,
+    "totalContributors": 30,
+    "totalLanguage": "Pike"
+}{
+    "totalLineCount": 1156,
+    "totalContributors": 30,
+    "totalLanguage": "M"
+}{
+    "totalLineCount": 650,
+    "totalContributors": 30,
+    "totalLanguage": "Rascal"
+}{
+    "totalLineCount": 633,
+    "totalContributors": 23,
+    "totalLanguage": "CoffeeScript"
+}{
+    "totalLineCount": 569,
+    "totalContributors": 2,
+    "totalLanguage": "PLSQL"
+}{
+    "totalLineCount": 109,
+    "totalContributors": 30,
+    "totalLanguage": "ASP"
+}{
+    "totalLineCount": 14,
+    "totalContributors": 30,
+    "totalLanguage": "OpenEdge ABL"
+>>>>>>> getManyRepos
 }

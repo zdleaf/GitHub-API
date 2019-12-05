@@ -1,4 +1,5 @@
 module Main where
+
 import System.IO
 
 import HTTP as HT
@@ -12,19 +13,12 @@ import Data.Aeson.Encode.Pretty
 
 main :: IO ()
 main = do
-    -- get repositories
-    print "retrieving repository information..."
-    repoResponse <- callAPI repoAPIUrl :: IO BL.ByteString
-    print $ "length of response: " ++ (show $ BL.length repoResponse)
-    --P.writeFile ("output.json") (C8.unpack response)
-    print "parsing JSON..."
-    repoParsed <- parseRepoResponse repoResponse
-
     print "initialising db..."
     db <- initialiseDB "github.db"
 
-    print "adding repos to DB..."
-    addRepoMany db $ extractResp repoParsed
+    -- get the repository API responses for the repoIDs between the values in the 2nd and 3rd arguments
+    -- callMultiRepo db StartRepoID EndRepoID
+    getManyRepos db 224239200 224239300
 
     repoList <- retrieveDB db "repoResponses" repoFromSQL
 
