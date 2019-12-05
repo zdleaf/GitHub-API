@@ -7,15 +7,14 @@ module Parser
     ) where
 
 import DataTypes
-
--- JSON modules
-import Data.Aeson as AE
 import Prelude as P
+
+import Control.Monad (join)
+
+import Data.Aeson as AE
 import Data.Aeson.Types 
 import Data.ByteString.Lazy as BL
 import Data.Foldable
-import Control.Monad (join)
-
 import qualified Data.HashMap.Strict as HM
 
 -- | Decodes raw JSON byteString from the repositories API call into a list of RepoResponse objects.

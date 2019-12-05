@@ -21,11 +21,16 @@ module DB
 
 import DataTypes as D
 import Prelude as P
+
+import System.IO
+import Control.Monad (when)
+
 import Database.HDBC
 import Database.HDBC.Sqlite3
-import Control.Monad
+
 import Data.ByteString.Lazy as BL
 import Data.Aeson.Encode.Pretty
+
 -- | Initialise the database with a given path name
 initialiseDB :: FilePath -> IO Connection
 initialiseDB dbname = do
@@ -66,9 +71,9 @@ connectDB connection =
     when (not ("totalCount" `P.elem` tables)) $ do
         run connection "CREATE TABLE totalCount (\
                         \language TEXT NOT NULL UNIQUE,\
-                        \lineCount INTEGER NOT NULL,\
-                        \contributors INTEGER NOT NULL,\
-                        \linesPerContrib FLOAT NOT NULL)" []
+                        \lineCount INTEGER,\
+                        \contributors INTEGER,\
+                        \linesPerContrib FLOAT)" []
 
         return()
     commit connection
@@ -125,6 +130,7 @@ addContribs connection tuple = handleSql handleError $ do
     ]
   commit connection
   P.putStr "."
+  hFlush stdout
   where handleError e = do fail $ "error adding contributors: " ++ (show (fst tuple)) ++ " "++ (show e)
 
 -- | Adds a single language tuple (as provided by callLangURL in the HTTP module) to the database
@@ -138,6 +144,7 @@ addLang connection (id, language, count)  = handleSql handleError $ do
     ]
   commit connection
   P.putStr "."
+  hFlush stdout
   where handleError e = do fail $ "error adding contributors: " ++ (show (id)) ++ " "++ (show e)
 
 -- | Adds a list of language tuples to the database using addLang above

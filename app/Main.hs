@@ -1,14 +1,14 @@
 module Main where
 
-import System.IO
-
 import HTTP as HT
 import DB
 import Parser
 import DataTypes
-import Prelude as P
-import Data.ByteString.Lazy as BL
 
+import Prelude as P
+import System.IO
+
+import Data.ByteString.Lazy as BL
 import Data.Aeson.Encode.Pretty
 
 main :: IO ()
@@ -17,8 +17,8 @@ main = do
     db <- initialiseDB "github.db"
 
     -- get the repository API responses for the repoIDs between the values in the 2nd and 3rd arguments
-    -- callMultiRepo db StartRepoID EndRepoID
-    getManyRepos db 224239000 224239100
+    -- getManyRepos db StartRepoID EndRepoID
+    getManyRepos db 224240000 224241500
 
     repoList <- retrieveDB db "repoResponses" repoFromSQL
 

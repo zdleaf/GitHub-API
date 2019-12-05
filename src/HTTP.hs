@@ -8,16 +8,19 @@ module HTTP
 import Parser
 import DataTypes as D
 import DB
+
+import System.IO
+
 import Database.HDBC
 import Database.HDBC.Sqlite3
+
+import Data.Aeson.Types
 import Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Char8 as C8
+
 import Network.HTTP.Simple -- see https://github.com/snoyberg/http-client/blob/master/TUTORIAL.md
 import Network.HTTP.Client.TLS
 import Network.HTTP.Types
-
-import Data.Aeson.Types
-import System.IO
 
 repoAPIBase = "http://api.github.com/repositories?since="
 userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
