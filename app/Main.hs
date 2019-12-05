@@ -42,10 +42,10 @@ main = do
     fillTotalCount db
 
     P.putStrLn "\ndumping DB to JSON files..."
-    repoJSONtoFile db
-    contribJSONtoFile db
-    langJSONtoFile db
-    totalJSONtoFile db
+    dbTableToJSON db "repoResponses" repoFromSQL
+    dbTableToJSON db "contributorResponses" contribFromSQL
+    dbTableToJSON db "langResponses" langFromSQL
+    dbTableToJSON db "totalCount" totalFromSQL
     
     P.putStrLn "\ncomplete"
 

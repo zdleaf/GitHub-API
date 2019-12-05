@@ -11,11 +11,11 @@ module DB
         addLangMany,
         addLang,
         fillTotalCount,
-        repoJSONtoFile,
+        dbTableToJSON,
         repoFromSQL,
-        contribJSONtoFile,
-        langJSONtoFile,
-        totalJSONtoFile
+        contribFromSQL,
+        langFromSQL,
+        totalFromSQL
         ) where
 
 import DataTypes as D
@@ -221,12 +221,11 @@ langJSONtoFile db = do
   print "output db to: languages.json"
 
 -- |  
-totalJSONtoFile :: IConnection conn => conn -> IO ()
-totalJSONtoFile db = do
-  totalList <- retrieveDB db "totalCount" totalFromSQL
+
+dbTableToJSON db tableName converter = do
+  totalList <- retrieveDB db tableName converter
   let json = BL.concat $ fmap encodePretty totalList
-  BL.writeFile "totalcounts.json" json
-  print "output db to: totalcounts.json"
+  BL.writeFile (tableName ++ ".json") json
+  print  $ "output db to: " ++ tableName ++ ".json"
 
 
-  
