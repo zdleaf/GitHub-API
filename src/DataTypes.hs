@@ -17,6 +17,7 @@ import GHC.Generics
 import qualified Data.HashMap.Strict as H
 
 -- a data type to handle API response for public repos
+
 data RepoResponse = RepoResponse
     {
       id :: Integer, -- github repo id
@@ -28,6 +29,7 @@ data RepoResponse = RepoResponse
 -- we do not need to specify details since we're deriving Generic
 instance FromJSON RepoResponse
 instance ToJSON RepoResponse
+
 
 data Contributor = 
   ContributorFrom {
