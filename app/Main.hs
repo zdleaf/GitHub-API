@@ -40,13 +40,14 @@ main = do
     P.putStrLn "\nadding languages to db..."
     sequence_ $ fmap (addLangMany db) langResp
     fillTotalCount db
+    fillLinesPerContrib db
 
     P.putStrLn "\ndumping DB to JSON files..."
     repoJSONtoFile db
     contribJSONtoFile db
     langJSONtoFile db
     totalJSONtoFile db
-    
+
     P.putStrLn "\ncomplete"
 
     return ()

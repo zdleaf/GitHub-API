@@ -11,6 +11,7 @@ module DB
         addLangMany,
         addLang,
         fillTotalCount,
+        fillLinesPerContrib,
         repoJSONtoFile,
         repoFromSQL,
         contribJSONtoFile,
@@ -179,6 +180,19 @@ fillTotalCount connection = do
                 \ORDER BY sum(lineCount) DESC" []
 
   commit connection
+
+
+fillLinesPerContrib connection = do
+  run connection
+                "INSERT INTO linesPerContrib (repoID, line_contrib_ratio)\
+                \SELECT lr.repoID,  SUM (lr.lineCount ) / CASE WHEN \
+                \count(cr.contributors) = 0 THEN 1 ELSE count(cr.contributors) \
+                \END as line_contrib_ratio FROM contributorResponses AS cr \
+                \JOIN langResponses as lr on lr.repoID = cr.repoID \
+                \GROUP BY lr.repoID \
+                \ORDER BY line_contrib_ratio DESC" []
+  commit connection
+
 
 repoJSONtoFile db = do
   repoList <- retrieveDB db "repoResponses" repoFromSQL
