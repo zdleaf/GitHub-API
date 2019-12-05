@@ -121,7 +121,7 @@ addLang connection (id, language, count)  = handleSql handleError $ do
 
 addLangMany connection (x:xs) = do
   addLang connection x
-  print $ "adding to db: " ++ show x
+  --print $ "adding to db: " ++ show x
   addLangMany connection xs
   return ()
 addLangMany db _ = do
@@ -165,7 +165,7 @@ fillTotalCount connection = do
                             \as contributors, sum(lineCount) as lineCount FROM \
                             \langResponses JOIN contributorResponses ON \
                             \contributorResponses.repoID = \
-                            \langResponses.repoID GROUP BY LANGUAGE ORDER BY \
+                            \langResponses.repoID GROUP BY language ORDER BY \
                             \sum(lineCount) DESC" []
   commit connection
 

@@ -1,17 +1,22 @@
 module HTTP
     ( callAPI,
-    repoAPIUrl,
+    --repoAPIUrl,
     callContribURL,
-    callLangURL
+    callLangURL,
+    getManyRepos
     ) where
+
+import Parser
+import DataTypes as D
+import DB
 
 import Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Char8 as C8
-import DataTypes as D
+
 import Network.HTTP.Simple -- see https://github.com/snoyberg/http-client/blob/master/TUTORIAL.md
 import Network.HTTP.Client.TLS
 import Network.HTTP.Types
-import Parser
+
 import Data.Aeson.Types
 import System.IO
 
@@ -23,8 +28,8 @@ https://artyom.me/aeson
 repoID: 224,238,000
 -}
 
-startRepoId = 224238000 :: Integer
-repoAPIUrl = "http://api.github.com/repositories?since=" ++ show startRepoId
+repoAPIBase = "http://api.github.com/repositories?since="
+--repoAPIUrl = repoAPIBase ++ show startRepoId
 userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
 token =  C8.pack "token da45c3b3cfa3127bf08e60eff8be3f58aac0923d"
 
@@ -39,6 +44,20 @@ callAPI url = do
     --print $ getResponseHeader "Content-Type" response
     --return $ getResponseStatusCode response
 
+getManyRepos db currentRepoID endRepoID = do
+    print "getting repos from" ++ (show currentRepoID) to (show $ currentRepoID + 100)
+    repoResponse <- callAPI $ repoAPIBase ++ (show currentRepoID)
+    print $ "length of response: " ++ (show $ BL.length repoResponse)
+    print "parsing JSON..."
+    repoParsed <- parseRepoResponse repoResponse
+    print "adding repos to DB..."
+    addRepoMany db $ extractResp repoParsed
+    -- run again until we reach the endRepoId
+    let nextVal = currentRepoID + 100
+    if nextVal <= endRepoID 
+        then getManyRepos db nextVal endRepoID
+        else print "completed calling all requested repos"
+    
 removeEitherNum (Right x) = x
 removeEitherNum _ = 0
 
