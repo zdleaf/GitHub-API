@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8657a1eff9ac5169606d625c85311822f2362a406a690e0ca70924901ff725fb
+-- hash: 15f61ff920f1fc52f208b40a138d93ffa7dea78399614ea9efaf9055951a020f
 
 name:           GitHubAPI
 version:        0.1.0.0
@@ -36,6 +36,7 @@ library
       HDBC
     , HDBC-sqlite3
     , aeson
+    , aeson-pretty
     , base >=4.7 && <5
     , bytestring
     , case-insensitive
@@ -60,6 +61,7 @@ executable GitHubAPI-exe
     , HDBC
     , HDBC-sqlite3
     , aeson
+    , aeson-pretty
     , base >=4.7 && <5
     , bytestring
     , case-insensitive
@@ -85,6 +87,7 @@ test-suite GitHubAPI-test
     , HDBC
     , HDBC-sqlite3
     , aeson
+    , aeson-pretty
     , base >=4.7 && <5
     , bytestring
     , case-insensitive
