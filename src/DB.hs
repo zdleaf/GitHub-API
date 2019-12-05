@@ -36,7 +36,6 @@ connectDB connection =
       return ()
     commit connection
 
-
     when (not ("langResponses" `elem` tables)) $ do
       run connection "CREATE TABLE langResponses (\
                       \repoID INTEGER NOT NULL,\
@@ -53,7 +52,6 @@ connectDB connection =
 
       return()
     commit connection
-
 -- final table including languages and totals for contributors and line count
     when (not ("totalCount" `elem` tables)) $ do
         run connection "CREATE TABLE totalCount (\
@@ -62,6 +60,17 @@ connectDB connection =
                         \contributors INTEGER NOT NULL)" []
 
         return()
+    commit connection
+
+    when (not ("linesPerContrib" `elem` tables)) $ do
+        run connection "CREATE TABLE linesPerContrib (\
+                      \repoID INTEGER NOT NULL PRIMARY KEY,\
+                      \line_contrib_ratio INTEGER)" []
+
+        return()
+    -- delete the derived table data as this is updated every run
+    run connection "DELETE FROM totalCount" []
+    run connection "DELETE FROM linesPerContrib" []
     commit connection
 
 --addRepo :: Connection -> Reporesponse -> IO ()
@@ -138,7 +147,7 @@ fillTotalCount connection = do
                 \SELECT language, sum(contributors) as contributors, \
                 \sum(lineCount) as lineCount  FROM langResponses \
                 \JOIN contributorResponses ON contributorResponses.repoID\
-                \ = langResponses.repoID GROUP BY LANGUAGE \
+                \ = langResponses.repoID GROUP BY language \
                 \ORDER BY sum(lineCount) DESC" []
   commit connection
 
