@@ -23,7 +23,7 @@ repoAPIBase = "http://api.github.com/repositories?since="
 userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
 token =  C8.pack "token da45c3b3cfa3127bf08e60eff8be3f58aac0923d"
 
---callRepoAPI returns JSON data from calling a GitHub API url
+-- | callAPI returns JSON data from calling a GitHub API url
 callAPI :: String -> IO BL.ByteString
 callAPI url = do
     initReq <- parseRequest $ url
@@ -48,11 +48,16 @@ getManyRepos db currentRepoID endRepoID = do
         then getManyRepos db nextVal endRepoID
         else print "completed calling all requested repos"
     
+-- | Error handling for callContribURL as parseContribResponse returns Either
+removeEitherNum :: Num p => Either a p -> p
 removeEitherNum (Right x) = x
 removeEitherNum _ = 0
 
 test = RepoResponse 999 "https://api.github.com/repos/gr3gburk3/node/languages" "https://api.github.com/repos/Chekist322/android-dagger/contributors"
 
+
+-- | takes a RepoResponse and calls the API on the Contributor URL and returns a tuple of repoID and contributor count
+callContribURL :: RepoResponse -> IO (Integer, Int)
 callContribURL reporesponse = do
     response <- callAPI $ D.contributors_url reporesponse
     parsedContribs <- parseContribResponse response
@@ -63,9 +68,8 @@ callContribURL reporesponse = do
     --print "((D.id reporesponse), count)"
     return ((D.id reporesponse), count)
 
-{- removeEitherLang (Right x) = x
-removeEitherLang _ = "error" -}
-
+-- | takes a RepoResponse and calls the API on the languages URL and returns a list of tuples of repoID, language and line count
+callLangURL :: RepoResponse -> IO [(Integer, String, Integer)]
 callLangURL reporesponse = do
     response <- callAPI $ D.languages_url reporesponse
     parsedLangs <- parseLangResponse response
@@ -73,6 +77,9 @@ callLangURL reporesponse = do
     hFlush stdout
     return $ splitLangResp (D.id reporesponse) parsedLangs
 
+
+-- | Error handling for callLangURL when parseLangResponse is called as it returns an Either[]
+splitLangResp :: t -> Either a [Language] -> [(t, String, Integer)]    
 splitLangResp id (Right []) = []
 splitLangResp id (Right (x:xs)) = (id, D.language x, D.lineCount x):splitLangResp id (Right xs)
 splitLangResp id _ = []

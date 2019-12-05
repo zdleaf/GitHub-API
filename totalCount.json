@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD:totalcounts.json
 <<<<<<< HEAD
     "totalLineCount": 174,
     "totalContributors": 9686150,
@@ -167,6 +168,18 @@
 =======
     "totalLineCount": 85541300,
     "totalContributors": 151,
+=======
+    "totalLineCount": 9686150,
+    "totalContributors": 174,
+    "totalLanguage": "JavaScript"
+}{
+    "totalLineCount": 6917442,
+    "totalContributors": 184,
+    "totalLanguage": "HTML"
+}{
+    "totalLineCount": 4489115,
+    "totalContributors": 32,
+>>>>>>> Haddock:totalCount.json
     "totalLanguage": "C++"
 }{
     "totalLineCount": 63433878,
@@ -177,9 +190,15 @@
     "totalContributors": 70,
     "totalLanguage": "Go"
 }{
+<<<<<<< HEAD:totalcounts.json
     "totalLineCount": 30346693,
     "totalContributors": 36,
     "totalLanguage": "Jupyter Notebook"
+=======
+    "totalLineCount": 548580,
+    "totalContributors": 63,
+    "totalLanguage": "TypeScript"
+>>>>>>> Haddock:totalCount.json
 }{
     "totalLineCount": 29347121,
     "totalContributors": 175,
@@ -193,9 +212,15 @@
     "totalContributors": 153,
     "totalLanguage": "C#"
 }{
+<<<<<<< HEAD:totalcounts.json
     "totalLineCount": 21939356,
     "totalContributors": 146,
     "totalLanguage": "Java"
+=======
+    "totalLineCount": 152267,
+    "totalContributors": 103,
+    "totalLanguage": "CSS"
+>>>>>>> Haddock:totalCount.json
 }{
     "totalLineCount": 8070406,
     "totalContributors": 49,

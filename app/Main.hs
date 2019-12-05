@@ -37,11 +37,11 @@ main = do
     fillLinesPerContrib db
 
     P.putStrLn "\ndumping DB to JSON files..."
-    repoJSONtoFile db
-    contribJSONtoFile db
-    langJSONtoFile db
-    totalJSONtoFile db
-    contriblinesJSONtoFile db
+    dbTableToJSON db "repoResponses" repoFromSQL
+    dbTableToJSON db "contributorResponses" contribFromSQL
+    dbTableToJSON db "langResponses" langFromSQL
+    dbTableToJSON db "totalCount" totalFromSQL
+    
     P.putStrLn "\ncomplete"
 
     return ()

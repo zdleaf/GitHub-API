@@ -1424,7 +1424,10 @@
     "langRepoID": 224239478
 }{
     "language": "CSS",
+<<<<<<< HEAD:languages.json
 <<<<<<< HEAD
+=======
+>>>>>>> Haddock:langResponses.json
     "lineCount": 11518,
     "langRepoID": 224238149
 }{

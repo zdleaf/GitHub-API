@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
-
+-- | Database Operations
 module DB
        (
         connectDB,
@@ -12,30 +12,29 @@ module DB
         addLang,
         fillTotalCount,
         fillLinesPerContrib,
-        repoJSONtoFile,
+        dbTableToJSON,
         repoFromSQL,
-        contribJSONtoFile,
-        langJSONtoFile,
-        totalJSONtoFile,
-        contriblinesJSONtoFile
+        contribFromSQL,
+        langFromSQL,
+        totalFromSQL
         ) where
 
 import DataTypes as D
-
 import Prelude as P
 import Database.HDBC
 import Database.HDBC.Sqlite3
 import Control.Monad
 import Data.ByteString.Lazy as BL
 import Data.Aeson.Encode.Pretty
-
-
+-- | Initialise the database with a given path name
+initialiseDB :: FilePath -> IO Connection
 initialiseDB dbname = do
         connection <- connectSqlite3 dbname
         connectDB connection
         return connection
 
-
+-- | Connect the database and create all the tables
+connectDB :: IConnection conn => conn -> IO ()
 connectDB connection =
   do
     tables <- getTables connection
@@ -85,7 +84,8 @@ connectDB connection =
     run connection "DELETE FROM linesPerContrib" []
     commit connection
 
---addRepo :: Connection -> Reporesponse -> IO ()
+-- | add RepoResponses to the "repoResponses" table in the Database 
+addRepo:: IConnection conn => conn -> Either a RepoResponse -> IO ()
 addRepo connection (Left err) = return ()
 addRepo connection (Right repoResponse) = handleSql handleError $ do
 
@@ -99,10 +99,14 @@ addRepo connection (Right repoResponse) = handleSql handleError $ do
         commit connection
         where handleError e = do fail $ "error adding repo: " ++ (show (D.id repoResponse)) ++ " "++ (show e)
 
--- extract response list from Either Left/Right
+
+
+-- |  extract response list from Either Left/Right as it is returned by parseRepoResponse
+extractResp :: Either a1 [a2] -> [a2]
 extractResp (Left err) = []
 extractResp (Right list) = list
 
+-- | Recursively calls addRepo on a list of Either RepoResponse objects
 addRepoMany :: IConnection t => t -> [Either String RepoResponse] -> IO ()
 addRepoMany db (x:xs) = do
     addRepo db x
@@ -111,6 +115,8 @@ addRepoMany db (x:xs) = do
 addRepoMany db _ = do
     return ()
 
+-- | adds a single contributor tuple (as provided by callContribURL in the HTTP module) to the database
+addContribs:: IConnection conn => conn -> (Integer,Int) -> IO()
 addContribs connection tuple = handleSql handleError $ do
   run connection "INSERT OR REPLACE INTO contributorResponses (repoID, contributors) VALUES (?, ?)"
     [
@@ -121,6 +127,8 @@ addContribs connection tuple = handleSql handleError $ do
   P.putStr "."
   where handleError e = do fail $ "error adding contributors: " ++ (show (fst tuple)) ++ " "++ (show e)
 
+-- | adds a single language tuple (as provided by callLangURL in the HTTP module) to the database
+addLang :: IConnection conn => conn -> (Integer, String, Integer) -> IO()
 addLang connection (id, language, count)  = handleSql handleError $ do
   run connection "INSERT OR REPLACE INTO langResponses (repoID, language, lineCount) VALUES (?, ?, ?)"
     [
@@ -132,6 +140,8 @@ addLang connection (id, language, count)  = handleSql handleError $ do
   P.putStr "."
   where handleError e = do fail $ "error adding contributors: " ++ (show (id)) ++ " "++ (show e)
 
+-- | adds a list of language tuples to the database using addLang above
+addLangMany :: IConnection conn => conn -> [(Integer, String, Integer)] -> IO()
 addLangMany connection (x:xs) = do
   addLang connection x
   --print $ "adding to db: " ++ show x
@@ -140,11 +150,16 @@ addLangMany connection (x:xs) = do
 addLangMany db _ = do
   return ()
 
+-- | generalised function to retrieve and type convert an entire table from the database. 
+-- | Returns a list of a given data type specified by the typeConverter parameter
+retrieveDB:: IConnection conn => conn -> [Char] -> ([SqlValue] -> b) -> IO [b]
 retrieveDB connection table typeConverter = do
         repoList <- quickQuery connection ("select * from " ++ table) []
         commit connection
         return (P.map typeConverter repoList)
 
+-- | type converter that allows us to extract items from the database as RepoResponse objects
+repoFromSQL :: [SqlValue] -> RepoResponse 
 repoFromSQL [repoID, languages_url, contributors_url] =
     RepoResponse {D.id = fromSql repoID,
             languages_url = fromSql languages_url,
@@ -152,12 +167,16 @@ repoFromSQL [repoID, languages_url, contributors_url] =
     }
 repoFromSQL _ = error $ "error in bytestring conversion"
 
+-- | type converter that allows us to extract items from the database as Contributor objects
+contribFromSQL :: [SqlValue] -> Contributor
 contribFromSQL [repoID, contributors] =
   ContributorTo {D.repoID = fromSql repoID,
           D.contributors = fromSql contributors
   }
 contribFromSQL _ = error $ "error in bytestring conversion"
 
+-- |type converter that allows us to extract items from the database as Language objects
+langFromSQL :: [SqlValue] -> Language
 langFromSQL [repoID, language, lineCount] =
   LanguageTo {D.langRepoID = fromSql repoID,
           D.language = fromSql language,
@@ -165,6 +184,8 @@ langFromSQL [repoID, language, lineCount] =
   }
 langFromSQL _ = error $ "error in bytestring conversion"
 
+-- | type converter that allows us to extract items from the database as TotalCount objects
+totalFromSQL :: [SqlValue] -> TotalCount
 totalFromSQL [language, lineCount, contributors, linesPerContrib] =
   TotalCount {D.totalLanguage = fromSql language,
           D.totalLineCount = fromSql lineCount,
@@ -179,6 +200,9 @@ conrtibFromSQL [repo, lineContribRatio] =
   }
 conrtibFromSQL _ = error $ "error in bytestring conversion"
 
+-- | SQL query that aggregates across all repositories and calculates the total line count and total contributors for each language.
+-- | This also populates the total count table
+fillTotalCount :: IConnection conn => conn -> IO ()
 fillTotalCount connection = do
   run connection
                 "INSERT INTO totalCount (language, lineCount, contributors, \
@@ -201,32 +225,38 @@ fillLinesPerContrib connection = do
                 \ORDER BY lineContribRatio DESC" []
   commit connection
 
+-- | Reads the repoResponses table and encodes 
+repoJSONtoFile :: IConnection conn => conn -> IO ()
 repoJSONtoFile db = do
   repoList <- retrieveDB db "repoResponses" repoFromSQL
   let json = BL.concat $ fmap encodePretty repoList
   BL.writeFile "repos.json" json
   print "output db to: repos.json"
 
+
+-- |  
+contribJSONtoFile :: IConnection conn => conn -> IO ()  
 contribJSONtoFile db = do
   contribList <- retrieveDB db "contributorResponses" contribFromSQL
   let json = BL.concat $ fmap encodePretty contribList
   BL.writeFile "contributors.json" json
   print "output db to: contributor.json"
 
+
+-- |
+langJSONtoFile :: IConnection conn => conn -> IO ()  
 langJSONtoFile db = do
   langList <- retrieveDB db "langResponses" langFromSQL
   let json = BL.concat $ fmap encodePretty langList
   BL.writeFile "languages.json" json
   print "output db to: languages.json"
 
-totalJSONtoFile db = do
-  totalList <- retrieveDB db "totalCount" totalFromSQL
-  let json = BL.concat $ fmap encodePretty totalList
-  BL.writeFile "totalcounts.json" json
-  print "output db to: totalcounts.json"
+-- |  
 
-contriblinesJSONtoFile db = do
-  totalList <- retrieveDB db "linesPerContrib" conrtibFromSQL
+dbTableToJSON db tableName converter = do
+  totalList <- retrieveDB db tableName converter
   let json = BL.concat $ fmap encodePretty totalList
-  BL.writeFile "linesPerContrib.json" json
-  print "output db to: linesPerContrib.json"
+  BL.writeFile (tableName ++ ".json") json
+  print  $ "output db to: " ++ tableName ++ ".json"
+
+
