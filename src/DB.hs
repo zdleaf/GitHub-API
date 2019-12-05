@@ -68,7 +68,7 @@ connectDB connection =
                         \language TEXT NOT NULL UNIQUE,\
                         \lineCount INTEGER NOT NULL,\
                         \contributors INTEGER NOT NULL,\
-                        \lines_per_contrib FLOAT NOT NULL)" []
+                        \linesPerContrib FLOAT NOT NULL)" []
 
         return()
     commit connection
@@ -206,7 +206,7 @@ fillTotalCount :: IConnection conn => conn -> IO ()
 fillTotalCount connection = do
   run connection
                 "INSERT INTO totalCount (language, lineCount, contributors, \
-                \lines_per_contrib) SELECT language, sum(contributors) as \
+                \linesPerContrib) SELECT language, sum(contributors) as \
                 \contributors,   sum(lineCount) as linecounts, \
                 \(sum(lineCount) / sum(contributors)) FROM langResponses \
                 \JOIN contributorResponses ON contributorResponses.repoID = \

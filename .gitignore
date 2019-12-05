@@ -1,5 +1,5 @@
+*.json
 .stack-work/
 *~
 .DS_Store
 github.db
-*.json
