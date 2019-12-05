@@ -11,9 +11,6 @@ import Data.ByteString.Lazy as BL
 
 import Data.Aeson.Encode.Pretty
 
-{- startRepoId = 224238000 :: Integer
-endRepoId = 224239000 :: Integer -}
-
 main :: IO ()
 main = do
     print "initialising db..."

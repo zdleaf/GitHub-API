@@ -1,6 +1,5 @@
 module HTTP
     ( callAPI,
-    --repoAPIUrl,
     callContribURL,
     callLangURL,
     getManyRepos
@@ -20,16 +19,7 @@ import Network.HTTP.Types
 import Data.Aeson.Types
 import System.IO
 
-{-
-parsing many with Aeson:
-https://geekingfrog.com/blog/post/struggles-with-parsing-json-with-aeson
-https://artyom.me/aeson
-
-repoID: 224,238,000
--}
-
 repoAPIBase = "http://api.github.com/repositories?since="
---repoAPIUrl = repoAPIBase ++ show startRepoId
 userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
 token =  C8.pack "token da45c3b3cfa3127bf08e60eff8be3f58aac0923d"
 
