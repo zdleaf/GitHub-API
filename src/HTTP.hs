@@ -8,10 +8,10 @@ module HTTP
 import Parser
 import DataTypes as D
 import DB
-
+import Database.HDBC
+import Database.HDBC.Sqlite3
 import Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Char8 as C8
-
 import Network.HTTP.Simple -- see https://github.com/snoyberg/http-client/blob/master/TUTORIAL.md
 import Network.HTTP.Client.TLS
 import Network.HTTP.Types
@@ -23,7 +23,7 @@ repoAPIBase = "http://api.github.com/repositories?since="
 userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
 token =  C8.pack "token da45c3b3cfa3127bf08e60eff8be3f58aac0923d"
 
--- | callAPI returns JSON data from calling a GitHub API url
+-- | callAPI returns JSON data as a Lazy ByteString from calling a GitHub API URL
 callAPI :: String -> IO BL.ByteString
 callAPI url = do
     initReq <- parseRequest $ url
@@ -34,6 +34,10 @@ callAPI url = do
     --print $ getResponseHeader "Content-Type" response
     --return $ getResponseStatusCode response
 
+-- | As the API only returns 100 repositories at once, getManyRepos recursively calls callAPI for multiple blocks of 100 repositories. 
+-- The function takes a database to write to, and a start repository ID and an end repository ID. 
+-- The API is called via the URL http://api.github.com/repositories?since= where we append a repository ID to receive the 100 repositories since that ID.
+getManyRepos:: IConnection conn => conn -> Integer -> Integer -> IO ()  
 getManyRepos db currentRepoID endRepoID = do
     print $ "getting repos from " ++ (show currentRepoID) ++ " to " ++ (show $ currentRepoID + 100)
     repoResponse <- callAPI $ repoAPIBase ++ (show currentRepoID)
@@ -52,9 +56,6 @@ getManyRepos db currentRepoID endRepoID = do
 removeEitherNum :: Num p => Either a p -> p
 removeEitherNum (Right x) = x
 removeEitherNum _ = 0
-
-test = RepoResponse 999 "https://api.github.com/repos/gr3gburk3/node/languages" "https://api.github.com/repos/Chekist322/android-dagger/contributors"
-
 
 -- | takes a RepoResponse and calls the API on the Contributor URL and returns a tuple of repoID and contributor count
 callContribURL :: RepoResponse -> IO (Integer, Int)

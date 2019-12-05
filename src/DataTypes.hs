@@ -9,15 +9,14 @@ module DataTypes
    Contributor(login, repoID, contributors, ContributorFrom, ContributorTo),
    Language(langRepoID, language, lineCount, LanguageFrom, LanguageTo),
    TotalCount(TotalCount, totalLanguage, totalLineCount, totalContributors, linesPerContrib),
-   ContribRatio(repo, lineContribRatio, ContribRatio)
+   AvgContribLines(repo, avgLinesPerContrib, AvgContribLines)
 ) where
 
 import Data.Aeson
 import GHC.Generics
 import qualified Data.HashMap.Strict as H
 
--- a data type to handle API response for public repos
-
+-- |A data type to handle API response for public repositories
 data RepoResponse = RepoResponse
     {
       id :: Integer, -- github repo id
@@ -26,11 +25,11 @@ data RepoResponse = RepoResponse
     }
     deriving (Show, Generic)
 
--- we do not need to specify details since we're deriving Generic
+-- | no need to specify details since we're deriving Generic
 instance FromJSON RepoResponse
 instance ToJSON RepoResponse
 
-
+-- | A data type for contributors with multiple constructors reflecting different needs when encoding and decoding from JSON 
 data Contributor = 
   ContributorFrom {
     login :: String
@@ -41,8 +40,10 @@ data Contributor =
 
 instance FromJSON Contributor
 instance ToJSON Contributor where
-  toJSON = genericToJSON (defaultOptions { sumEncoding = UntaggedValue }) --remove "tag" in JSON due to multiple constructors
+  -- remove "tag" in JSON due to multiple constructors
+  toJSON = genericToJSON (defaultOptions { sumEncoding = UntaggedValue }) 
 
+-- | A data type for languages with multiple constructors reflecting different needs when encoding and decoding from JSON
 data Language =
   LanguageFrom
   {
@@ -56,8 +57,11 @@ data Language =
 
 instance FromJSON Language
 instance ToJSON Language where
-  toJSON = genericToJSON (defaultOptions { sumEncoding = UntaggedValue }) --remove "tag" in JSON due to multiple constructors
+  -- remove "tag" in JSON due to multiple constructors
+  toJSON = genericToJSON (defaultOptions { sumEncoding = UntaggedValue }) 
 
+
+-- | A data type for extracting our derived table of total counts 
 data TotalCount = TotalCount
   {
     totalLanguage :: String,
@@ -68,10 +72,12 @@ data TotalCount = TotalCount
 
 instance ToJSON TotalCount
 
-data ContribRatio = ContribRatio
+
+-- | A data type for extracting our derived table of lines per contributor
+data AvgContribLines = AvgContribLines
   {
     repo :: String,
-    lineContribRatio :: Double
+    avgLinesPerContrib :: Double
   } deriving (Show, Generic)
 
-instance ToJSON ContribRatio
+instance ToJSON AvgContribLines
