@@ -47,7 +47,7 @@ main = do
     contribJSONtoFile db
     langJSONtoFile db
     totalJSONtoFile db
-
+    contriblinesJSONtoFile db
     P.putStrLn "\ncomplete"
 
     return ()

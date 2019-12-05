@@ -1,133 +1,166 @@
 {
     "totalLineCount": 174,
     "totalContributors": 9686150,
-    "totalLanguage": "JavaScript"
+    "totalLanguage": "JavaScript",
+    "linesPerContrib": 55667
 }{
     "totalLineCount": 184,
     "totalContributors": 6917442,
-    "totalLanguage": "HTML"
+    "totalLanguage": "HTML",
+    "linesPerContrib": 37594
 }{
     "totalLineCount": 32,
     "totalContributors": 4489115,
-    "totalLanguage": "C++"
+    "totalLanguage": "C++",
+    "linesPerContrib": 140284
 }{
     "totalLineCount": 164,
     "totalContributors": 4079730,
-    "totalLanguage": "Python"
+    "totalLanguage": "Python",
+    "linesPerContrib": 24876
 }{
     "totalLineCount": 30,
     "totalContributors": 1934739,
-    "totalLanguage": "C#"
+    "totalLanguage": "C#",
+    "linesPerContrib": 64491
 }{
     "totalLineCount": 30,
     "totalContributors": 1581474,
-    "totalLanguage": "Erlang"
+    "totalLanguage": "Erlang",
+    "linesPerContrib": 52715
 }{
     "totalLineCount": 63,
     "totalContributors": 548580,
-    "totalLanguage": "TypeScript"
+    "totalLanguage": "TypeScript",
+    "linesPerContrib": 8707
 }{
     "totalLineCount": 32,
     "totalContributors": 436209,
-    "totalLanguage": "C"
+    "totalLanguage": "C",
+    "linesPerContrib": 13631
 }{
     "totalLineCount": 70,
     "totalContributors": 370824,
-    "totalLanguage": "Perl"
+    "totalLanguage": "Perl",
+    "linesPerContrib": 5297
 }{
     "totalLineCount": 18,
     "totalContributors": 217351,
-    "totalLanguage": "PHP"
+    "totalLanguage": "PHP",
+    "linesPerContrib": 12075
 }{
     "totalLineCount": 33,
     "totalContributors": 155272,
-    "totalLanguage": "Vue"
+    "totalLanguage": "Vue",
+    "linesPerContrib": 4705
 }{
     "totalLineCount": 103,
     "totalContributors": 152267,
-    "totalLanguage": "CSS"
+    "totalLanguage": "CSS",
+    "linesPerContrib": 1478
 }{
     "totalLineCount": 33,
     "totalContributors": 140846,
-    "totalLanguage": "Jupyter Notebook"
+    "totalLanguage": "Jupyter Notebook",
+    "linesPerContrib": 4268
 }{
     "totalLineCount": 4,
     "totalContributors": 124481,
-    "totalLanguage": "Go"
+    "totalLanguage": "Go",
+    "linesPerContrib": 31120
 }{
     "totalLineCount": 107,
     "totalContributors": 92939,
-    "totalLanguage": "Shell"
+    "totalLanguage": "Shell",
+    "linesPerContrib": 868
 }{
     "totalLineCount": 6,
     "totalContributors": 89681,
-    "totalLanguage": "Java"
+    "totalLanguage": "Java",
+    "linesPerContrib": 14946
 }{
     "totalLineCount": 91,
     "totalContributors": 63080,
-    "totalLanguage": "Makefile"
+    "totalLanguage": "Makefile",
+    "linesPerContrib": 693
 }{
     "totalLineCount": 2,
     "totalContributors": 48400,
-    "totalLanguage": "Kotlin"
+    "totalLanguage": "Kotlin",
+    "linesPerContrib": 24200
 }{
     "totalLineCount": 31,
     "totalContributors": 46886,
-    "totalLanguage": "Rust"
+    "totalLanguage": "Rust",
+    "linesPerContrib": 1512
 }{
     "totalLineCount": 16,
     "totalContributors": 46579,
-    "totalLanguage": "Ruby"
+    "totalLanguage": "Ruby",
+    "linesPerContrib": 2911
 }{
     "totalLineCount": 76,
     "totalContributors": 43809,
-    "totalLanguage": "Batchfile"
+    "totalLanguage": "Batchfile",
+    "linesPerContrib": 576
 }{
     "totalLineCount": 47,
     "totalContributors": 38231,
-    "totalLanguage": "Roff"
+    "totalLanguage": "Roff",
+    "linesPerContrib": 813
 }{
     "totalLineCount": 30,
     "totalContributors": 38095,
-    "totalLanguage": "PowerShell"
+    "totalLanguage": "PowerShell",
+    "linesPerContrib": 1269
 }{
     "totalLineCount": 30,
     "totalContributors": 37661,
-    "totalLanguage": "DTrace"
+    "totalLanguage": "DTrace",
+    "linesPerContrib": 1255
 }{
     "totalLineCount": 12,
     "totalContributors": 31331,
-    "totalLanguage": "CoffeeScript"
+    "totalLanguage": "CoffeeScript",
+    "linesPerContrib": 2610
 }{
     "totalLineCount": 41,
     "totalContributors": 15129,
-    "totalLanguage": "R"
+    "totalLanguage": "R",
+    "linesPerContrib": 369
 }{
     "totalLineCount": 30,
     "totalContributors": 14357,
-    "totalLanguage": "Emacs Lisp"
+    "totalLanguage": "Emacs Lisp",
+    "linesPerContrib": 478
 }{
     "totalLineCount": 22,
     "totalContributors": 10353,
-    "totalLanguage": "Dockerfile"
+    "totalLanguage": "Dockerfile",
+    "linesPerContrib": 470
 }{
     "totalLineCount": 1,
     "totalContributors": 6830,
-    "totalLanguage": "Swift"
+    "totalLanguage": "Swift",
+    "linesPerContrib": 6830
 }{
     "totalLineCount": 30,
     "totalContributors": 5368,
-    "totalLanguage": "M4"
+    "totalLanguage": "M4",
+    "linesPerContrib": 178
 }{
     "totalLineCount": 10,
     "totalContributors": 3096,
-    "totalLanguage": "Smarty"
+    "totalLanguage": "Smarty",
+    "linesPerContrib": 309
 }{
     "totalLineCount": 1,
     "totalContributors": 2914,
-    "totalLanguage": "TSQL"
+    "totalLanguage": "TSQL",
+    "linesPerContrib": 2914
 }{
     "totalLineCount": 1,
     "totalContributors": 494,
-    "totalLanguage": "Mako"
+    "totalLanguage": "Mako",
+    "linesPerContrib": 494
 }

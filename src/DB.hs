@@ -16,7 +16,8 @@ module DB
         repoFromSQL,
         contribJSONtoFile,
         langJSONtoFile,
-        totalJSONtoFile
+        totalJSONtoFile,
+        contriblinesJSONtoFile
         ) where
 
 import DataTypes as D
@@ -67,7 +68,8 @@ connectDB connection =
         run connection "CREATE TABLE totalCount (\
                         \language TEXT NOT NULL UNIQUE,\
                         \lineCount INTEGER NOT NULL,\
-                        \contributors INTEGER NOT NULL)" []
+                        \contributors INTEGER NOT NULL,\
+                        \lines_per_contrib FLOAT NOT NULL)" []
 
         return()
     commit connection
@@ -75,7 +77,7 @@ connectDB connection =
     when (not ("linesPerContrib" `P.elem` tables)) $ do
         run connection "CREATE TABLE linesPerContrib (\
                       \repoID INTEGER NOT NULL PRIMARY KEY,\
-                      \line_contrib_ratio INTEGER)" []
+                      \line_contrib_ratio FLOAT)" []
 
         return()
     -- delete the derived table data as this is updated every run
@@ -139,7 +141,7 @@ addLangMany db _ = do
   return ()
 
 retrieveDB connection table typeConverter = do
-        repoList <- quickQuery connection ("select * from "++table) []
+        repoList <- quickQuery connection ("select * from " ++ table) []
         commit connection
         return (P.map typeConverter repoList)
 
@@ -163,36 +165,41 @@ langFromSQL [repoID, language, lineCount] =
   }
 langFromSQL _ = error $ "error in bytestring conversion"
 
-totalFromSQL [language, lineCount, contributors] =
+totalFromSQL [language, lineCount, contributors, linesPerContrib] =
   TotalCount {D.totalLanguage = fromSql language,
           D.totalLineCount = fromSql lineCount,
-          D.totalContributors = fromSql contributors
+          D.totalContributors = fromSql contributors,
+          D.linesPerContrib = fromSql linesPerContrib
   }
 totalFromSQL _ = error $ "error in bytestring conversion"
 
+conrtibFromSQL [repo, lineContribRatio] =
+  ContribRatio {D.repo = fromSql repo,
+          D.lineContribRatio = fromSql lineContribRatio
+  }
+conrtibFromSQL _ = error $ "error in bytestring conversion"
+
 fillTotalCount connection = do
   run connection
-                "INSERT INTO totalCount (language, lineCount, contributors) \
-                \SELECT language, sum(contributors) as contributors, \
-                \sum(lineCount) as lineCount  FROM langResponses \
-                \JOIN contributorResponses ON contributorResponses.repoID\
-                \ = langResponses.repoID GROUP BY language \
-                \ORDER BY sum(lineCount) DESC" []
-
+                "INSERT INTO totalCount (language, lineCount, contributors, \
+                \lines_per_contrib) SELECT language, sum(contributors) as \
+                \contributors,   sum(lineCount) as linecounts, \
+                \(sum(lineCount) / sum(contributors)) FROM langResponses \
+                \JOIN contributorResponses ON contributorResponses.repoID = \
+                \langResponses.repoID GROUP BY language ORDER BY \
+                \sum(lineCount) DESC" []
   commit connection
-
 
 fillLinesPerContrib connection = do
   run connection
                 "INSERT INTO linesPerContrib (repoID, line_contrib_ratio)\
                 \SELECT lr.repoID,  SUM (lr.lineCount ) / CASE WHEN \
                 \count(cr.contributors) = 0 THEN 1 ELSE count(cr.contributors) \
-                \END as line_contrib_ratio FROM contributorResponses AS cr \
+                \END as lineContribRatio FROM contributorResponses AS cr \
                 \JOIN langResponses as lr on lr.repoID = cr.repoID \
                 \GROUP BY lr.repoID \
-                \ORDER BY line_contrib_ratio DESC" []
+                \ORDER BY lineContribRatio DESC" []
   commit connection
-
 
 repoJSONtoFile db = do
   repoList <- retrieveDB db "repoResponses" repoFromSQL
@@ -217,3 +224,9 @@ totalJSONtoFile db = do
   let json = BL.concat $ fmap encodePretty totalList
   BL.writeFile "totalcounts.json" json
   print "output db to: totalcounts.json"
+
+contriblinesJSONtoFile db = do
+  totalList <- retrieveDB db "linesPerContrib" conrtibFromSQL
+  let json = BL.concat $ fmap encodePretty totalList
+  BL.writeFile "linesPerContrib.json" json
+  print "output db to: linesPerContrib.json"

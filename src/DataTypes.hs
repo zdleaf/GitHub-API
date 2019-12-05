@@ -8,8 +8,8 @@ module DataTypes
    RepoResponse(id, languages_url, contributors_url, RepoResponse),
    Contributor(login, repoID, contributors, ContributorFrom, ContributorTo),
    Language(langRepoID, language, lineCount, LanguageFrom, LanguageTo),
-   TotalCount(TotalCount, totalLanguage, totalLineCount, totalContributors)
-
+   TotalCount(TotalCount, totalLanguage, totalLineCount, totalContributors, linesPerContrib),
+   ContribRatio(repo, lineContribRatio, ContribRatio)
 ) where
 
 import Data.Aeson
@@ -29,7 +29,7 @@ data RepoResponse = RepoResponse
 instance FromJSON RepoResponse
 instance ToJSON RepoResponse
 
-data Contributor = 
+data Contributor =
   ContributorFrom {
     login :: String
   } | ContributorTo {
@@ -41,7 +41,7 @@ instance FromJSON Contributor
 instance ToJSON Contributor where
   toJSON = genericToJSON (defaultOptions { sumEncoding = UntaggedValue }) --remove "tag" in JSON due to multiple constructors
 
-data Language = 
+data Language =
   LanguageFrom
   {
     language  :: String,
@@ -58,9 +58,18 @@ instance ToJSON Language where
 
 data TotalCount = TotalCount
   {
-    totalLanguage :: String, 
+    totalLanguage :: String,
     totalLineCount :: Integer,
-    totalContributors :: Integer
+    totalContributors :: Integer,
+    linesPerContrib :: Double
   } deriving (Show, Generic)
 
 instance ToJSON TotalCount
+
+data ContribRatio = ContribRatio
+  {
+    repo :: String,
+    lineContribRatio :: Double
+  } deriving (Show, Generic)
+
+instance ToJSON ContribRatio
