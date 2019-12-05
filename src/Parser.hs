@@ -18,7 +18,7 @@ import Control.Monad (join)
 
 import qualified Data.HashMap.Strict as HM
 
---|
+--| 
 parseRepoResponse:: ByteString-> IO (Either String [Either String RepoResponse])
 parseRepoResponse response = do
     let decodedJSON = eitherDecode response >>= parseEither parserRepoMany
