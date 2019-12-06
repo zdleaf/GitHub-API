@@ -14,6 +14,8 @@ import DataTypes as D
 import DB
 
 import System.IO
+import Control.Exception (try)
+import Control.Monad (when)
 
 import Database.HDBC
 import Database.HDBC.Sqlite3
@@ -36,11 +38,14 @@ callAPI :: String -> IO BL.ByteString
 callAPI url = do
     initReq <- parseRequest $ url
     let request = setRequestHeaders [(hUserAgent, userAgentBS),(hAuthorization, token)] initReq
-    response <- httpLBS request
-    --Prelude.putStrLn $ "The status code was: " ++ show (getResponseStatusCode response)
-    return $ getResponseBody response -- JSON response data
-    --print $ getResponseHeader "Content-Type" response
-    --return $ getResponseStatusCode response
+    response <- try $ httpLBS request
+    case response of
+        Left e -> print (e :: HttpException)
+        Right response -> return ()
+    return $ getResponseBody (handleAPIException response)
+
+handleAPIException (Left err) = undefined
+handleAPIException (Right response) = response
 
 -- | As the API only returns 100 repositories at once, getManyRepos recursively calls callAPI for multiple blocks of 100 repositories.
 -- The function takes a database to write to, and a start repository ID and an end repository ID.
