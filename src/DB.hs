@@ -73,7 +73,7 @@ connectDB connection =
                         \language TEXT NOT NULL UNIQUE,\
                         \lineCount INTEGER NOT NULL,\
                         \contributors INTEGER NOT NULL,\
-                        \linesPerContrib FLOAT)" []
+                        \linesPerContrib FLOAT NOT NULL)" []
 
         return()
     commit connection
@@ -81,7 +81,7 @@ connectDB connection =
     when (not ("LinesPerContrib" `P.elem` tables)) $ do
         run connection "CREATE TABLE LinesPerContrib (\
                       \repoID INTEGER NOT NULL PRIMARY KEY,\
-                      \avgLinesPerContrib FLOAT" []
+                      \avgLinesPerContrib FLOAT NOT NULL)" []
 
         return()
     -- Delete the derived table data as this is updated every run
@@ -89,7 +89,7 @@ connectDB connection =
     run connection "DELETE FROM LinesPerContrib" []
     commit connection
 
--- | Add RepoResponses to the "repoResponses" table in the Database 
+-- | Add RepoResponses to the "repoResponses" table in the Database
 addRepo:: IConnection conn => conn -> Either a RepoResponse -> IO ()
 addRepo connection (Left err) = return ()
 addRepo connection (Right repoResponse) = handleSql handleError $ do
@@ -157,7 +157,7 @@ addLangList connection (x:xs) = do
 addLangList db _ = do
   return ()
 
--- | Generalised function to retrieve and type convert an entire table from the database. 
+-- | Generalised function to retrieve and type convert an entire table from the database.
 --  Returns a list of a given data type specified by the typeConverter parameter
 retrieveDB:: IConnection conn => conn -> [Char] -> ([SqlValue] -> b) -> IO [b]
 retrieveDB connection table typeConverter = do
@@ -166,7 +166,7 @@ retrieveDB connection table typeConverter = do
         return (P.map typeConverter repoList)
 
 -- | Type converter that allows us to extract items from the database as RepoResponse objects
-repoFromSQL :: [SqlValue] -> RepoResponse 
+repoFromSQL :: [SqlValue] -> RepoResponse
 repoFromSQL [repoID, languages_url, contributors_url] =
     RepoResponse {D.id = fromSql repoID,
             languages_url = fromSql languages_url,
@@ -213,15 +213,15 @@ fillTotalCount :: IConnection conn => conn -> IO ()
 fillTotalCount connection = do
   run connection
                 "INSERT INTO totalCount (language, lineCount, contributors, \
-                \linesPerContrib) SELECT language, sum(contributors) as \
-                \contributors,   sum(lineCount) as lineCount, \
-                \(sum(lineCount) / sum(contributors)) FROM langResponses \
-                \JOIN contributorResponses ON contributorResponses.repoID = \
+                \linesPerContrib) SELECT language, sum(lineCount) as lineCount, \
+                \sum(contributors) as contributors, (sum(lineCount) / \
+                \sum(contributors)) FROM langResponses JOIN \
+                \contributorResponses ON contributorResponses.repoID = \
                 \langResponses.repoID GROUP BY language ORDER BY \
                 \sum(lineCount) DESC" []
   commit connection
 
--- | SQL query that calculates the average number  of lines per contributor for each repository. 
+-- | SQL query that calculates the average number  of lines per contributor for each repository.
 -- | This query then populates the LinesPerContrib table
 fillLinesPerContrib :: IConnection conn => conn -> IO ()
 fillLinesPerContrib connection = do
@@ -235,7 +235,7 @@ fillLinesPerContrib connection = do
                 \ORDER BY LinesPerContrib DESC" []
   commit connection
 
--- | Takes a table name and its conveter (FromSQL), ecncodes the the list then writes it out to a JSON file matching it's table name  
+-- | Takes a table name and its conveter (FromSQL), ecncodes the the list then writes it out to a JSON file matching it's table name
 dbTableToJSON db tableName converter = do
   totalList <- retrieveDB db tableName converter
   let json = BL.concat $ fmap encodePretty totalList
