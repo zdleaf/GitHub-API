@@ -18,10 +18,12 @@ module DB
         langFromSQL,
         totalFromSQL,
         avgContribFromSQL,
-        topThreeLang,
+        topThreeLangPerContrib,
         printTopThreeLang,
         printTopContribs,
-        topFiveContribs
+        topFiveContribs,
+        printtopFiveLinesContribPerRepo,
+        topFiveLinesContribPerRepo
         ) where
 
 import DataTypes as D
@@ -254,14 +256,14 @@ dbTableToJSON db tableName converter = do
 
 -- | Finds 3 repositories with the largest number of lines per contributor
 -- topThreeLang :: IConnection conn => conn -> IO []
-topThreeLang connection = do
+topThreeLangPerContrib connection = do
   topThree <- quickQuery connection "SELECT language, lineCount, contributors, \
                                     \round(linesPerContrib, 2) FROM totalCount\
                                     \ ORDER BY linesPerContrib DESC LIMIT 3" []
   commit connection
-  print "The three repositories with the largest number of lines per \
+  print "The three languages with the largest number of lines per \
         \ contributor are: "
-  (printTopThreeLang (P.map totalFromSQL topThree))
+  printTopThreeLang $ (P.map totalFromSQL topThree)
 
 topFiveContribs connection = do
   topFive <- quickQuery connection "SELECT * FROM contributorResponses\
@@ -270,13 +272,26 @@ topFiveContribs connection = do
   print "The Five repositories with the largest number of contributors are: "
   (printTopContribs (P.map contribFromSQL topFive))
 
+topFiveLinesContribPerRepo connection = do
+  topFive <- quickQuery connection "SELECT * FROM linesPerContrib\
+                                    \ ORDER BY avgLinesPerContrib DESC LIMIT \
+                                    \5" []
+  commit connection
+  print "The Five repositories with the largest number of lines per contributor are: "
+  (printtopFiveLinesContribPerRepo (P.map avgContribFromSQL topFive))
+
 printTopThreeLang (x:xs) = do
   print ((D.totalLanguage x),(D.linesPerContrib x))
   printTopThreeLang xs
 printTopThreeLang _ = return ()
 
 printTopContribs (x:xs) = do
+  print ("repo id", "number of contributors")
   print ((D.repoID x),(D.contributors x))
   printTopContribs xs
 printTopContribs _ = return ()
 
+printtopFiveLinesContribPerRepo (x:xs) = do
+  print ((D.repo x),(D.avgLinesPerContrib x))
+  printtopFiveLinesContribPerRepo xs
+printtopFiveLinesContribPerRepo _ = return ()

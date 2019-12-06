@@ -46,7 +46,8 @@ main = do
     dbTableToJSON db "linesPerContrib" avgContribFromSQL
 
     P.putStrLn "\ncomplete"
-    topThreeLang db
+    topThreeLangPerContrib db
     topFiveContribs db
+    topFiveLinesContribPerRepo db
     return ()
 
