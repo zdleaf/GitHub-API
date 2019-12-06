@@ -13,7 +13,7 @@ module DataTypes
 
 import Data.Aeson
 import GHC.Generics
-import qualified Data.HashMap.Strict as H
+
 
 -- |A data type to handle API response for public repositories
 data RepoResponse = RepoResponse
