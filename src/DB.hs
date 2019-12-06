@@ -273,10 +273,10 @@ topFiveContribs connection = do
 printTopThreeLang (x:xs) = do
   print ((D.totalLanguage x),(D.linesPerContrib x))
   printTopThreeLang xs
-printTopThreeLang _ = print ()
+printTopThreeLang _ = return ()
 
 printTopContribs (x:xs) = do
   print ((D.repoID x),(D.contributors x))
   printTopContribs xs
-printTopContribs _ = print ()
+printTopContribs _ = return ()
 
