@@ -230,7 +230,7 @@ fillLinesPerContrib connection = do
   run connection
                 "INSERT INTO linesPerContrib (repoID, avgLinesPerContrib)\
                 \SELECT lr.repoID,  SUM (1.0*lr.lineCount ) / CASE WHEN \
-                \count(cr.contributors) IN (NULL, 0) THEN 1 ELSE sum(cr.contributors) \
+                \sum(cr.contributors) IN (NULL, 0) THEN 1 ELSE sum(cr.contributors) \
                 \END as LinesPerContrib FROM contributorResponses AS cr \
                 \JOIN langResponses as lr on lr.repoID = cr.repoID \
                 \GROUP BY lr.repoID \
