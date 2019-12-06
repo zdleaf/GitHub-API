@@ -15,7 +15,7 @@ main :: IO ()
 main = do
     print "initialising db..."
     db <- initialiseDB "github.db"
-    
+
     -- get the repository API responses for the repoIDs between the values in the 2nd and 3rd arguments
     -- getManyRepos db StartRepoID EndRepoID
     getManyRepos db 224243400 224243500
@@ -37,7 +37,7 @@ main = do
     P.putStrLn "\nderiving and inserting values for totalCount and linesPerContrib db tables..."
     fillTotalCount db
     fillLinesPerContrib db
- 
+
     P.putStrLn "\ndumping DB to JSON files..."
     dbTableToJSON db "repoResponses" repoFromSQL
     dbTableToJSON db "contributorResponses" contribFromSQL
@@ -46,6 +46,6 @@ main = do
     dbTableToJSON db "linesPerContrib" avgContribFromSQL
 
     P.putStrLn "\ncomplete"
-
+    topThreeLang db
     return ()
 

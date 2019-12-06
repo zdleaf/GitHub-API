@@ -17,7 +17,9 @@ module DB
         contribFromSQL,
         langFromSQL,
         totalFromSQL,
-        avgContribFromSQL
+        avgContribFromSQL,
+        topThreeLang,
+        printTopThreeLang
         ) where
 
 import DataTypes as D
@@ -247,4 +249,19 @@ dbTableToJSON db tableName converter = do
   BL.writeFile (tableName ++ ".json") json
   print  $ "output db to: " ++ tableName ++ ".json"
 
+
+-- | Finds 3 repositories with the largest number of lines per contributor
+-- topThreeLang :: IConnection conn => conn -> IO []
+topThreeLang connection = do
+  topThree <- quickQuery connection "SELECT * FROM totalCount ORDER BY \
+                                    \linesPerContrib DESC LIMIT 3" []
+  commit connection
+  print "The three repositories with the largest number of lines per \
+        \ contributor are: "
+  (printTopThreeLang (P.map totalFromSQL topThree))
+
+printTopThreeLang (x:xs) = do
+  print ((D.totalLanguage x),(D.linesPerContrib x))
+  printTopThreeLang xs
+printTopThreeLang _ = print ("")
 
