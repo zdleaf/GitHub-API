@@ -17,7 +17,13 @@ module DB
         contribFromSQL,
         langFromSQL,
         totalFromSQL,
-        avgContribFromSQL
+        avgContribFromSQL,
+        topThreeLangPerContrib,
+        printTopThreeLang,
+        printTopContribs,
+        topFiveContribs,
+        printtopFiveLinesContribPerRepo,
+        topFiveLinesContribPerRepo
         ) where
 
 import DataTypes as D
@@ -31,6 +37,8 @@ import Database.HDBC.Sqlite3
 
 import Data.ByteString.Lazy as BL
 import Data.Aeson.Encode.Pretty
+
+import Data.Aeson.Types
 
 -- | Initialise the database with a given path name
 initialiseDB :: FilePath -> IO Connection
@@ -242,6 +250,7 @@ fillLinesPerContrib connection = do
   commit connection
 
 -- | Takes a table name and its conveter (FromSQL), ecncodes the the list then writes it out to a JSON file matching it's table name
+dbTableToJSON :: (IConnection conn, ToJSON b )=> conn -> [Char] -> ([SqlValue] -> b) -> IO ()
 dbTableToJSON db tableName converter = do
   totalList <- retrieveDB db tableName converter
   let json = BL.concat $ fmap encodePretty totalList
@@ -249,3 +258,44 @@ dbTableToJSON db tableName converter = do
   print  $ "output db to: " ++ tableName ++ ".json"
 
 
+-- | Finds 3 repositories with the largest number of lines per contributor
+-- topThreeLang :: IConnection conn => conn -> IO []
+topThreeLangPerContrib connection = do
+  topThree <- quickQuery connection "SELECT language, lineCount, contributors, \
+                                    \round(linesPerContrib, 2) FROM totalCount\
+                                    \ ORDER BY linesPerContrib DESC LIMIT 3" []
+  commit connection
+  print "The three languages with the largest number of lines per \
+        \ contributor are: "
+  printTopThreeLang $ (P.map totalFromSQL topThree)
+
+topFiveContribs connection = do
+  topFive <- quickQuery connection "SELECT * FROM contributorResponses\
+                                    \ ORDER BY contributors DESC LIMIT 5" []
+  commit connection
+  print "The Five repositories with the largest number of contributors are: "
+  (printTopContribs (P.map contribFromSQL topFive))
+
+topFiveLinesContribPerRepo connection = do
+  topFive <- quickQuery connection "SELECT * FROM linesPerContrib\
+                                    \ ORDER BY avgLinesPerContrib DESC LIMIT \
+                                    \5" []
+  commit connection
+  print "The Five repositories with the largest number of lines per contributor are: "
+  (printtopFiveLinesContribPerRepo (P.map avgContribFromSQL topFive))
+
+printTopThreeLang (x:xs) = do
+  print ((D.totalLanguage x),(D.linesPerContrib x))
+  printTopThreeLang xs
+printTopThreeLang _ = return ()
+
+printTopContribs (x:xs) = do
+  print ("repo id", "number of contributors")
+  print ((D.repoID x),(D.contributors x))
+  printTopContribs xs
+printTopContribs _ = return ()
+
+printtopFiveLinesContribPerRepo (x:xs) = do
+  print ((D.repo x),(D.avgLinesPerContrib x))
+  printtopFiveLinesContribPerRepo xs
+printtopFiveLinesContribPerRepo _ = return ()

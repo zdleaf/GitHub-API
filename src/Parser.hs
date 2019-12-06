@@ -1,9 +1,13 @@
+-- | Parsing Operations
 module Parser
     ( parseRepoResponse,
       parserRepo,
       parseContribResponse,
       parserContribs,
       parseLangResponse,
+      parserLanguages,
+      parserContribsMany,
+      parserRepoMany
     ) where
 
 import DataTypes
