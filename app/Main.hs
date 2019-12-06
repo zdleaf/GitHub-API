@@ -47,5 +47,6 @@ main = do
 
     P.putStrLn "\ncomplete"
     topThreeLang db
+    topFiveContribs db
     return ()
 

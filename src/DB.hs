@@ -19,7 +19,9 @@ module DB
         totalFromSQL,
         avgContribFromSQL,
         topThreeLang,
-        printTopThreeLang
+        printTopThreeLang,
+        printTopContribs,
+        topFiveContribs
         ) where
 
 import DataTypes as D
@@ -253,15 +255,28 @@ dbTableToJSON db tableName converter = do
 -- | Finds 3 repositories with the largest number of lines per contributor
 -- topThreeLang :: IConnection conn => conn -> IO []
 topThreeLang connection = do
-  topThree <- quickQuery connection "SELECT * FROM totalCount ORDER BY \
-                                    \linesPerContrib DESC LIMIT 3" []
+  topThree <- quickQuery connection "SELECT language, lineCount, contributors, \
+                                    \round(linesPerContrib, 2) FROM totalCount\
+                                    \ ORDER BY linesPerContrib DESC LIMIT 3" []
   commit connection
   print "The three repositories with the largest number of lines per \
         \ contributor are: "
   (printTopThreeLang (P.map totalFromSQL topThree))
 
+topFiveContribs connection = do
+  topFive <- quickQuery connection "SELECT * FROM contributorResponses\
+                                    \ ORDER BY contributors DESC LIMIT 5" []
+  commit connection
+  print "The Five repositories with the largest number of contributors are: "
+  (printTopContribs (P.map contribFromSQL topFive))
+
 printTopThreeLang (x:xs) = do
   print ((D.totalLanguage x),(D.linesPerContrib x))
   printTopThreeLang xs
-printTopThreeLang _ = print ("")
+printTopThreeLang _ = print ()
+
+printTopContribs (x:xs) = do
+  print ((D.repoID x),(D.contributors x))
+  printTopContribs xs
+printTopContribs _ = print ()
 
