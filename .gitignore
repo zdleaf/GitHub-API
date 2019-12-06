@@ -1,4 +1,5 @@
 *.json
+!example-API-calls/*.json
 .stack-work/
 *~
 .DS_Store

@@ -2,7 +2,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DuplicateRecordFields #-}
 
-
 module DataTypes
 (
    RepoResponse(id, languages_url, contributors_url, RepoResponse),
@@ -14,7 +13,7 @@ module DataTypes
 
 import Data.Aeson
 import GHC.Generics
-import qualified Data.HashMap.Strict as H
+
 
 -- |A data type to handle API response for public repositories
 data RepoResponse = RepoResponse
@@ -43,7 +42,7 @@ instance ToJSON Contributor where
   -- remove "tag" in JSON due to multiple constructors
   toJSON = genericToJSON (defaultOptions { sumEncoding = UntaggedValue }) 
 
--- | A data type for Languages with multiple constructors reflecting different needs when encoding and decoding from JSON
+-- | A data type for languages with multiple constructors reflecting different needs when encoding and decoding from JSON
 data Language =
   LanguageFrom
   {

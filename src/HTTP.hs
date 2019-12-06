@@ -8,16 +8,19 @@ module HTTP
 import Parser
 import DataTypes as D
 import DB
+
+import System.IO
+
 import Database.HDBC
 import Database.HDBC.Sqlite3
+
+import Data.Aeson.Types
 import Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Char8 as C8
+
 import Network.HTTP.Simple -- see https://github.com/snoyberg/http-client/blob/master/TUTORIAL.md
 import Network.HTTP.Client.TLS
 import Network.HTTP.Types
-
-import Data.Aeson.Types
-import System.IO
 
 repoAPIBase = "http://api.github.com/repositories?since="
 userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
@@ -39,7 +42,7 @@ callAPI url = do
 -- The API is called via the URL http://api.github.com/repositories?since= where we append a repository ID to receive the 100 repositories since that ID.
 getManyRepos:: IConnection conn => conn -> Integer -> Integer -> IO ()  
 getManyRepos db currentRepoID endRepoID = do
-    print $ "getting repos from " ++ (show currentRepoID) ++ " to " ++ (show $ currentRepoID + 100)
+    print $ "getting repos from " ++ (show currentRepoID) ++ " to " ++ (show $ currentRepoID + 99)
     repoResponse <- callAPI $ repoAPIBase ++ (show currentRepoID)
     print $ "length of response: " ++ (show $ BL.length repoResponse)
     print "parsing JSON..."
@@ -48,7 +51,7 @@ getManyRepos db currentRepoID endRepoID = do
     addRepoMany db $ extractResp repoParsed
     -- run again until we reach the endRepoId
     let nextVal = currentRepoID + 100
-    if nextVal <= endRepoID 
+    if nextVal < endRepoID 
         then getManyRepos db nextVal endRepoID
         else print "completed calling all requested repos"
     

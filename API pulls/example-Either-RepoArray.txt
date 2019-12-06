@@ -1,7 +1,0 @@
-Right 
-[    
-Left "Error", 
-Right (Reporesponse {id = 224238003, languages_url = "https://api.github.com/repos/nwillouis/GithubCC2019/languages", contributors_url = "https://api.github.com/repos/nwillouis/GithubCC2019/contributors"}), 
-Right (Reporesponse {id = 224238008, languages_url = "https://api.github.com/repos/gr3gburk3/node/languages", contributors_url = "https://api.github.com/repos/gr3gburk3/node/contributors"}), 
-Right (Reporesponse {id = 224238010, languages_url = "https://api.github.com/repos/oldcarremoval/oldcarremoval/languages", contributors_url = "https://api.github.com/repos/oldcarremoval/oldcarremoval/contributors"})
-]
