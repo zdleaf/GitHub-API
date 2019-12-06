@@ -18,7 +18,7 @@ main = do
 
     -- get the repository API responses for the repoIDs between the values in the 2nd and 3rd arguments
     -- getManyRepos db StartRepoID EndRepoID
-    getManyRepos db 224240000 224241500
+    getManyRepos db 224240000 224240100
 
     repoList <- retrieveDB db "repoResponses" repoFromSQL
 
@@ -33,6 +33,8 @@ main = do
 
     P.putStrLn "\nadding languages to db..."
     sequence_ $ fmap (addLangList db) langResp
+
+    P.putStrLn "\nderiving and inserting values for totalCount and linesPerContrib db tables..."
     fillTotalCount db
     fillLinesPerContrib db
 

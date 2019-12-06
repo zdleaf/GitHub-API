@@ -47,7 +47,7 @@ connectDB connection =
       run connection "CREATE TABLE repoResponses(\
                       \repoID INTEGER NOT NULL PRIMARY KEY,\
                       \languageURL TEXT NOT NULL UNIQUE,\
-                      \contributorsURL Text Not NULL UNIQUE)" []
+                      \contributorsURL Text NOT NULL UNIQUE)" []
       return ()
     commit connection
 
@@ -71,8 +71,8 @@ connectDB connection =
     when (not ("totalCount" `P.elem` tables)) $ do
         run connection "CREATE TABLE totalCount (\
                         \language TEXT NOT NULL UNIQUE,\
-                        \lineCount INTEGER,\
-                        \contributors INTEGER,\
+                        \lineCount INTEGER NOT NULL,\
+                        \contributors INTEGER NOT NULL,\
                         \linesPerContrib FLOAT)" []
 
         return()
@@ -81,7 +81,7 @@ connectDB connection =
     when (not ("LinesPerContrib" `P.elem` tables)) $ do
         run connection "CREATE TABLE LinesPerContrib (\
                       \repoID INTEGER NOT NULL PRIMARY KEY,\
-                      \avgLinesPerContrib FLOAT)" []
+                      \avgLinesPerContrib FLOAT" []
 
         return()
     -- Delete the derived table data as this is updated every run
@@ -214,7 +214,7 @@ fillTotalCount connection = do
   run connection
                 "INSERT INTO totalCount (language, lineCount, contributors, \
                 \linesPerContrib) SELECT language, sum(contributors) as \
-                \contributors,   sum(lineCount) as linecounts, \
+                \contributors,   sum(lineCount) as lineCount, \
                 \(sum(lineCount) / sum(contributors)) FROM langResponses \
                 \JOIN contributorResponses ON contributorResponses.repoID = \
                 \langResponses.repoID GROUP BY language ORDER BY \

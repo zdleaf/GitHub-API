@@ -42,7 +42,7 @@ callAPI url = do
 -- The API is called via the URL http://api.github.com/repositories?since= where we append a repository ID to receive the 100 repositories since that ID.
 getManyRepos:: IConnection conn => conn -> Integer -> Integer -> IO ()  
 getManyRepos db currentRepoID endRepoID = do
-    print $ "getting repos from " ++ (show currentRepoID) ++ " to " ++ (show $ currentRepoID + 100)
+    print $ "getting repos from " ++ (show currentRepoID) ++ " to " ++ (show $ currentRepoID + 99)
     repoResponse <- callAPI $ repoAPIBase ++ (show currentRepoID)
     print $ "length of response: " ++ (show $ BL.length repoResponse)
     print "parsing JSON..."
@@ -51,7 +51,7 @@ getManyRepos db currentRepoID endRepoID = do
     addRepoMany db $ extractResp repoParsed
     -- run again until we reach the endRepoId
     let nextVal = currentRepoID + 100
-    if nextVal <= endRepoID 
+    if nextVal < endRepoID 
         then getManyRepos db nextVal endRepoID
         else print "completed calling all requested repos"
     
