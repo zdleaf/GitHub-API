@@ -43,7 +43,7 @@ instance ToJSON Contributor where
   -- remove "tag" in JSON due to multiple constructors
   toJSON = genericToJSON (defaultOptions { sumEncoding = UntaggedValue }) 
 
--- | A data type for languages with multiple constructors reflecting different needs when encoding and decoding from JSON
+-- | A data type for Languages with multiple constructors reflecting different needs when encoding and decoding from JSON
 data Language =
   LanguageFrom
   {
