@@ -32,6 +32,8 @@ import Database.HDBC.Sqlite3
 import Data.ByteString.Lazy as BL
 import Data.Aeson.Encode.Pretty
 
+import Data.Aeson.Types
+
 -- | Initialise the database with a given path name
 initialiseDB :: FilePath -> IO Connection
 initialiseDB dbname = do
@@ -238,6 +240,7 @@ fillLinesPerContrib connection = do
   commit connection
 
 -- | Takes a table name and its conveter (FromSQL), ecncodes the the list then writes it out to a JSON file matching it's table name
+dbTableToJSON :: (IConnection conn, ToJSON b )=> conn -> [Char] -> ([SqlValue] -> b) -> IO ()
 dbTableToJSON db tableName converter = do
   totalList <- retrieveDB db tableName converter
   let json = BL.concat $ fmap encodePretty totalList

@@ -1,8 +1,12 @@
+-- | HTTP Operations
+
 module HTTP
     ( callAPI,
     callContribURL,
     callLangURL,
-    getManyRepos
+    getManyRepos,
+    removeEitherNum,
+    splitLangResp
     ) where
 
 import Parser

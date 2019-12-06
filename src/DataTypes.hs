@@ -2,6 +2,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DuplicateRecordFields #-}
 
+-- | Data type declarations
+
 module DataTypes
 (
    RepoResponse(id, languages_url, contributors_url, RepoResponse),
