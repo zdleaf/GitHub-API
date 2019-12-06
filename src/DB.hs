@@ -73,20 +73,20 @@ connectDB connection =
                         \language TEXT NOT NULL UNIQUE,\
                         \lineCount INTEGER NOT NULL,\
                         \contributors INTEGER NOT NULL,\
-                        \linesPerContrib FLOAT NOT NULL)" []
+                        \linesPerContrib REAL NOT NULL)" []
 
         return()
     commit connection
 
-    when (not ("LinesPerContrib" `P.elem` tables)) $ do
-        run connection "CREATE TABLE LinesPerContrib (\
+    when (not ("linesPerContrib" `P.elem` tables)) $ do
+        run connection "CREATE TABLE linesPerContrib (\
                       \repoID INTEGER NOT NULL PRIMARY KEY,\
-                      \avgLinesPerContrib FLOAT NOT NULL)" []
+                      \avgLinesPerContrib REAL)" []
 
         return()
     -- Delete data from the the derived tables as this is updated every run
     run connection "DELETE FROM totalCount" []
-    run connection "DELETE FROM LinesPerContrib" []
+    run connection "DELETE FROM linesPerContrib" []
     commit connection
 
 -- | Add RepoResponses to the "repoResponses" table in the Database
@@ -212,13 +212,14 @@ conrtibFromSQL _ = error $ "error in bytestring conversion"
 fillTotalCount :: IConnection conn => conn -> IO ()
 fillTotalCount connection = do
   run connection
-                "INSERT INTO totalCount (language, lineCount, contributors, \
-                \linesPerContrib) SELECT language, sum(lineCount) as lineCount, \
-                \sum(contributors) as contributors, (sum(lineCount) / \
-                \sum(contributors)) FROM langResponses JOIN \
-                \contributorResponses ON contributorResponses.repoID = \
+                "INSERT INTO totalCount (language, lineCount, contributors,\
+                \linesPerContrib) SELECT language, sum(lineCount), \
+                \sum(contributors),  (1.0*sum(lineCount) / CASE WHEN \
+                \sum(cr.contributors) in (NULL, 0) THEN 1 ELSE \
+                \sum(cr.contributors) END ) as linesPerContrib FROM \
+                \langResponses JOIN contributorResponses cr ON cr.repoID = \
                 \langResponses.repoID GROUP BY language ORDER BY \
-                \sum(lineCount) DESC" []
+                \ sum(lineCount) DESC" []
   commit connection
 
 -- | SQL query that calculates the average number  of lines per contributor for each repository.
@@ -226,9 +227,9 @@ fillTotalCount connection = do
 fillLinesPerContrib :: IConnection conn => conn -> IO ()
 fillLinesPerContrib connection = do
   run connection
-                "INSERT INTO LinesPerContrib (repoID, avgLinesPerContrib)\
-                \SELECT lr.repoID,  SUM (lr.lineCount ) / CASE WHEN \
-                \count(cr.contributors) = 0 THEN 1 ELSE count(cr.contributors) \
+                "INSERT INTO linesPerContrib (repoID, avgLinesPerContrib)\
+                \SELECT lr.repoID,  SUM (1.0*lr.lineCount ) / CASE WHEN \
+                \count(cr.contributors) = 0 THEN 1 ELSE sum(cr.contributors) \
                 \END as LinesPerContrib FROM contributorResponses AS cr \
                 \JOIN langResponses as lr on lr.repoID = cr.repoID \
                 \GROUP BY lr.repoID \

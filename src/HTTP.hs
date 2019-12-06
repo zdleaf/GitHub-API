@@ -24,7 +24,7 @@ import Network.HTTP.Types
 
 repoAPIBase = "http://api.github.com/repositories?since="
 userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
-token =  C8.pack "token da45c3b3cfa3127bf08e60eff8be3f58aac0923d"
+token =  C8.pack "token 5be20b79c05ba422ca80377c1b759e9f99d5d335"
 
 -- | callAPI returns JSON data as a Lazy ByteString from calling a GitHub API URL
 callAPI :: String -> IO BL.ByteString
@@ -37,10 +37,10 @@ callAPI url = do
     --print $ getResponseHeader "Content-Type" response
     --return $ getResponseStatusCode response
 
--- | As the API only returns 100 repositories at once, getManyRepos recursively calls callAPI for multiple blocks of 100 repositories. 
--- The function takes a database to write to, and a start repository ID and an end repository ID. 
+-- | As the API only returns 100 repositories at once, getManyRepos recursively calls callAPI for multiple blocks of 100 repositories.
+-- The function takes a database to write to, and a start repository ID and an end repository ID.
 -- The API is called via the URL http://api.github.com/repositories?since= where we append a repository ID to receive the 100 repositories since that ID.
-getManyRepos:: IConnection conn => conn -> Integer -> Integer -> IO ()  
+getManyRepos:: IConnection conn => conn -> Integer -> Integer -> IO ()
 getManyRepos db currentRepoID endRepoID = do
     print $ "getting repos from " ++ (show currentRepoID) ++ " to " ++ (show $ currentRepoID + 99)
     repoResponse <- callAPI $ repoAPIBase ++ (show currentRepoID)
@@ -51,10 +51,10 @@ getManyRepos db currentRepoID endRepoID = do
     addRepoMany db $ extractResp repoParsed
     -- run again until we reach the endRepoId
     let nextVal = currentRepoID + 100
-    if nextVal < endRepoID 
+    if nextVal < endRepoID
         then getManyRepos db nextVal endRepoID
         else print "completed calling all requested repos"
-    
+
 -- | Error handling for callContribURL as parseContribResponse returns Either
 removeEitherNum :: Num p => Either a p -> p
 removeEitherNum (Right x) = x
@@ -83,7 +83,7 @@ callLangURL reporesponse = do
 
 
 -- | Error handling for callLangURL when parseLangResponse is called as it returns an Either[]
-splitLangResp :: t -> Either a [Language] -> [(t, String, Integer)]    
+splitLangResp :: t -> Either a [Language] -> [(t, String, Integer)]
 splitLangResp id (Right []) = []
 splitLangResp id (Right (x:xs)) = (id, D.language x, D.lineCount x):splitLangResp id (Right xs)
 splitLangResp id _ = []
