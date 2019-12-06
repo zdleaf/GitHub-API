@@ -43,6 +43,11 @@ callAPI url = do
 handleAPIException (Left err) = undefined
 handleAPIException (Right response) = response
 
+{- import Control.Monad
+main = do s <- getLine
+          when (s == "foo") $ putStr "You entered foo" -}
+
+
 -- | As the API only returns 100 repositories at once, getManyRepos recursively calls callAPI for multiple blocks of 100 repositories.
 -- The function takes a database to write to, and a start repository ID and an end repository ID.
 -- The API is called via the URL http://api.github.com/repositories?since= where we append a repository ID to receive the 100 repositories since that ID.

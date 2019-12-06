@@ -165,7 +165,11 @@ retrieveDB connection table typeConverter = do
         repoList <- quickQuery connection ("select * from " ++ table) []
         commit connection
         return (P.map typeConverter repoList)
+{- 
 
+        SQL CONVERTERS
+
+         -}
 -- | Type converter that allows us to extract items from the database as RepoResponse objects
 repoFromSQL :: [SqlValue] -> RepoResponse
 repoFromSQL [repoID, languages_url, contributors_url] =
