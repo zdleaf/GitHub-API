@@ -84,7 +84,7 @@ connectDB connection =
                       \avgLinesPerContrib FLOAT NOT NULL)" []
 
         return()
-    -- Delete the derived table data as this is updated every run
+    -- Delete data from the the derived tables as this is updated every run
     run connection "DELETE FROM totalCount" []
     run connection "DELETE FROM LinesPerContrib" []
     commit connection
