@@ -43,6 +43,7 @@ main = do
     dbTableToJSON db "contributorResponses" contribFromSQL
     dbTableToJSON db "langResponses" langFromSQL
     dbTableToJSON db "totalCount" totalFromSQL
+    dbTableToJSON db "linesPerContrib" avgContribFromSQL
 
     P.putStrLn "\ncomplete"
 

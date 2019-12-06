@@ -16,7 +16,8 @@ module DB
         repoFromSQL,
         contribFromSQL,
         langFromSQL,
-        totalFromSQL
+        totalFromSQL,
+        avgContribFromSQL
         ) where
 
 import DataTypes as D
@@ -201,11 +202,11 @@ totalFromSQL [language, lineCount, contributors, linesPerContrib] =
   }
 totalFromSQL _ = error $ "error in bytestring conversion"
 
-conrtibFromSQL [repo, avgLinesPerContrib] =
+avgContribFromSQL [repo, avgLinesPerContrib] =
   AvgContribLines {D.repo = fromSql repo,
           D.avgLinesPerContrib = fromSql avgLinesPerContrib
   }
-conrtibFromSQL _ = error $ "error in bytestring conversion"
+avgContribFromSQL _ = error $ "error in bytestring conversion"
 
 -- | SQL query that aggregates across all repositories and calculates the total line count and total contributors for each language.
 --  This also populates the total count table
@@ -215,7 +216,7 @@ fillTotalCount connection = do
                 "INSERT INTO totalCount (language, lineCount, contributors,\
                 \linesPerContrib) SELECT language, sum(lineCount), \
                 \sum(contributors),  (1.0*sum(lineCount) / CASE WHEN \
-                \sum(cr.contributors) in (NULL, 0) THEN 1 ELSE \
+                \sum(cr.contributors) IN (NULL, 0) THEN 1 ELSE \
                 \sum(cr.contributors) END ) as linesPerContrib FROM \
                 \langResponses JOIN contributorResponses cr ON cr.repoID = \
                 \langResponses.repoID GROUP BY language ORDER BY \
@@ -229,7 +230,7 @@ fillLinesPerContrib connection = do
   run connection
                 "INSERT INTO linesPerContrib (repoID, avgLinesPerContrib)\
                 \SELECT lr.repoID,  SUM (1.0*lr.lineCount ) / CASE WHEN \
-                \count(cr.contributors) = 0 THEN 1 ELSE sum(cr.contributors) \
+                \count(cr.contributors) IN (NULL, 0) THEN 1 ELSE sum(cr.contributors) \
                 \END as LinesPerContrib FROM contributorResponses AS cr \
                 \JOIN langResponses as lr on lr.repoID = cr.repoID \
                 \GROUP BY lr.repoID \

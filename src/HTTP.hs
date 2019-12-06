@@ -25,6 +25,7 @@ import Network.HTTP.Types
 repoAPIBase = "http://api.github.com/repositories?since="
 userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
 token =  C8.pack "token 5be20b79c05ba422ca80377c1b759e9f99d5d335"
+-- alternative token da45c3b3cfa3127bf08e60eff8be3f58aac0923d
 
 -- | callAPI returns JSON data as a Lazy ByteString from calling a GitHub API URL
 callAPI :: String -> IO BL.ByteString
