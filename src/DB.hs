@@ -20,7 +20,10 @@ module DB
         avgContribFromSQL,
         topFiveLangs,
         topFiveContribs,
-        topLinesPerContrib
+        topLinesPerContrib,
+        printResults,
+        printContribResults,
+        printAvgLPCResults
         ) where
 
 import DataTypes as D
