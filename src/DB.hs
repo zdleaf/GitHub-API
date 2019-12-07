@@ -211,6 +211,7 @@ totalFromSQL [language, lineCount, contributors, linesPerContrib] =
   }
 totalFromSQL _ = error $ "error in bytestring conversion"
 
+-- | Type converter that allows us to extract items from the database as AvgContribLines objects
 avgContribFromSQL [repo, avgLinesPerContrib] =
   AvgContribLines {D.repo = fromSql repo,
           D.avgLinesPerContrib = fromSql avgLinesPerContrib
