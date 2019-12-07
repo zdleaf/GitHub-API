@@ -56,7 +56,7 @@ getManyRepos db currentRepoID endRepoID = do
             print (e :: HttpException)
             if nextVal < endRepoID
                 then getManyRepos db nextVal endRepoID
-                else return ()
+                else print "completed calling all requested repos"
         Right response -> do
             let responseBody = getResponseBody response
             print $ "length of response: " ++ (show $ BL.length responseBody)
@@ -64,15 +64,11 @@ getManyRepos db currentRepoID endRepoID = do
             repoParsed <- parseRepoResponse responseBody
             print "adding repos to DB..."
             addRepoMany db $ extractResp repoParsed
+            -- run again until we reach the endRepoId
             if nextVal < endRepoID
                 then getManyRepos db nextVal endRepoID
                 else print "completed calling all requested repos"
-    -- run again until we reach the endRepoId
     
-    if nextVal < endRepoID
-        then getManyRepos db nextVal endRepoID
-        else print "completed calling all requested repos"
-
 -- | Error handling for callContribURL as parseContribResponse returns Either
 removeEitherNum :: Num p => Either a p -> p
 removeEitherNum (Right x) = x

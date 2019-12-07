@@ -18,7 +18,7 @@ main = do
 
     -- get the repository API responses for the repoIDs between the values in the 2nd and 3rd arguments
     -- getManyRepos db StartRepoID EndRepoID
-    --getManyRepos db 224244000 224244100
+    getManyRepos db 224244000 224244100
 
     repoList <- retrieveDB db "repoResponses" repoFromSQL
 
