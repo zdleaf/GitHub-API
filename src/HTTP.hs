@@ -33,6 +33,8 @@ userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
 token =  C8.pack "token 5be20b79c05ba422ca80377c1b759e9f99d5d335"
 -- alternative token da45c3b3cfa3127bf08e60eff8be3f58aac0923d
 
+-- test timeout: http://httpstat.us/504?sleep=60000
+
 -- | callAPI returns JSON data as a Lazy ByteString from calling a GitHub API URL
 callAPI :: String -> IO BL.ByteString
 callAPI url = do
@@ -44,7 +46,7 @@ callAPI url = do
         Right response -> return ()
     return $ getResponseBody (handleAPIException response)
 
-handleAPIException (Left err) = undefined
+handleAPIException (Left err) = undefined -- BL.pack " " --empty ByteString
 handleAPIException (Right response) = response
 
 {- import Control.Monad

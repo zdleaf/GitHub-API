@@ -265,7 +265,7 @@ topThreeLangPerContrib connection = do
                                     \round(linesPerContrib, 2) FROM totalCount\
                                     \ ORDER BY linesPerContrib DESC LIMIT 3" []
   commit connection
-  print "The three languages with the largest number of lines per \
+  print "\nThe three languages with the largest number of lines per \
         \ contributor are: "
   printTopThreeLang $ (P.map totalFromSQL topThree)
 
@@ -273,7 +273,7 @@ topFiveContribs connection = do
   topFive <- quickQuery connection "SELECT * FROM contributorResponses\
                                     \ ORDER BY contributors DESC LIMIT 5" []
   commit connection
-  print "The Five repositories with the largest number of contributors are: "
+  print "\nThe five repositories with the largest number of contributors are: "
   (printTopContribs (P.map contribFromSQL topFive))
 
 topFiveLinesContribPerRepo connection = do
@@ -281,7 +281,7 @@ topFiveLinesContribPerRepo connection = do
                                     \ ORDER BY avgLinesPerContrib DESC LIMIT \
                                     \5" []
   commit connection
-  print "The Five repositories with the largest number of lines per contributor are: "
+  print "\nThe five repositories with the largest number of lines per contributor are: "
   (printtopFiveLinesContribPerRepo (P.map avgContribFromSQL topFive))
 
 printTopThreeLang (x:xs) = do
@@ -290,7 +290,7 @@ printTopThreeLang (x:xs) = do
 printTopThreeLang _ = return ()
 
 printTopContribs (x:xs) = do
-  print ("repo id", "number of contributors")
+  --print ("repo id", "number of contributors")
   print ((D.repoID x),(D.contributors x))
   printTopContribs xs
 printTopContribs _ = return ()
