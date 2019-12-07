@@ -3,4 +3,4 @@
 .stack-work/
 *~
 .DS_Store
-github.db
+github.db*

@@ -16,9 +16,10 @@ main = do
     print "initialising db..."
     db <- initialiseDB "github.db"
 
-    -- get the repository API responses for the repoIDs between the values in the 2nd and 3rd arguments
-    -- getManyRepos db StartRepoID EndRepoID
-    getManyRepos db 224244000 224244100
+    let startRepoID = 224244000
+    let endRepoID   = 224244100
+
+    getManyRepos db startRepoID endRepoID
 
     repoList <- retrieveDB db "repoResponses" repoFromSQL
 
