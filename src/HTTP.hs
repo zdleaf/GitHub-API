@@ -49,13 +49,13 @@ callAPI url = do
 getManyRepos:: IConnection conn => conn -> Integer -> Integer -> IO ()
 getManyRepos db currentRepoID endRepoID = do
     print $ "getting repos from " ++ (show currentRepoID) ++ " to " ++ (show $ currentRepoID + 99)
-    let nextVal = currentRepoID + 100
+    let nextRepoID = currentRepoID + 100
     eitherResponse <- callAPI $ repoAPIBase ++ (show currentRepoID)
     case eitherResponse of
         Left e -> do
             print (e :: HttpException)
-            if nextVal < endRepoID
-                then getManyRepos db nextVal endRepoID
+            if nextRepoID < endRepoID
+                then getManyRepos db nextRepoID endRepoID
                 else print "completed calling all requested repos"
         Right response -> do
             let responseBody = getResponseBody response
@@ -64,9 +64,8 @@ getManyRepos db currentRepoID endRepoID = do
             repoParsed <- parseRepoResponse responseBody
             print "adding repos to DB..."
             addRepoMany db $ extractResp repoParsed
-            -- run again until we reach the endRepoId
-            if nextVal < endRepoID
-                then getManyRepos db nextVal endRepoID
+            if nextRepoID < endRepoID
+                then getManyRepos db nextRepoID endRepoID
                 else print "completed calling all requested repos"
     
 -- | Error handling for callContribURL as parseContribResponse returns Either
