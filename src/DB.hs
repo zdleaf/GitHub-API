@@ -18,12 +18,9 @@ module DB
         langFromSQL,
         totalFromSQL,
         avgContribFromSQL,
-        topThreeLangPerContrib,
-        printTopThreeLang,
-        printTopContribs,
+        topFiveLangs,
         topFiveContribs,
-        printtopFiveLinesContribPerRepo,
-        topFiveLinesContribPerRepo
+        topLinesPerContrib
         ) where
 
 import DataTypes as D
@@ -257,45 +254,63 @@ dbTableToJSON db tableName converter = do
   BL.writeFile (tableName ++ ".json") json
   print  $ "output db to: " ++ tableName ++ ".json"
 
-
--- | Finds 3 repositories with the largest number of lines per contributor
--- topThreeLang :: IConnection conn => conn -> IO []
-topThreeLangPerContrib connection = do
-  topThree <- quickQuery connection "SELECT language, lineCount, contributors, \
-                                    \round(linesPerContrib, 2) FROM totalCount\
-                                    \ ORDER BY linesPerContrib DESC LIMIT 3" []
+-- | Finds and prints the top languages from the totalCount table by a number of metrics (line count, most contributors, most average lines per contributor)
+topFiveLangs connection = do
+  -- line counts
+  result <- quickQuery connection "SELECT language, lineCount, contributors, round(linesPerContrib, 2) FROM totalCount ORDER BY lineCount DESC LIMIT 5" []
   commit connection
-  print "\nThe three languages with the largest number of lines per \
-        \ contributor are: "
-  printTopThreeLang $ (P.map totalFromSQL topThree)
+  P.putStrLn "\nThe five languages with the highest line counts are: "
+  printResults "lineCount" (P.map totalFromSQL result)
 
+  -- contributors
+  result <- quickQuery connection "SELECT language, lineCount, contributors, round(linesPerContrib, 2) FROM totalCount ORDER BY contributors DESC LIMIT 5" []
+  commit connection
+  P.putStrLn "\nThe five languages with the most contributors are: "
+  printResults "contribs" (P.map totalFromSQL result)
+
+  -- average line count per contributor
+  result <- quickQuery connection "SELECT language, lineCount, contributors, round(linesPerContrib, 2) FROM totalCount ORDER BY linesPerContrib DESC LIMIT 3" []
+  commit connection
+  P.putStrLn "\nThe three languages with the largest average number of lines per contributor are: "
+  printResults "avglpc" (P.map totalFromSQL result)
+
+-- | Finds and prints the top repos by contributors from the contributorResponses table
 topFiveContribs connection = do
-  topFive <- quickQuery connection "SELECT * FROM contributorResponses\
-                                    \ ORDER BY contributors DESC LIMIT 5" []
+  result <- quickQuery connection "SELECT * FROM contributorResponses ORDER BY contributors DESC LIMIT 5" []
   commit connection
-  print "\nThe five repositories with the largest number of contributors are: "
-  (printTopContribs (P.map contribFromSQL topFive))
+  P.putStrLn "\nThe five repositories with the largest number of contributors are: "
+  printContribResults (P.map contribFromSQL result)
 
-topFiveLinesContribPerRepo connection = do
-  topFive <- quickQuery connection "SELECT * FROM linesPerContrib\
+-- | Finds and prints the top repos by average lines per contributor from the linesPerContrib table
+topLinesPerContrib connection = do
+  result <- quickQuery connection "SELECT * FROM linesPerContrib\
                                     \ ORDER BY avgLinesPerContrib DESC LIMIT \
                                     \5" []
   commit connection
-  print "\nThe five repositories with the largest number of lines per contributor are: "
-  (printtopFiveLinesContribPerRepo (P.map avgContribFromSQL topFive))
+  P.putStrLn "\nThe five repositories with the highest number of lines per contributor are: "
+  printAvgLPCResults (P.map avgContribFromSQL result)
 
-printTopThreeLang (x:xs) = do
-  print ((D.totalLanguage x),(D.linesPerContrib x))
-  printTopThreeLang xs
-printTopThreeLang _ = return ()
+-- | When printing the top five results from the totalCount at the end of program execution, this function gets the relevant fields to display from the DataTypes and prints them
+printResults z (x:xs)
+  | z == "lineCount" = do 
+    print ((D.totalLanguage x),(D.totalLineCount x)) 
+    printResults "lineCount" xs
+  | z == "contribs" = do 
+    print ((D.totalLanguage x),(D.totalContributors x)) 
+    printResults "contribs" xs
+  | z == "avglpc" = do 
+    print ((D.totalLanguage x),(D.linesPerContrib x)) 
+    printResults "avglpc" xs  
+printResults z _ = return ()
 
-printTopContribs (x:xs) = do
-  --print ("repo id", "number of contributors")
-  print ((D.repoID x),(D.contributors x))
-  printTopContribs xs
-printTopContribs _ = return ()
+-- | Gets the relevant fields and prints them for the top 5 repo's by contributor
+printContribResults (x:xs) = do 
+    print ((D.repoID x),(D.contributors x)) 
+    printContribResults xs  
+printContribResults _ = return ()
 
-printtopFiveLinesContribPerRepo (x:xs) = do
-  print ((D.repo x),(D.avgLinesPerContrib x))
-  printtopFiveLinesContribPerRepo xs
-printtopFiveLinesContribPerRepo _ = return ()
+-- | Gets the relevant fields and prints them for the top 5 repo's by average lines per contributor
+printAvgLPCResults (x:xs) = do
+    print ((D.repo x),(D.avgLinesPerContrib x)) 
+    printAvgLPCResults xs
+printAvgLPCResults _ = return () 

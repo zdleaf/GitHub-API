@@ -18,7 +18,7 @@ main = do
 
     -- get the repository API responses for the repoIDs between the values in the 2nd and 3rd arguments
     -- getManyRepos db StartRepoID EndRepoID
-    getManyRepos db 224244000 224245000
+    --getManyRepos db 224244000 224244100
 
     repoList <- retrieveDB db "repoResponses" repoFromSQL
 
@@ -45,9 +45,9 @@ main = do
     dbTableToJSON db "totalCount" totalFromSQL
     dbTableToJSON db "linesPerContrib" avgContribFromSQL
 
-    P.putStrLn "\ncomplete"
-    topThreeLangPerContrib db
+    P.putStrLn "\nResults:"
+    topFiveLangs db
     topFiveContribs db
-    topFiveLinesContribPerRepo db
+    topLinesPerContrib db
     return ()
 
