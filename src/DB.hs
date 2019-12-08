@@ -23,7 +23,8 @@ module DB
         topLinesPerContrib,
         printResults,
         printContribResults,
-        printAvgLPCResults
+        printAvgLPCResults,
+        retrieveRepoBetween
         ) where
 
 import DataTypes as D
@@ -166,6 +167,17 @@ addLangList connection (x:xs) = do
 addLangList db _ = do
   return ()
 
+
+retrieveRepoBetween connection start end = do
+      repoList <- quickQuery connection ("select * from repoResponses \
+                                          \WHERE repoID > (?) AND repoID < (?)\
+                                          \")
+                                          [
+                                          toSql start,
+                                          toSql end
+                                          ]
+      commit connection
+      return (P.map repoFromSQL repoList)
 -- | Generalised function to retrieve and type convert an entire table from the database.
 --  Returns a list of a given data type specified by the typeConverter parameter
 retrieveDB:: IConnection conn => conn -> [Char] -> ([SqlValue] -> b) -> IO [b]
@@ -173,7 +185,7 @@ retrieveDB connection table typeConverter = do
         repoList <- quickQuery connection ("select * from " ++ table) []
         commit connection
         return (P.map typeConverter repoList)
-{- 
+{-
 
         SQL CONVERTERS
 
@@ -296,25 +308,25 @@ topLinesPerContrib connection = do
 
 -- | When printing the top five results from the totalCount at the end of program execution, this function gets the relevant fields to display from the DataTypes and prints them
 printResults z (x:xs)
-  | z == "lineCount" = do 
-    print ((D.totalLanguage x),(D.totalLineCount x)) 
+  | z == "lineCount" = do
+    print ((D.totalLanguage x),(D.totalLineCount x))
     printResults "lineCount" xs
-  | z == "contribs" = do 
-    print ((D.totalLanguage x),(D.totalContributors x)) 
+  | z == "contribs" = do
+    print ((D.totalLanguage x),(D.totalContributors x))
     printResults "contribs" xs
-  | z == "avglpc" = do 
-    print ((D.totalLanguage x),(D.linesPerContrib x)) 
-    printResults "avglpc" xs  
+  | z == "avglpc" = do
+    print ((D.totalLanguage x),(D.linesPerContrib x))
+    printResults "avglpc" xs
 printResults z _ = return ()
 
 -- | Gets the relevant fields and prints them for the top 5 repo's by contributor
-printContribResults (x:xs) = do 
-    print ((D.repoID x),(D.contributors x)) 
-    printContribResults xs  
+printContribResults (x:xs) = do
+    print ((D.repoID x),(D.contributors x))
+    printContribResults xs
 printContribResults _ = return ()
 
 -- | Gets the relevant fields and prints them for the top 5 repo's by average lines per contributor
 printAvgLPCResults (x:xs) = do
-    print ((D.repo x),(D.avgLinesPerContrib x)) 
+    print ((D.repo x),(D.avgLinesPerContrib x))
     printAvgLPCResults xs
-printAvgLPCResults _ = return () 
+printAvgLPCResults _ = return ()

@@ -21,7 +21,7 @@ main = do
 
     getManyRepos db startRepoID endRepoID
 
-    repoList <- retrieveDB db "repoResponses" repoFromSQL
+    repoList <- retrieveRepoBetween db startRepoID endRepoID
 
     print "calling all contributor urls..."
     contribResp <- sequence $ fmap callContribURL repoList
