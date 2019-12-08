@@ -38,6 +38,7 @@ import Database.HDBC.Sqlite3
 
 import Data.ByteString.Lazy as BL
 import Data.Aeson.Encode.Pretty
+import Data.Convertible.Base
 
 import Data.Aeson.Types
 
@@ -122,7 +123,7 @@ extractResp (Left err) = []
 extractResp (Right list) = list
 
 -- | Recursively calls addRepo on a list of Either RepoResponse objects
-addRepoMany :: IConnection t => t -> [Either String RepoResponse] -> IO ()
+addRepoMany :: IConnection conn => conn -> [Either String RepoResponse] -> IO ()
 addRepoMany db (x:xs) = do
     addRepo db x
     addRepoMany db xs
@@ -175,7 +176,8 @@ retrieveDB connection table typeConverter = do
         commit connection
         return (P.map typeConverter repoList)
 
--- | Retrieve the repos from the DB between the requested start and end repoID. This is so we call only the newly added languages_url and contributors_url in the current run. This allows us to build up a database over time of repos, language and contributor responses given we can only make 5000 API calls/hour. 
+-- | Retrieve the repos from the DB between the requested start and end repoID. This is so we call only the newly added languages_url and contributors_url in the current run. This allows us to build up a database over time of repos, language and contributor responses, without duplicating API calls, given we can only make 5000 API calls/hour. 
+retrieveRepoBetween :: (IConnection conn, Convertible a SqlValue) => conn -> a -> a -> IO [RepoResponse]
 retrieveRepoBetween connection start end = do
   repoList <- quickQuery connection ("select * from repoResponses \
                                       \WHERE repoID > (?) AND repoID < (?)\

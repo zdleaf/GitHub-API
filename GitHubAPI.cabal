@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 15f61ff920f1fc52f208b40a138d93ffa7dea78399614ea9efaf9055951a020f
+-- hash: e421df253ba20f083ab5ac407ad75bc93cdf020d63456cb88f54f085bdc5851b
 
 name:           GitHubAPI
 version:        0.1.0.0
@@ -40,6 +40,7 @@ library
     , base >=4.7 && <5
     , bytestring
     , case-insensitive
+    , convertible
     , http-client-tls
     , http-conduit
     , http-types
@@ -65,6 +66,7 @@ executable GitHubAPI-exe
     , base >=4.7 && <5
     , bytestring
     , case-insensitive
+    , convertible
     , http-client-tls
     , http-conduit
     , http-types
@@ -91,6 +93,7 @@ test-suite GitHubAPI-test
     , base >=4.7 && <5
     , bytestring
     , case-insensitive
+    , convertible
     , http-client-tls
     , http-conduit
     , http-types
