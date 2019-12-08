@@ -16,8 +16,8 @@ main = do
     print "initialising db..."
     db <- initialiseDB "github.db"
 
-    let startRepoID = 224244000
-    let endRepoID   = 224244100
+    let startRepoID = 224240000
+    let endRepoID   = 224241500
 
     getManyRepos db startRepoID endRepoID
 

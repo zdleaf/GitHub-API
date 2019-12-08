@@ -167,17 +167,6 @@ addLangList connection (x:xs) = do
 addLangList db _ = do
   return ()
 
-
-retrieveRepoBetween connection start end = do
-      repoList <- quickQuery connection ("select * from repoResponses \
-                                          \WHERE repoID > (?) AND repoID < (?)\
-                                          \")
-                                          [
-                                          toSql start,
-                                          toSql end
-                                          ]
-      commit connection
-      return (P.map repoFromSQL repoList)
 -- | Generalised function to retrieve and type convert an entire table from the database.
 --  Returns a list of a given data type specified by the typeConverter parameter
 retrieveDB:: IConnection conn => conn -> [Char] -> ([SqlValue] -> b) -> IO [b]
@@ -185,6 +174,19 @@ retrieveDB connection table typeConverter = do
         repoList <- quickQuery connection ("select * from " ++ table) []
         commit connection
         return (P.map typeConverter repoList)
+
+-- | Retrieve the repos from the DB between the requested start and end repoID. This is so we call only the newly added languages_url and contributors_url in the current run. This allows us to build up a database over time of repos, language and contributor responses given we can only make 5000 API calls/hour. 
+retrieveRepoBetween connection start end = do
+  repoList <- quickQuery connection ("select * from repoResponses \
+                                      \WHERE repoID > (?) AND repoID < (?)\
+                                      \")
+                                      [
+                                      toSql start,
+                                      toSql end
+                                      ]
+  commit connection
+  return (P.map repoFromSQL repoList)
+
 {-
 
         SQL CONVERTERS
