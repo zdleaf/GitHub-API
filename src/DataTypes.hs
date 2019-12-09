@@ -77,7 +77,7 @@ instance ToJSON TotalCount
 -- | A data type for extracting our derived table of lines per contributor
 data AvgContribLines = AvgContribLines
   {
-    repo :: String,
+    repo :: Integer,
     avgLinesPerContrib :: Double
   } deriving (Show, Generic)
 

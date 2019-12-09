@@ -104,7 +104,6 @@ connectDB connection =
 addRepo:: IConnection conn => conn -> Either a RepoResponse -> IO ()
 addRepo connection (Left err) = return ()
 addRepo connection (Right repoResponse) = handleSql handleError $ do
-
         run connection "INSERT OR REPLACE INTO repoResponses (repoID,\
                        \languageURL, contributorsURL) VALUES (?, ?, ?)"
             [
@@ -113,7 +112,7 @@ addRepo connection (Right repoResponse) = handleSql handleError $ do
               toSql (contributors_url repoResponse)
             ]
         commit connection
-        where handleError e = do fail $ "error adding repo: " ++ (show (D.id repoResponse)) ++ " "++ (show e)
+        where handleError e = do print $ "error adding repo: " ++ (show (D.id repoResponse)) ++ " "++ (show e)
 
 
 
@@ -142,7 +141,7 @@ addContribs connection tuple = handleSql handleError $ do
   commit connection
   P.putStr "."
   hFlush stdout
-  where handleError e = do fail $ "error adding contributors: " ++ (show (fst tuple)) ++ " "++ (show e)
+  where handleError e = do print $ "error adding contributors: " ++ (show (fst tuple)) ++ " "++ (show e)
 
 -- | Adds a single language tuple (as provided by callLangURL in the HTTP module) to the database
 addLang :: IConnection conn => conn -> (Integer, String, Integer) -> IO()
@@ -156,7 +155,7 @@ addLang connection (id, language, count)  = handleSql handleError $ do
   commit connection
   P.putStr "."
   hFlush stdout
-  where handleError e = do fail $ "error adding contributors: " ++ (show (id)) ++ " "++ (show e)
+  where handleError e = do print $ "error adding contributors: " ++ (show (id)) ++ " "++ (show e)
 
 -- | Adds a list of language tuples to the database using addLang above
 addLangList :: IConnection conn => conn -> [(Integer, String, Integer)] -> IO()
