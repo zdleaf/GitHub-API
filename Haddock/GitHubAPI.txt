@@ -73,20 +73,21 @@ instance Data.Aeson.Types.ToJSON.ToJSON DataTypes.RepoResponse
 -- | Database Operations
 module DB
 
--- | Connect to the database and create all the tables
+-- | Connect to the database and create all the tables.
 connectDB :: IConnection conn => conn -> IO ()
 
--- | Initialise the database with a given path name
+-- | Initialise the database with a given path name.
 initialiseDB :: FilePath -> IO Connection
 
 -- | Extract response list from Either Left/Right as returned by
---   parseRepoResponse
+--   parseRepoResponse.
 extractResp :: Either a1 [a2] -> [a2]
 
 -- | Add RepoResponses to the "repoResponses" table in the database.
 addRepo :: IConnection conn => conn -> Either a RepoResponse -> IO ()
 
--- | Recursively calls addRepo on a list of Either RepoResponse objects
+-- | Recursively calls addRepo on a list of Either Error RepoResponse
+--   objects.
 addRepoMany :: IConnection conn => conn -> [Either String RepoResponse] -> IO ()
 
 -- | Generalised function to retrieve and type convert an entire table from
@@ -95,15 +96,15 @@ addRepoMany :: IConnection conn => conn -> [Either String RepoResponse] -> IO ()
 retrieveDB :: IConnection conn => conn -> [Char] -> ([SqlValue] -> b) -> IO [b]
 
 -- | Adds a single contributor tuple (as provided by callContribURL in the
---   HTTP module) to the database
+--   HTTP module) to the database.
 addContribs :: IConnection conn => conn -> (Integer, Int) -> IO ()
 
--- | ARecursive function adding a list of language tuples to the database
---   using addLang above
+-- | A recursive function adding a list of language tuples to the database
+--   using addLang above.
 addLangList :: IConnection conn => conn -> [(Integer, String, Integer)] -> IO ()
 
 -- | Adds a single language tuple (as provided by callLangURL in the HTTP
---   module) to the database
+--   module) to the database.
 addLang :: IConnection conn => conn -> (Integer, String, Integer) -> IO ()
 
 -- | SQL query that aggregates across all repositories and calculates the
@@ -117,7 +118,7 @@ fillTotalCount :: IConnection conn => conn -> IO ()
 fillLinesPerContrib :: IConnection conn => conn -> IO ()
 
 -- | Takes a table name and its conveter (FromSQL), ecncodes the the list
---   then writes it out to a JSON file matching it's table name
+--   then writes it out to a JSON file matching it's table name.
 dbTableToJSON :: (IConnection conn, ToJSON b) => conn -> [Char] -> ([SqlValue] -> b) -> IO ()
 
 -- | Type converter that allows us to extract items from the database as
@@ -142,7 +143,7 @@ avgContribFromSQL :: [SqlValue] -> AvgContribLines
 
 -- | Finds and prints the top languages from the totalCount table by a
 --   number of metrics (line count, most contributors, most average lines
---   per contributor)
+--   per contributor).
 topFiveLangs :: IConnection conn => conn -> IO ()
 
 -- | Finds and prints the top repos by contributors from the
