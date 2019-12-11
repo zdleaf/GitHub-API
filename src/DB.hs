@@ -49,7 +49,7 @@ initialiseDB dbname = do
         connectDB connection
         return connection
 
--- | Connect the database and create all the tables
+-- | Connect to the database and create all the tables
 connectDB :: IConnection conn => conn -> IO ()
 connectDB connection =
   do
@@ -100,7 +100,7 @@ connectDB connection =
     run connection "DELETE FROM linesPerContrib" []
     commit connection
 
--- | Add RepoResponses to the "repoResponses" table in the Database
+-- | Add RepoResponses to the "repoResponses" table in the database. 
 addRepo:: IConnection conn => conn -> Either a RepoResponse -> IO ()
 addRepo connection (Left err) = return ()
 addRepo connection (Right repoResponse) = handleSql handleError $ do
@@ -114,9 +114,7 @@ addRepo connection (Right repoResponse) = handleSql handleError $ do
         commit connection
         where handleError e = do print $ "error adding repo: " ++ (show (D.id repoResponse)) ++ " "++ (show e)
 
-
-
--- | Extract response list from Either Left/Right as it is returned by parseRepoResponse
+-- | Extract response list from Either Left/Right as returned by parseRepoResponse
 extractResp :: Either a1 [a2] -> [a2]
 extractResp (Left err) = []
 extractResp (Right list) = list
@@ -157,7 +155,7 @@ addLang connection (id, language, count)  = handleSql handleError $ do
   hFlush stdout
   where handleError e = do print $ "error adding contributors: " ++ (show (id)) ++ " "++ (show e)
 
--- | Adds a list of language tuples to the database using addLang above
+-- | ARecursive function adding a list of language tuples to the database using addLang above
 addLangList :: IConnection conn => conn -> [(Integer, String, Integer)] -> IO()
 addLangList connection (x:xs) = do
   addLang connection x
@@ -167,15 +165,15 @@ addLangList connection (x:xs) = do
 addLangList db _ = do
   return ()
 
--- | Generalised function to retrieve and type convert an entire table from the database.
---  Returns a list of a given data type specified by the typeConverter parameter
+-- | Generalised function to retrieve and type convert an entire table from the database SQL format to Haskell data types.
+--  Returns a list of a given data type specified by the typeConverter parameter.
 retrieveDB:: IConnection conn => conn -> [Char] -> ([SqlValue] -> b) -> IO [b]
 retrieveDB connection table typeConverter = do
         repoList <- quickQuery connection ("select * from " ++ table) []
         commit connection
         return (P.map typeConverter repoList)
 
--- | Retrieve the repos from the DB between the requested start and end repoID. This is so we call only the newly added languages_url and contributors_url in the current run. This allows us to build up a database over time of repos, language and contributor responses, without duplicating API calls, given we can only make 5000 API calls/hour. 
+-- | Retrieve the repos from the DB between the requested start and end repoID. This is so we call only the newly added languages_url and contributors_url for repos specified in the current run. This allows us to build up a database over time of many repos, language and contributor responses, without duplicating API calls, given we can only make 5000 API calls/hour. 
 retrieveRepoBetween :: (IConnection conn, Convertible a SqlValue) => conn -> a -> a -> IO [RepoResponse]
 retrieveRepoBetween connection start end = do
   repoList <- quickQuery connection ("select * from repoResponses \
@@ -188,12 +186,9 @@ retrieveRepoBetween connection start end = do
   commit connection
   return (P.map repoFromSQL repoList)
 
-{-
+{- SQL CONVERTERS -}
 
-        SQL CONVERTERS
-
-         -}
--- | Type converter that allows us to extract items from the database as RepoResponse objects
+-- | Type converter that allows us to extract items from the database as RepoResponse objects.
 repoFromSQL :: [SqlValue] -> RepoResponse
 repoFromSQL [repoID, languages_url, contributors_url] =
     RepoResponse {D.id = fromSql repoID,
@@ -202,7 +197,7 @@ repoFromSQL [repoID, languages_url, contributors_url] =
     }
 repoFromSQL _ = error $ "error in bytestring conversion"
 
--- | Type converter that allows us to extract items from the database as Contributor objects
+-- | Type converter that allows us to extract items from the database as Contributor objects.
 contribFromSQL :: [SqlValue] -> Contributor
 contribFromSQL [repoID, contributors] =
   ContributorTo {D.repoID = fromSql repoID,
@@ -210,7 +205,7 @@ contribFromSQL [repoID, contributors] =
   }
 contribFromSQL _ = error $ "error in bytestring conversion"
 
--- |Type converter that allows us to extract items from the database as Language objects
+-- | Type converter that allows us to extract items from the database as Language objects.
 langFromSQL :: [SqlValue] -> Language
 langFromSQL [repoID, language, lineCount] =
   LanguageTo {D.langRepoID = fromSql repoID,
@@ -219,7 +214,7 @@ langFromSQL [repoID, language, lineCount] =
   }
 langFromSQL _ = error $ "error in bytestring conversion"
 
--- | Type converter that allows us to extract items from the database as TotalCount objects
+-- | Type converter that allows us to extract items from the database as TotalCount objects.
 totalFromSQL :: [SqlValue] -> TotalCount
 totalFromSQL [language, lineCount, contributors, linesPerContrib] =
   TotalCount {D.totalLanguage = fromSql language,
@@ -229,7 +224,7 @@ totalFromSQL [language, lineCount, contributors, linesPerContrib] =
   }
 totalFromSQL _ = error $ "error in bytestring conversion"
 
--- | Type converter that allows us to extract items from the database as AvgContribLines objects
+-- | Type converter that allows us to extract items from the database as AvgContribLines objects.
 avgContribFromSQL [repo, avgLinesPerContrib] =
   AvgContribLines {D.repo = fromSql repo,
           D.avgLinesPerContrib = fromSql avgLinesPerContrib
@@ -237,7 +232,7 @@ avgContribFromSQL [repo, avgLinesPerContrib] =
 avgContribFromSQL _ = error $ "error in bytestring conversion"
 
 -- | SQL query that aggregates across all repositories and calculates the total line count and total contributors for each language.
---  This also populates the total count table
+--  This also populates the total count table.
 fillTotalCount :: IConnection conn => conn -> IO ()
 fillTotalCount connection = do
   run connection
@@ -252,7 +247,7 @@ fillTotalCount connection = do
   commit connection
 
 -- | SQL query that calculates the average number  of lines per contributor for each repository.
--- | This query then populates the LinesPerContrib table
+-- | This query then populates the LinesPerContrib table.
 fillLinesPerContrib :: IConnection conn => conn -> IO ()
 fillLinesPerContrib connection = do
   run connection
