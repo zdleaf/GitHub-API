@@ -73,7 +73,6 @@ parserContribsMany = withArray "Contributor" $ \arr -> do
     return $ toList allParsed
 
 
--- | As the languages JSON had a varying number of unknown fields, albeit in a structured format,
--- Our parser creates a list of Language objects for each repository.  
+-- | As the languages JSON had a varying number of unknown fields, albeit in a structured format, our parser creates a list of Language objects for each repository.  
 parserLanguages :: Value -> Parser [Language]
 parserLanguages p = P.map (\(language, lineCount) -> LanguageFrom language lineCount) . HM.toList <$> parseJSON p

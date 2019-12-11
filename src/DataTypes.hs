@@ -17,7 +17,7 @@ import Data.Aeson
 import GHC.Generics
 
 
--- |A data type to handle API response for public repositories
+-- |A data type to handle API response for public repositories.
 data RepoResponse = RepoResponse
     {
       id :: Integer, -- github repo id
@@ -26,11 +26,11 @@ data RepoResponse = RepoResponse
     }
     deriving (Show, Generic)
 
--- | no need to specify details since we're deriving Generic
+-- | no need to specify instance details for FromJSON/ToJSON since constructors match incoming JSON fields and we derive Generic
 instance FromJSON RepoResponse
 instance ToJSON RepoResponse
 
--- | A data type for contributors with multiple constructors reflecting different needs when encoding and decoding from JSON 
+-- | A data type for contributors with multiple constructors reflecting different needs when encoding and decoding from JSON.
 data Contributor = 
   ContributorFrom {
     login :: String
@@ -44,7 +44,7 @@ instance ToJSON Contributor where
   -- remove "tag" in JSON due to multiple constructors
   toJSON = genericToJSON (defaultOptions { sumEncoding = UntaggedValue }) 
 
--- | A data type for languages with multiple constructors reflecting different needs when encoding and decoding from JSON
+-- | A data type for languages with multiple constructors reflecting different needs when encoding and decoding from JSON.
 data Language =
   LanguageFrom
   {
