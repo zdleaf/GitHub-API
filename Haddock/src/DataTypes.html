@@ -17,7 +17,7 @@
 </span><a name="line-17"></a><span class="hs-keyword">import</span><span> </span><span class="hs-identifier">GHC.Generics</span><span>
 </span><a name="line-18"></a><span>
 </span><a name="line-19"></a><span>
-</span><a name="line-20"></a><span class="hs-comment">-- |A data type to handle API response for public repositories</span><span>
+</span><a name="line-20"></a><span class="hs-comment">-- |A data type to handle API response for public repositories.</span><span>
 </span><a name="line-21"></a><span class="hs-keyword">data</span><span> </span><a name="RepoResponse"><a href="DataTypes.html#RepoResponse"><span class="hs-identifier">RepoResponse</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><a name="RepoResponse"><a href="DataTypes.html#RepoResponse"><span class="hs-identifier">RepoResponse</span></a></a><span>
 </span><a name="line-22"></a><span>    </span><span class="hs-special">{</span><span>
 </span><a name="line-23"></a><span>      </span><a name="%24sel%3Aid%3ARepoResponse"><a href="DataTypes.html#%24sel%3Aid%3ARepoResponse"><span class="hs-identifier">id</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">Integer</span><span class="hs-special">,</span><span> </span><span class="hs-comment">-- github repo id</span><span>
@@ -26,11 +26,11 @@
 </span><a name="line-26"></a><span>    </span><span class="hs-special">}</span><span>
 </span><a name="line-27"></a><span>    </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span class="hs-identifier hs-type">Show</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">Generic</span><span class="hs-special">)</span><span>
 </span><a name="line-28"></a><span>
-</span><a name="line-29"></a><span class="hs-comment">-- | no need to specify details since we're deriving Generic</span><span>
+</span><a name="line-29"></a><span class="hs-comment">-- | no need to specify instance details for FromJSON/ToJSON since constructors match incoming JSON fields and we derive Generic</span><span>
 </span><a name="line-30"></a><span class="hs-keyword">instance</span><span> </span><span class="hs-identifier hs-type">FromJSON</span><span> </span><a href="DataTypes.html#RepoResponse"><span class="hs-identifier hs-type">RepoResponse</span></a><span>
 </span><a name="line-31"></a><span class="hs-keyword">instance</span><span> </span><span class="hs-identifier hs-type">ToJSON</span><span> </span><a href="DataTypes.html#RepoResponse"><span class="hs-identifier hs-type">RepoResponse</span></a><span>
 </span><a name="line-32"></a><span>
-</span><a name="line-33"></a><span class="hs-comment">-- | A data type for contributors with multiple constructors reflecting different needs when encoding and decoding from JSON </span><span>
+</span><a name="line-33"></a><span class="hs-comment">-- | A data type for contributors with multiple constructors reflecting different needs when encoding and decoding from JSON.</span><span>
 </span><a name="line-34"></a><span class="hs-keyword">data</span><span> </span><a name="Contributor"><a href="DataTypes.html#Contributor"><span class="hs-identifier">Contributor</span></a></a><span> </span><span class="hs-glyph">=</span><span>
 </span><a name="line-35"></a><span>  </span><a name="ContributorFrom"><a href="DataTypes.html#ContributorFrom"><span class="hs-identifier">ContributorFrom</span></a></a><span> </span><span class="hs-special">{</span><span>
 </span><a name="line-36"></a><span>    </span><a name="%24sel%3Alogin%3AContributorFrom"><a href="DataTypes.html#%24sel%3Alogin%3AContributorFrom"><span class="hs-identifier">login</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">String</span><span>
@@ -44,7 +44,7 @@
 </span><a name="line-44"></a><span>  </span><span class="hs-comment">-- remove &quot;tag&quot; in JSON due to multiple constructors</span><span>
 </span><a name="line-45"></a><span>  </span><a name="local-8214565720323785265"><span class="hs-identifier">toJSON</span></a><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-identifier hs-var">genericToJSON</span><span> </span><span class="hs-special">(</span><span class="hs-identifier hs-var">defaultOptions</span><span> </span><span class="hs-special">{</span><span> </span><span class="hs-identifier">sumEncoding</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-identifier hs-var">UntaggedValue</span><span> </span><span class="hs-special">}</span><span class="hs-special">)</span><span>
 </span><a name="line-46"></a><span>
-</span><a name="line-47"></a><span class="hs-comment">-- | A data type for languages with multiple constructors reflecting different needs when encoding and decoding from JSON</span><span>
+</span><a name="line-47"></a><span class="hs-comment">-- | A data type for languages with multiple constructors reflecting different needs when encoding and decoding from JSON.</span><span>
 </span><a name="line-48"></a><span class="hs-keyword">data</span><span> </span><a name="Language"><a href="DataTypes.html#Language"><span class="hs-identifier">Language</span></a></a><span> </span><span class="hs-glyph">=</span><span>
 </span><a name="line-49"></a><span>  </span><a name="LanguageFrom"><a href="DataTypes.html#LanguageFrom"><span class="hs-identifier">LanguageFrom</span></a></a><span>
 </span><a name="line-50"></a><span>  </span><span class="hs-special">{</span><span>
@@ -77,7 +77,7 @@
 </span><a name="line-77"></a><span class="hs-comment">-- | A data type for extracting our derived table of lines per contributor</span><span>
 </span><a name="line-78"></a><span class="hs-keyword">data</span><span> </span><a name="AvgContribLines"><a href="DataTypes.html#AvgContribLines"><span class="hs-identifier">AvgContribLines</span></a></a><span> </span><span class="hs-glyph">=</span><span> </span><a name="AvgContribLines"><a href="DataTypes.html#AvgContribLines"><span class="hs-identifier">AvgContribLines</span></a></a><span>
 </span><a name="line-79"></a><span>  </span><span class="hs-special">{</span><span>
-</span><a name="line-80"></a><span>    </span><a name="%24sel%3Arepo%3AAvgContribLines"><a href="DataTypes.html#%24sel%3Arepo%3AAvgContribLines"><span class="hs-identifier">repo</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">String</span><span class="hs-special">,</span><span>
+</span><a name="line-80"></a><span>    </span><a name="%24sel%3Arepo%3AAvgContribLines"><a href="DataTypes.html#%24sel%3Arepo%3AAvgContribLines"><span class="hs-identifier">repo</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">Integer</span><span class="hs-special">,</span><span>
 </span><a name="line-81"></a><span>    </span><a name="%24sel%3AavgLinesPerContrib%3AAvgContribLines"><a href="DataTypes.html#%24sel%3AavgLinesPerContrib%3AAvgContribLines"><span class="hs-identifier">avgLinesPerContrib</span></a></a><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-identifier hs-type">Double</span><span>
 </span><a name="line-82"></a><span>  </span><span class="hs-special">}</span><span> </span><span class="hs-keyword">deriving</span><span> </span><span class="hs-special">(</span><span class="hs-identifier hs-type">Show</span><span class="hs-special">,</span><span> </span><span class="hs-identifier hs-type">Generic</span><span class="hs-special">)</span><span>
 </span><a name="line-83"></a><span>

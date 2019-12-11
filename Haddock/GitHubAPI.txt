@@ -10,7 +10,7 @@
 -- | Data type declarations
 module DataTypes
 
--- | A data type to handle API response for public repositories
+-- | A data type to handle API response for public repositories.
 data RepoResponse
 RepoResponse :: Integer -> String -> String -> RepoResponse
 [$sel:id:RepoResponse] :: RepoResponse -> Integer
@@ -18,7 +18,7 @@ RepoResponse :: Integer -> String -> String -> RepoResponse
 [$sel:contributors_url:RepoResponse] :: RepoResponse -> String
 
 -- | A data type for contributors with multiple constructors reflecting
---   different needs when encoding and decoding from JSON
+--   different needs when encoding and decoding from JSON.
 data Contributor
 ContributorFrom :: String -> Contributor
 [$sel:login:ContributorFrom] :: Contributor -> String
@@ -27,7 +27,7 @@ ContributorTo :: Integer -> Integer -> Contributor
 [$sel:contributors:ContributorFrom] :: Contributor -> Integer
 
 -- | A data type for languages with multiple constructors reflecting
---   different needs when encoding and decoding from JSON
+--   different needs when encoding and decoding from JSON.
 data Language
 LanguageFrom :: String -> Integer -> Language
 [$sel:language:LanguageFrom] :: Language -> String
@@ -47,8 +47,8 @@ TotalCount :: String -> Integer -> Integer -> Double -> TotalCount
 
 -- | A data type for extracting our derived table of lines per contributor
 data AvgContribLines
-AvgContribLines :: String -> Double -> AvgContribLines
-[$sel:repo:AvgContribLines] :: AvgContribLines -> String
+AvgContribLines :: Integer -> Double -> AvgContribLines
+[$sel:repo:AvgContribLines] :: AvgContribLines -> Integer
 [$sel:avgLinesPerContrib:AvgContribLines] :: AvgContribLines -> Double
 instance GHC.Generics.Generic DataTypes.AvgContribLines
 instance GHC.Show.Show DataTypes.AvgContribLines
@@ -73,29 +73,33 @@ instance Data.Aeson.Types.ToJSON.ToJSON DataTypes.RepoResponse
 -- | Database Operations
 module DB
 
--- | Connect the database and create all the tables
+-- | Connect to the database and create all the tables
 connectDB :: IConnection conn => conn -> IO ()
 
 -- | Initialise the database with a given path name
 initialiseDB :: FilePath -> IO Connection
 
--- | Extract response list from Either Left/Right as it is returned by
+-- | Extract response list from Either Left/Right as returned by
 --   parseRepoResponse
 extractResp :: Either a1 [a2] -> [a2]
+
+-- | Add RepoResponses to the "repoResponses" table in the database.
+addRepo :: IConnection conn => conn -> Either a RepoResponse -> IO ()
 
 -- | Recursively calls addRepo on a list of Either RepoResponse objects
 addRepoMany :: IConnection conn => conn -> [Either String RepoResponse] -> IO ()
 
 -- | Generalised function to retrieve and type convert an entire table from
---   the database. Returns a list of a given data type specified by the
---   typeConverter parameter
+--   the database SQL format to Haskell data types. Returns a list of a
+--   given data type specified by the typeConverter parameter.
 retrieveDB :: IConnection conn => conn -> [Char] -> ([SqlValue] -> b) -> IO [b]
 
 -- | Adds a single contributor tuple (as provided by callContribURL in the
 --   HTTP module) to the database
 addContribs :: IConnection conn => conn -> (Integer, Int) -> IO ()
 
--- | Adds a list of language tuples to the database using addLang above
+-- | ARecursive function adding a list of language tuples to the database
+--   using addLang above
 addLangList :: IConnection conn => conn -> [(Integer, String, Integer)] -> IO ()
 
 -- | Adds a single language tuple (as provided by callLangURL in the HTTP
@@ -104,12 +108,12 @@ addLang :: IConnection conn => conn -> (Integer, String, Integer) -> IO ()
 
 -- | SQL query that aggregates across all repositories and calculates the
 --   total line count and total contributors for each language. This also
---   populates the total count table
+--   populates the total count table.
 fillTotalCount :: IConnection conn => conn -> IO ()
 
 -- | SQL query that calculates the average number of lines per contributor
 --   for each repository. | This query then populates the LinesPerContrib
---   table
+--   table.
 fillLinesPerContrib :: IConnection conn => conn -> IO ()
 
 -- | Takes a table name and its conveter (FromSQL), ecncodes the the list
@@ -117,23 +121,23 @@ fillLinesPerContrib :: IConnection conn => conn -> IO ()
 dbTableToJSON :: (IConnection conn, ToJSON b) => conn -> [Char] -> ([SqlValue] -> b) -> IO ()
 
 -- | Type converter that allows us to extract items from the database as
---   RepoResponse objects
+--   RepoResponse objects.
 repoFromSQL :: [SqlValue] -> RepoResponse
 
 -- | Type converter that allows us to extract items from the database as
---   Contributor objects
+--   Contributor objects.
 contribFromSQL :: [SqlValue] -> Contributor
 
 -- | Type converter that allows us to extract items from the database as
---   Language objects
+--   Language objects.
 langFromSQL :: [SqlValue] -> Language
 
 -- | Type converter that allows us to extract items from the database as
---   TotalCount objects
+--   TotalCount objects.
 totalFromSQL :: [SqlValue] -> TotalCount
 
 -- | Type converter that allows us to extract items from the database as
---   AvgContribLines objects
+--   AvgContribLines objects.
 avgContribFromSQL :: [SqlValue] -> AvgContribLines
 
 -- | Finds and prints the top languages from the totalCount table by a
@@ -142,32 +146,32 @@ avgContribFromSQL :: [SqlValue] -> AvgContribLines
 topFiveLangs :: IConnection conn => conn -> IO ()
 
 -- | Finds and prints the top repos by contributors from the
---   contributorResponses table
+--   contributorResponses table.
 topFiveContribs :: IConnection conn => conn -> IO ()
 
 -- | Finds and prints the top repos by average lines per contributor from
---   the linesPerContrib table
+--   the linesPerContrib table.
 topLinesPerContrib :: IConnection conn => conn -> IO ()
 
 -- | When printing the top five results from the totalCount at the end of
 --   program execution, this function gets the relevant fields to display
---   from the DataTypes and prints them
+--   from the DataTypes and prints them.
 printResults :: [Char] -> [TotalCount] -> IO ()
 
 -- | Gets the relevant fields and prints them for the top 5 repo's by
---   contributor
+--   contributor.
 printContribResults :: [Contributor] -> IO ()
 
 -- | Gets the relevant fields and prints them for the top 5 repo's by
---   average lines per contributor
+--   average lines per contributor.
 printAvgLPCResults :: [AvgContribLines] -> IO ()
 
 -- | Retrieve the repos from the DB between the requested start and end
 --   repoID. This is so we call only the newly added languages_url and
---   contributors_url in the current run. This allows us to build up a
---   database over time of repos, language and contributor responses,
---   without duplicating API calls, given we can only make 5000 API
---   calls/hour.
+--   contributors_url for repos specified in the current run. This allows
+--   us to build up a database over time of many repos, language and
+--   contributor responses, without duplicating API calls, given we can
+--   only make 5000 API calls/hour.
 retrieveRepoBetween :: (IConnection conn, Convertible a SqlValue) => conn -> a -> a -> IO [RepoResponse]
 
 
@@ -193,7 +197,7 @@ parserContribs :: Value -> Parser (Either String Contributor)
 parseLangResponse :: Monad m => ByteString -> m (Either String [Language])
 
 -- | As the languages JSON had a varying number of unknown fields, albeit
---   in a structured format, Our parser creates a list of Language objects
+--   in a structured format, our parser creates a list of Language objects
 --   for each repository.
 parserLanguages :: Value -> Parser [Language]
 
@@ -216,12 +220,12 @@ module HTTP
 --   HttpException details.
 callAPI :: Exception e => String -> IO (Either e (Response ByteString))
 
--- | takes a RepoResponse and calls the API on the Contributor URL and
---   returns a tuple of repoID and contributor count
+-- | Takes a RepoResponse and calls the API on the Contributor URL and
+--   returns a tuple of repoID and contributor count.
 callContribURL :: RepoResponse -> IO (Integer, Int)
 
--- | takes a RepoResponse and calls the API on the languages URL and
---   returns a list of tuples of repoID, language and line count
+-- | Takes a RepoResponse and calls the API on the languages URL and
+--   returns a list of tuples of repoID, language and line count.
 callLangURL :: RepoResponse -> IO [(Integer, String, Integer)]
 
 -- | As the API only returns 100 repositories at once, getManyRepos
@@ -233,9 +237,9 @@ callLangURL :: RepoResponse -> IO [(Integer, String, Integer)]
 getManyRepos :: IConnection conn => conn -> Integer -> Integer -> IO ()
 
 -- | Error handling for callContribURL as parseContribResponse returns
---   Either
+--   Either.
 removeEitherNum :: Num p => Either a p -> p
 
 -- | Error handling for callLangURL when parseLangResponse is called as it
---   returns an Either[]
+--   returns an Either[].
 splitLangResp :: t -> Either a [Language] -> [(t, String, Integer)]
