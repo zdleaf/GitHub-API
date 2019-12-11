@@ -40,7 +40,7 @@ callAPI :: Exception e => String -> IO (Either e (Response ByteString))
 callAPI url = do
     initReq <- parseRequest $ url
     let request = setRequestHeaders [(hUserAgent, userAgentBS),(hAuthorization, token)] initReq
-    response <- try $ httpLBS request
+    response <- try $ httpLBS request -- error handling using "try" from Control.Exception
     return response
 
 -- | As the API only returns 100 repositories at once, getManyRepos recursively calls callAPI for multiple blocks of 100 repositories.
@@ -51,6 +51,7 @@ getManyRepos db currentRepoID endRepoID = do
     print $ "getting repos from " ++ (show currentRepoID) ++ " to " ++ (show $ currentRepoID + 99)
     let nextRepoID = currentRepoID + 100
     eitherResponse <- callAPI $ repoAPIBase ++ (show currentRepoID)
+    -- error handling
     case eitherResponse of
         Left e -> do
             print (e :: HttpException)
@@ -68,12 +69,12 @@ getManyRepos db currentRepoID endRepoID = do
                 then getManyRepos db nextRepoID endRepoID
                 else print "completed calling all requested repos"
     
--- | Error handling for callContribURL as parseContribResponse returns Either
+-- | Error handling for callContribURL as parseContribResponse returns Either.
 removeEitherNum :: Num p => Either a p -> p
 removeEitherNum (Right x) = x
 removeEitherNum _ = 0
 
--- | takes a RepoResponse and calls the API on the Contributor URL and returns a tuple of repoID and contributor count
+-- | Takes a RepoResponse and calls the API on the Contributor URL and returns a tuple of repoID and contributor count.
 callContribURL :: RepoResponse -> IO (Integer, Int)
 callContribURL reporesponse = do
     eitherResponse <- callAPI $ D.contributors_url reporesponse
@@ -89,7 +90,7 @@ callContribURL reporesponse = do
             hFlush stdout
             return ((D.id reporesponse), count)
 
--- | takes a RepoResponse and calls the API on the languages URL and returns a list of tuples of repoID, language and line count
+-- | Takes a RepoResponse and calls the API on the languages URL and returns a list of tuples of repoID, language and line count.
 callLangURL :: RepoResponse -> IO [(Integer, String, Integer)]
 callLangURL reporesponse = do
     eitherResponse <- callAPI $ D.languages_url reporesponse
@@ -103,7 +104,7 @@ callLangURL reporesponse = do
             hFlush stdout
             return $ splitLangResp (D.id reporesponse) parsedLangs
 
--- | Error handling for callLangURL when parseLangResponse is called as it returns an Either[]
+-- | Error handling for callLangURL when parseLangResponse is called as it returns an Either[].
 splitLangResp :: t -> Either a [Language] -> [(t, String, Integer)]
 splitLangResp id (Right []) = []
 splitLangResp id (Right (x:xs)) = (id, D.language x, D.lineCount x):splitLangResp id (Right xs)
