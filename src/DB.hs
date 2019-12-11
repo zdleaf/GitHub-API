@@ -5,6 +5,7 @@ module DB
         connectDB,
         initialiseDB,
         extractResp,
+        addRepo,
         addRepoMany,
         retrieveDB,
         addContribs,
