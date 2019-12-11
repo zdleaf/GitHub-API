@@ -156,7 +156,7 @@ addLang connection (id, language, count)  = handleSql handleError $ do
   hFlush stdout
   where handleError e = do print $ "error adding contributors: " ++ (show (id)) ++ " "++ (show e)
 
--- | ARecursive function adding a list of language tuples to the database using addLang above.
+-- | A recursive function adding a list of language tuples to the database using addLang above.
 addLangList :: IConnection conn => conn -> [(Integer, String, Integer)] -> IO()
 addLangList connection (x:xs) = do
   addLang connection x
