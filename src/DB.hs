@@ -289,7 +289,7 @@ topFiveLangs connection = do
   P.putStrLn "\nThe three languages with the largest average number of lines per contributor are: "
   printResults "avglpc" (P.map totalFromSQL result)
 
--- | Finds and prints the top repos by contributors from the contributorResponses table
+-- | Finds and prints the top repos by contributors from the contributorResponses table.
 topFiveContribs::IConnection conn => conn -> IO ()
 topFiveContribs connection = do
   result <- quickQuery connection "SELECT * FROM contributorResponses ORDER BY contributors DESC LIMIT 5" []
@@ -297,7 +297,7 @@ topFiveContribs connection = do
   P.putStrLn "\nThe five repositories with the largest number of contributors are: "
   printContribResults (P.map contribFromSQL result)
 
--- | Finds and prints the top repos by average lines per contributor from the linesPerContrib table
+-- | Finds and prints the top repos by average lines per contributor from the linesPerContrib table.
 topLinesPerContrib:: IConnection conn => conn -> IO ()
 topLinesPerContrib connection = do
   result <- quickQuery connection "SELECT * FROM linesPerContrib\
@@ -307,7 +307,7 @@ topLinesPerContrib connection = do
   P.putStrLn "\nThe five repositories with the highest number of lines per contributor are: "
   printAvgLPCResults (P.map avgContribFromSQL result)
 
--- | When printing the top five results from the totalCount at the end of program execution, this function gets the relevant fields to display from the DataTypes and prints them
+-- | When printing the top five results from the totalCount at the end of program execution, this function gets the relevant fields to display from the DataTypes and prints them.
 printResults :: [Char] -> [TotalCount] -> IO ()
 printResults z (x:xs)
   | z == "lineCount" = do
@@ -321,14 +321,14 @@ printResults z (x:xs)
     printResults "avglpc" xs
 printResults z _ = return ()
 
--- | Gets the relevant fields and prints them for the top 5 repo's by contributor
+-- | Gets the relevant fields and prints them for the top 5 repo's by contributor.
 printContribResults :: [Contributor] -> IO ()
 printContribResults (x:xs) = do
     print ((D.repoID x),(D.contributors x))
     printContribResults xs
 printContribResults _ = return ()
 
--- | Gets the relevant fields and prints them for the top 5 repo's by average lines per contributor
+-- | Gets the relevant fields and prints them for the top 5 repo's by average lines per contributor.
 printAvgLPCResults :: [AvgContribLines] -> IO ()
 printAvgLPCResults (x:xs) = do
     print ((D.repo x),(D.avgLinesPerContrib x))
