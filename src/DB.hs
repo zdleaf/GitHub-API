@@ -43,14 +43,14 @@ import Data.Convertible.Base
 
 import Data.Aeson.Types
 
--- | Initialise the database with a given path name
+-- | Initialise the database with a given path name.
 initialiseDB :: FilePath -> IO Connection
 initialiseDB dbname = do
         connection <- connectSqlite3 dbname
         connectDB connection
         return connection
 
--- | Connect to the database and create all the tables
+-- | Connect to the database and create all the tables.
 connectDB :: IConnection conn => conn -> IO ()
 connectDB connection =
   do
@@ -79,7 +79,7 @@ connectDB connection =
 
       return()
     commit connection
--- Final table including languages and totals for contributors and line count
+-- Final table including languages and totals for contributors and line count.
     when (not ("totalCount" `P.elem` tables)) $ do
         run connection "CREATE TABLE totalCount (\
                         \language TEXT NOT NULL UNIQUE,\
@@ -115,12 +115,12 @@ addRepo connection (Right repoResponse) = handleSql handleError $ do
         commit connection
         where handleError e = do print $ "error adding repo: " ++ (show (D.id repoResponse)) ++ " "++ (show e)
 
--- | Extract response list from Either Left/Right as returned by parseRepoResponse
+-- | Extract response list from Either Left/Right as returned by parseRepoResponse.
 extractResp :: Either a1 [a2] -> [a2]
 extractResp (Left err) = []
 extractResp (Right list) = list
 
--- | Recursively calls addRepo on a list of Either RepoResponse objects
+-- | Recursively calls addRepo on a list of Either Error RepoResponse objects.
 addRepoMany :: IConnection conn => conn -> [Either String RepoResponse] -> IO ()
 addRepoMany db (x:xs) = do
     addRepo db x
@@ -129,7 +129,7 @@ addRepoMany db (x:xs) = do
 addRepoMany db _ = do
     return ()
 
--- | Adds a single contributor tuple (as provided by callContribURL in the HTTP module) to the database
+-- | Adds a single contributor tuple (as provided by callContribURL in the HTTP module) to the database.
 addContribs:: IConnection conn => conn -> (Integer,Int) -> IO()
 addContribs connection tuple = handleSql handleError $ do
   run connection "INSERT OR REPLACE INTO contributorResponses (repoID, contributors) VALUES (?, ?)"
@@ -142,7 +142,7 @@ addContribs connection tuple = handleSql handleError $ do
   hFlush stdout
   where handleError e = do print $ "error adding contributors: " ++ (show (fst tuple)) ++ " "++ (show e)
 
--- | Adds a single language tuple (as provided by callLangURL in the HTTP module) to the database
+-- | Adds a single language tuple (as provided by callLangURL in the HTTP module) to the database.
 addLang :: IConnection conn => conn -> (Integer, String, Integer) -> IO()
 addLang connection (id, language, count)  = handleSql handleError $ do
   run connection "INSERT OR REPLACE INTO langResponses (repoID, language, lineCount) VALUES (?, ?, ?)"
@@ -156,7 +156,7 @@ addLang connection (id, language, count)  = handleSql handleError $ do
   hFlush stdout
   where handleError e = do print $ "error adding contributors: " ++ (show (id)) ++ " "++ (show e)
 
--- | ARecursive function adding a list of language tuples to the database using addLang above
+-- | ARecursive function adding a list of language tuples to the database using addLang above.
 addLangList :: IConnection conn => conn -> [(Integer, String, Integer)] -> IO()
 addLangList connection (x:xs) = do
   addLang connection x
@@ -262,15 +262,15 @@ fillLinesPerContrib connection = do
                 \ORDER BY LinesPerContrib DESC" []
   commit connection
 
--- | Takes a table name and its conveter (FromSQL), ecncodes the the list then writes it out to a JSON file matching it's table name
+-- | Takes a table name and its conveter (FromSQL), ecncodes the the list then writes it out to a JSON file matching it's table name.
 dbTableToJSON :: (IConnection conn, ToJSON b )=> conn -> [Char] -> ([SqlValue] -> b) -> IO ()
 dbTableToJSON db tableName converter = do
   totalList <- retrieveDB db tableName converter
   let json = BL.concat $ fmap encodePretty totalList
-  BL.writeFile (tableName ++ ".json") json
+  BL.writeFile ("./outputJSON/" ++ tableName ++ ".json") json
   print  $ "output db to: " ++ tableName ++ ".json"
 
--- | Finds and prints the top languages from the totalCount table by a number of metrics (line count, most contributors, most average lines per contributor)
+-- | Finds and prints the top languages from the totalCount table by a number of metrics (line count, most contributors, most average lines per contributor).
 topFiveLangs:: IConnection conn => conn -> IO ()
 topFiveLangs connection = do
   -- line counts
