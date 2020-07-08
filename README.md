@@ -5,7 +5,7 @@ https://developer.github.com/v3/), however it can be configured to make any stan
 
 At the moment it currently scrapes the languages and respective line counts that make up a given repository. 
 It also counts the contributors involved in a repository. In the example code the scraped information is used to get an understanding of popular languages
-by deriving a total line count for each language across all repositories and also how many
+by deriving a total line count for each language across all repositories scraped and also how many
 contributors are involved with repositories using those languages. This allows us to get a snapshot
 of the popular languages at a particular time by specifying whether to scrape older or more
 recent repositories.
@@ -16,6 +16,8 @@ order to change the repositories to be downloaded set the values of startRepoID 
 at the top of app/Main.hs by specifying the start and end repository IDs to scrape. 
 
 Bear in mind the default API rate limit is 60/hour API requests, and each repository scraped currently results in an average of 2.01 total API calls. It is possible to include a GitHub personal access token in HTTP.hs. This increases the API limit from from 60/hour to 5000. Tokens can be created at https://github.com/settings/tokens. 
+
+Full Haddock documentation is available in the /Haddock directory.
 
 # 2. Overview
 Stack is used to build the tool and manage the dependencies. See .yaml files in the root directory for configuration.
