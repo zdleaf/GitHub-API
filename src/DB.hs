@@ -5,6 +5,7 @@ module DB
         connectDB,
         initialiseDB,
         extractResp,
+        addRepo,
         addRepoMany,
         retrieveDB,
         addContribs,
@@ -42,14 +43,14 @@ import Data.Convertible.Base
 
 import Data.Aeson.Types
 
--- | Initialise the database with a given path name
+-- | Initialise the database with a given path name.
 initialiseDB :: FilePath -> IO Connection
 initialiseDB dbname = do
         connection <- connectSqlite3 dbname
         connectDB connection
         return connection
 
--- | Connect the database and create all the tables
+-- | Connect to the database and create all the tables.
 connectDB :: IConnection conn => conn -> IO ()
 connectDB connection =
   do
@@ -78,7 +79,7 @@ connectDB connection =
 
       return()
     commit connection
--- Final table including languages and totals for contributors and line count
+-- Final table including languages and totals for contributors and line count.
     when (not ("totalCount" `P.elem` tables)) $ do
         run connection "CREATE TABLE totalCount (\
                         \language TEXT NOT NULL UNIQUE,\
@@ -100,7 +101,7 @@ connectDB connection =
     run connection "DELETE FROM linesPerContrib" []
     commit connection
 
--- | Add RepoResponses to the "repoResponses" table in the Database
+-- | Add RepoResponses to the "repoResponses" table in the database. 
 addRepo:: IConnection conn => conn -> Either a RepoResponse -> IO ()
 addRepo connection (Left err) = return ()
 addRepo connection (Right repoResponse) = handleSql handleError $ do
@@ -114,14 +115,12 @@ addRepo connection (Right repoResponse) = handleSql handleError $ do
         commit connection
         where handleError e = do print $ "error adding repo: " ++ (show (D.id repoResponse)) ++ " "++ (show e)
 
-
-
--- | Extract response list from Either Left/Right as it is returned by parseRepoResponse
+-- | Extract response list from Either Left/Right as returned by parseRepoResponse.
 extractResp :: Either a1 [a2] -> [a2]
 extractResp (Left err) = []
 extractResp (Right list) = list
 
--- | Recursively calls addRepo on a list of Either RepoResponse objects
+-- | Recursively calls addRepo on a list of Either Error RepoResponse objects.
 addRepoMany :: IConnection conn => conn -> [Either String RepoResponse] -> IO ()
 addRepoMany db (x:xs) = do
     addRepo db x
@@ -130,7 +129,7 @@ addRepoMany db (x:xs) = do
 addRepoMany db _ = do
     return ()
 
--- | Adds a single contributor tuple (as provided by callContribURL in the HTTP module) to the database
+-- | Adds a single contributor tuple (as provided by callContribURL in the HTTP module) to the database.
 addContribs:: IConnection conn => conn -> (Integer,Int) -> IO()
 addContribs connection tuple = handleSql handleError $ do
   run connection "INSERT OR REPLACE INTO contributorResponses (repoID, contributors) VALUES (?, ?)"
@@ -143,7 +142,7 @@ addContribs connection tuple = handleSql handleError $ do
   hFlush stdout
   where handleError e = do print $ "error adding contributors: " ++ (show (fst tuple)) ++ " "++ (show e)
 
--- | Adds a single language tuple (as provided by callLangURL in the HTTP module) to the database
+-- | Adds a single language tuple (as provided by callLangURL in the HTTP module) to the database.
 addLang :: IConnection conn => conn -> (Integer, String, Integer) -> IO()
 addLang connection (id, language, count)  = handleSql handleError $ do
   run connection "INSERT OR REPLACE INTO langResponses (repoID, language, lineCount) VALUES (?, ?, ?)"
@@ -157,7 +156,7 @@ addLang connection (id, language, count)  = handleSql handleError $ do
   hFlush stdout
   where handleError e = do print $ "error adding contributors: " ++ (show (id)) ++ " "++ (show e)
 
--- | Adds a list of language tuples to the database using addLang above
+-- | A recursive function adding a list of language tuples to the database using addLang above.
 addLangList :: IConnection conn => conn -> [(Integer, String, Integer)] -> IO()
 addLangList connection (x:xs) = do
   addLang connection x
@@ -167,15 +166,15 @@ addLangList connection (x:xs) = do
 addLangList db _ = do
   return ()
 
--- | Generalised function to retrieve and type convert an entire table from the database.
---  Returns a list of a given data type specified by the typeConverter parameter
+-- | Generalised function to retrieve and type convert an entire table from the database SQL format to Haskell data types.
+--  Returns a list of a given data type specified by the typeConverter parameter.
 retrieveDB:: IConnection conn => conn -> [Char] -> ([SqlValue] -> b) -> IO [b]
 retrieveDB connection table typeConverter = do
         repoList <- quickQuery connection ("select * from " ++ table) []
         commit connection
         return (P.map typeConverter repoList)
 
--- | Retrieve the repos from the DB between the requested start and end repoID. This is so we call only the newly added languages_url and contributors_url in the current run. This allows us to build up a database over time of repos, language and contributor responses, without duplicating API calls, given we can only make 5000 API calls/hour. 
+-- | Retrieve the repos from the DB between the requested start and end repoID. This is so we call only the newly added languages_url and contributors_url for repos specified in the current run. This allows us to build up a database over time of many repos, language and contributor responses, without duplicating API calls, given we can only make 5000 API calls/hour. 
 retrieveRepoBetween :: (IConnection conn, Convertible a SqlValue) => conn -> a -> a -> IO [RepoResponse]
 retrieveRepoBetween connection start end = do
   repoList <- quickQuery connection ("select * from repoResponses \
@@ -188,12 +187,9 @@ retrieveRepoBetween connection start end = do
   commit connection
   return (P.map repoFromSQL repoList)
 
-{-
+{- SQL CONVERTERS -}
 
-        SQL CONVERTERS
-
-         -}
--- | Type converter that allows us to extract items from the database as RepoResponse objects
+-- | Type converter that allows us to extract items from the database as RepoResponse objects.
 repoFromSQL :: [SqlValue] -> RepoResponse
 repoFromSQL [repoID, languages_url, contributors_url] =
     RepoResponse {D.id = fromSql repoID,
@@ -202,7 +198,7 @@ repoFromSQL [repoID, languages_url, contributors_url] =
     }
 repoFromSQL _ = error $ "error in bytestring conversion"
 
--- | Type converter that allows us to extract items from the database as Contributor objects
+-- | Type converter that allows us to extract items from the database as Contributor objects.
 contribFromSQL :: [SqlValue] -> Contributor
 contribFromSQL [repoID, contributors] =
   ContributorTo {D.repoID = fromSql repoID,
@@ -210,7 +206,7 @@ contribFromSQL [repoID, contributors] =
   }
 contribFromSQL _ = error $ "error in bytestring conversion"
 
--- |Type converter that allows us to extract items from the database as Language objects
+-- | Type converter that allows us to extract items from the database as Language objects.
 langFromSQL :: [SqlValue] -> Language
 langFromSQL [repoID, language, lineCount] =
   LanguageTo {D.langRepoID = fromSql repoID,
@@ -219,7 +215,7 @@ langFromSQL [repoID, language, lineCount] =
   }
 langFromSQL _ = error $ "error in bytestring conversion"
 
--- | Type converter that allows us to extract items from the database as TotalCount objects
+-- | Type converter that allows us to extract items from the database as TotalCount objects.
 totalFromSQL :: [SqlValue] -> TotalCount
 totalFromSQL [language, lineCount, contributors, linesPerContrib] =
   TotalCount {D.totalLanguage = fromSql language,
@@ -229,7 +225,8 @@ totalFromSQL [language, lineCount, contributors, linesPerContrib] =
   }
 totalFromSQL _ = error $ "error in bytestring conversion"
 
--- | Type converter that allows us to extract items from the database as AvgContribLines objects
+-- | Type converter that allows us to extract items from the database as AvgContribLines objects.
+avgContribFromSQL:: [SqlValue] -> AvgContribLines
 avgContribFromSQL [repo, avgLinesPerContrib] =
   AvgContribLines {D.repo = fromSql repo,
           D.avgLinesPerContrib = fromSql avgLinesPerContrib
@@ -237,7 +234,7 @@ avgContribFromSQL [repo, avgLinesPerContrib] =
 avgContribFromSQL _ = error $ "error in bytestring conversion"
 
 -- | SQL query that aggregates across all repositories and calculates the total line count and total contributors for each language.
---  This also populates the total count table
+--  This also populates the total count table.
 fillTotalCount :: IConnection conn => conn -> IO ()
 fillTotalCount connection = do
   run connection
@@ -252,7 +249,7 @@ fillTotalCount connection = do
   commit connection
 
 -- | SQL query that calculates the average number  of lines per contributor for each repository.
--- | This query then populates the LinesPerContrib table
+-- | This query then populates the LinesPerContrib table.
 fillLinesPerContrib :: IConnection conn => conn -> IO ()
 fillLinesPerContrib connection = do
   run connection
@@ -265,15 +262,15 @@ fillLinesPerContrib connection = do
                 \ORDER BY LinesPerContrib DESC" []
   commit connection
 
--- | Takes a table name and its conveter (FromSQL), ecncodes the the list then writes it out to a JSON file matching it's table name
+-- | Takes a table name and its conveter (FromSQL), ecncodes the the list then writes it out to a JSON file matching it's table name.
 dbTableToJSON :: (IConnection conn, ToJSON b )=> conn -> [Char] -> ([SqlValue] -> b) -> IO ()
 dbTableToJSON db tableName converter = do
   totalList <- retrieveDB db tableName converter
   let json = BL.concat $ fmap encodePretty totalList
-  BL.writeFile (tableName ++ ".json") json
+  BL.writeFile ("./outputJSON/" ++ tableName ++ ".json") json
   print  $ "output db to: " ++ tableName ++ ".json"
 
--- | Finds and prints the top languages from the totalCount table by a number of metrics (line count, most contributors, most average lines per contributor)
+-- | Finds and prints the top languages from the totalCount table by a number of metrics (line count, most contributors, most average lines per contributor).
 topFiveLangs:: IConnection conn => conn -> IO ()
 topFiveLangs connection = do
   -- line counts
@@ -294,7 +291,7 @@ topFiveLangs connection = do
   P.putStrLn "\nThe three languages with the largest average number of lines per contributor are: "
   printResults "avglpc" (P.map totalFromSQL result)
 
--- | Finds and prints the top repos by contributors from the contributorResponses table
+-- | Finds and prints the top repos by contributors from the contributorResponses table.
 topFiveContribs::IConnection conn => conn -> IO ()
 topFiveContribs connection = do
   result <- quickQuery connection "SELECT * FROM contributorResponses ORDER BY contributors DESC LIMIT 5" []
@@ -302,7 +299,7 @@ topFiveContribs connection = do
   P.putStrLn "\nThe five repositories with the largest number of contributors are: "
   printContribResults (P.map contribFromSQL result)
 
--- | Finds and prints the top repos by average lines per contributor from the linesPerContrib table
+-- | Finds and prints the top repos by average lines per contributor from the linesPerContrib table.
 topLinesPerContrib:: IConnection conn => conn -> IO ()
 topLinesPerContrib connection = do
   result <- quickQuery connection "SELECT * FROM linesPerContrib\
@@ -312,7 +309,7 @@ topLinesPerContrib connection = do
   P.putStrLn "\nThe five repositories with the highest number of lines per contributor are: "
   printAvgLPCResults (P.map avgContribFromSQL result)
 
--- | When printing the top five results from the totalCount at the end of program execution, this function gets the relevant fields to display from the DataTypes and prints them
+-- | When printing the top five results from the totalCount at the end of program execution, this function gets the relevant fields to display from the DataTypes and prints them.
 printResults :: [Char] -> [TotalCount] -> IO ()
 printResults z (x:xs)
   | z == "lineCount" = do
@@ -326,14 +323,14 @@ printResults z (x:xs)
     printResults "avglpc" xs
 printResults z _ = return ()
 
--- | Gets the relevant fields and prints them for the top 5 repo's by contributor
+-- | Gets the relevant fields and prints them for the top 5 repo's by contributor.
 printContribResults :: [Contributor] -> IO ()
 printContribResults (x:xs) = do
     print ((D.repoID x),(D.contributors x))
     printContribResults xs
 printContribResults _ = return ()
 
--- | Gets the relevant fields and prints them for the top 5 repo's by average lines per contributor
+-- | Gets the relevant fields and prints them for the top 5 repo's by average lines per contributor.
 printAvgLPCResults :: [AvgContribLines] -> IO ()
 printAvgLPCResults (x:xs) = do
     print ((D.repo x),(D.avgLinesPerContrib x))
