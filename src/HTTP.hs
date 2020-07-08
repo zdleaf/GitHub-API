@@ -28,14 +28,15 @@ import Network.HTTP.Simple -- see https://github.com/snoyberg/http-client/blob/m
 import Network.HTTP.Client.TLS
 import Network.HTTP.Types
 
-repoAPIBase = "http://api.github.com/repositories?since="
-userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
-token =  C8.pack "token 5be20b79c05ba422ca80377c1b759e9f99d5d335"
--- alternative token da45c3b3cfa3127bf08e60eff8be3f58aac0923d
+-- Generate and enter a GitHub personal access token to use for login to API below - this increases the 60/h API request limit to 5000
+-- see https://github.com/settings/tokens and https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token
+token =  C8.pack "token INSERT-GITHUB-TOKEN-HERE"
 
--- to test an HTTP timeout, call the following URL: http://httpstat.us/504?sleep=60000
+userAgentBS = C8.pack "https://github.com/zdleaf/GitHub-API"
+repoAPIBase = "http://api.github.com/repositories?since="
 
 -- | callAPI returns an API call as an Either e (Response ByteString) when calling a given GitHub API URL. On a successful download, we can get the JSON from the Response ByteString using getResponseBody. In the case of an HTTP exception e.g. timeout, "e" will contain the HttpException details.
+-- to test an HTTP timeout, call the following URL: http://httpstat.us/504?sleep=60000
 callAPI :: Exception e => String -> IO (Either e (Response ByteString))
 callAPI url = do
     initReq <- parseRequest $ url
